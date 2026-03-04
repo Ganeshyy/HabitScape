@@ -175,8 +175,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:4000;
 .activity-bubble .sb-name{color:var(--green-m)}
 
 .habit-actions{display:none;gap:3px;flex-shrink:0}
-body.manage-mode .habit-actions{display:flex}
+body.manage-mode .habit-row .habit-actions{display:flex}
 body.manage-mode .skill-bubble{pointer-events:none;opacity:.5}
+body.manage-mode .habit-row{cursor:default}
 .h-act{font-size:8px;padding:3px 6px;cursor:pointer;border:1px solid;background:none;font-family:'Cinzel',serif;transition:all .2s}
 .h-act-edit{color:var(--text-d);border-color:var(--border)}
 .h-act-edit:hover{color:var(--text-m);border-color:var(--text-m)}
@@ -232,7 +233,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 /* ══════════════════════════
    EQUIPMENT PANE
 ══════════════════════════ */
-.equip-layout{display:grid;grid-template-columns:1fr 80px 1fr;grid-template-rows:repeat(6,52px);gap:4px;margin-bottom:10px}
+.equip-layout{display:grid;grid-template-columns:1fr 80px 1fr;grid-template-rows:repeat(3,60px);gap:4px;margin-bottom:10px}
 .eq-slot{background:var(--bg-card);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all .2s;position:relative;padding:4px}
 .eq-slot:hover{border-color:var(--bhi)}
 .eq-slot.filled{border-color:var(--gold-d)}
@@ -241,20 +242,14 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .eq-slot-name{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-d);text-align:center}
 .eq-slot.filled .eq-slot-name{color:var(--gold-d)}
 .eq-slot-item{font-size:9px;color:var(--text-m);text-align:center;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.eq-silhouette{grid-column:2;grid-row:1/7;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);border:1px solid var(--border);font-size:52px}
 /* slot positions */
-.eq-head   {grid-column:2;grid-row:1}
-.eq-cape   {grid-column:1;grid-row:2;justify-self:end;width:100%}
-.eq-neck   {grid-column:3;grid-row:2}
-.eq-weapon {grid-column:1;grid-row:3;justify-self:end;width:100%}
-.eq-body   {grid-column:2;grid-row:3}
-.eq-shield {grid-column:3;grid-row:3}
-.eq-legs   {grid-column:2;grid-row:4}
-.eq-hands  {grid-column:1;grid-row:4;justify-self:end;width:100%}
-.eq-feet   {grid-column:2;grid-row:5}
-.eq-ring   {grid-column:1;grid-row:5;justify-self:end;width:100%}
-.eq-ammo   {grid-column:3;grid-row:4}
-.eq-silhouette{grid-column:2;grid-row:2/5;font-size:48px;align-items:center;justify-content:center}
+.eq-head  {grid-column:2;grid-row:1}
+.eq-weapon{grid-column:1;grid-row:2}
+.eq-body  {grid-column:2;grid-row:2}
+.eq-shield{grid-column:3;grid-row:2}
+.eq-legs  {grid-column:1;grid-row:3}
+.eq-feet  {grid-column:2;grid-row:3}
+.eq-silhouette{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);border:1px solid var(--border);font-size:44px;pointer-events:none}
 
 .eq-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .eq-stat{background:var(--bg-card);border:1px solid var(--border);padding:7px 10px;display:flex;align-items:center;justify-content:space-between}
@@ -509,7 +504,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
     <div class="content" id="content">
 
       <!-- SKILLS -->
-      <div class="pane active" id="pane-skills">
+      <div class="pane" id="pane-skills">
         <div class="total-banner">
           <div class="tb-left">
             <div class="tb-lbl">Total Level</div>
@@ -522,7 +517,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       </div>
 
       <!-- HABITS -->
-      <div class="pane" id="pane-habits">
+      <div class="pane active" id="pane-habits">
         <div class="manage-bar">
           <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Your Habits</span>
           <button class="manage-toggle off" id="manage-toggle" onclick="toggleManage()">Manage</button>
@@ -549,16 +544,11 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <div class="pane" id="pane-equip">
         <div class="sec">Equipped Gear</div>
         <div class="equip-layout">
-          <div class="eq-slot eq-cape"   data-slot="cape"   onclick="openEquipSlot('cape')">  <div class="eq-slot-icon">🪬</div><div class="eq-slot-name">Cape</div>  <div class="eq-slot-item" id="eq-cape-item"></div></div>
           <div class="eq-slot eq-head"   data-slot="head"   onclick="openEquipSlot('head')">  <div class="eq-slot-icon">🪖</div><div class="eq-slot-name">Head</div>  <div class="eq-slot-item" id="eq-head-item"></div></div>
-          <div class="eq-slot eq-neck"   data-slot="neck"   onclick="openEquipSlot('neck')">  <div class="eq-slot-icon">📿</div><div class="eq-slot-name">Neck</div>  <div class="eq-slot-item" id="eq-neck-item"></div></div>
-          <div class="eq-slot eq-weapon" data-slot="weapon" onclick="openEquipSlot('weapon')"><div class="eq-slot-icon">⚔️</div><div class="eq-slot-name">Weapon</div><div class="eq-slot-item" id="eq-weapon-item"></div></div>
           <div class="eq-silhouette">🧙</div>
           <div class="eq-slot eq-shield" data-slot="shield" onclick="openEquipSlot('shield')"><div class="eq-slot-icon">🛡️</div><div class="eq-slot-name">Shield</div><div class="eq-slot-item" id="eq-shield-item"></div></div>
-          <div class="eq-slot eq-hands"  data-slot="hands"  onclick="openEquipSlot('hands')"> <div class="eq-slot-icon">🧤</div><div class="eq-slot-name">Hands</div> <div class="eq-slot-item" id="eq-hands-item"></div></div>
+          <div class="eq-slot eq-weapon" data-slot="weapon" onclick="openEquipSlot('weapon')"><div class="eq-slot-icon">⚔️</div><div class="eq-slot-name">Weapon</div><div class="eq-slot-item" id="eq-weapon-item"></div></div>
           <div class="eq-slot eq-body"   data-slot="body"   onclick="openEquipSlot('body')">  <div class="eq-slot-icon">👕</div><div class="eq-slot-name">Body</div>  <div class="eq-slot-item" id="eq-body-item"></div></div>
-          <div class="eq-slot eq-ammo"   data-slot="ammo"   onclick="openEquipSlot('ammo')">  <div class="eq-slot-icon">🏹</div><div class="eq-slot-name">Ammo</div>  <div class="eq-slot-item" id="eq-ammo-item"></div></div>
-          <div class="eq-slot eq-ring"   data-slot="ring"   onclick="openEquipSlot('ring')">  <div class="eq-slot-icon">💍</div><div class="eq-slot-name">Ring</div>  <div class="eq-slot-item" id="eq-ring-item"></div></div>
           <div class="eq-slot eq-legs"   data-slot="legs"   onclick="openEquipSlot('legs')">  <div class="eq-slot-icon">👖</div><div class="eq-slot-name">Legs</div>  <div class="eq-slot-item" id="eq-legs-item"></div></div>
           <div class="eq-slot eq-feet"   data-slot="feet"   onclick="openEquipSlot('feet')">  <div class="eq-slot-icon">👟</div><div class="eq-slot-name">Feet</div>  <div class="eq-slot-item" id="eq-feet-item"></div></div>
         </div>
@@ -569,7 +559,6 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <div class="eq-stat"><span class="eq-stat-name">Ranged</span><span class="eq-stat-val" id="eq-rng">0</span></div>
           <div class="eq-stat"><span class="eq-stat-name">Magic</span><span class="eq-stat-val" id="eq-mag">0</span></div>
           <div class="eq-stat"><span class="eq-stat-name">Strength</span><span class="eq-stat-val" id="eq-str">0</span></div>
-          <div class="eq-stat"><span class="eq-stat-name">Prayer</span><span class="eq-stat-val" id="eq-pry">0</span></div>
         </div>
       </div>
 
@@ -577,10 +566,18 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <div class="pane" id="pane-bank">
         <div class="bank-header">
           <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Bank</span>
-          <span class="bank-slots-info" id="bank-slots-info">0 / 20 slots used</span>
+          <span class="bank-slots-info" id="bank-slots-info">0 / 50 slots used</span>
         </div>
         <input class="bank-search" type="text" id="bank-search" placeholder="Search items..." oninput="renderBank()">
         <div class="bank-grid" id="bank-grid"></div>
+        <div style="margin-top:4px;padding:8px 10px;background:rgba(192,80,64,.06);border:1px solid var(--red-d);display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">🔥</span>
+          <div style="flex:1">
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red-d)">Incinerator</div>
+            <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:1px">Tap any item to incinerate it</div>
+          </div>
+          <button class="btn btn-red btn-sm" id="incinerate-toggle" onclick="toggleIncinerator()">Enable</button>
+        </div>
       </div>
 
       <!-- PROFILE -->
@@ -604,6 +601,75 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <div class="card" style="padding:10px;display:none" id="p-vices-card"><div id="p-vices-list"></div></div>
         <div class="sec">Today's Log</div>
         <div class="card" style="padding:8px"><div id="p-log"></div></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="pane" id="pane-settings">
+        <div class="activity-header">
+          <div class="act-icon">⚙️</div>
+          <div><div class="act-title">Settings</div><div class="act-sub">Manage your account</div></div>
+        </div>
+
+        <div class="sec">Account</div>
+        <div class="card" style="padding:12px;margin-bottom:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.5px" id="settings-name">—</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:2px">Tap Profile to edit name &amp; avatar</div>
+            </div>
+            <button class="btn btn-dim btn-sm" onclick="showPane('profile',null)">Edit Profile</button>
+          </div>
+        </div>
+
+        <div class="sec">Data</div>
+        <div class="card" style="padding:0;margin-bottom:6px;overflow:hidden">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--text)">Export Save</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:1px">Copy your save data as text</div>
+            </div>
+            <button class="btn btn-dim btn-sm" onclick="exportSave()">Export</button>
+          </div>
+          <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--text)">Import Save</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:1px">Restore from exported text</div>
+            </div>
+            <button class="btn btn-dim btn-sm" onclick="importSave()">Import</button>
+          </div>
+        </div>
+
+        <div class="sec">Danger Zone</div>
+        <div class="card" style="padding:0;margin-bottom:6px;overflow:hidden;border-color:var(--red-d)">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--red-d);display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--text)">Log Out</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:1px">Returns to the name screen. Save is kept.</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="logout()">Log Out</button>
+          </div>
+          <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--red-d)">Reset Everything</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:1px">Wipes all progress. Cannot be undone.</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="resetEverything()">Reset</button>
+          </div>
+        </div>
+
+        <div style="text-align:center;padding:20px 0 8px">
+          <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--text-d)">HabitScape</div>
+          <div style="font-size:10px;font-style:italic;color:var(--text-d);margin-top:3px">Your real life. Your adventure.</div>
+        </div>
+      </div>
+
+      <!-- QUESTS -->
+      <div class="pane" id="pane-quests">
+        <div class="activity-header">
+          <div class="act-icon">📜</div>
+          <div><div class="act-title">Quests</div><div class="act-sub">Real commitment. Massive rewards.</div></div>
+        </div>
+        <div id="quests-list"></div>
       </div>
 
       <!-- COMBAT -->
@@ -753,37 +819,38 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       </div>
 
       <!-- RUNECRAFTING -->
-      <div class="pane" id="pane-runecrafting">
+      <!-- MAGECRAFTING -->
+      <div class="pane" id="pane-magecrafting">
         <div class="activity-header">
           <div class="act-icon">🌀</div>
-          <div><div class="act-title">Runecrafting</div><div class="act-sub">Imbue runes with essence</div></div>
-          <div style="text-align:right"><div class="act-lv" id="runecrafting-lv">1</div><div class="act-lv-lbl">Level</div></div>
+          <div><div class="act-title">Magecrafting</div><div class="act-sub">Forge staves and magic armour</div></div>
+          <div style="text-align:right"><div class="act-lv" id="magecrafting-lv">1</div><div class="act-lv-lbl">Level</div></div>
         </div>
-        <div id="runecrafting-idle-wrap" style="display:none">
+        <div id="magecrafting-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
-            <div class="idle-bar-label">Crafting: <strong id="idle-runecrafting-name">—</strong></div>
-            <div class="idle-track"><div class="idle-fill" id="idle-runecrafting-fill" style="width:0%"></div></div>
+            <div class="idle-bar-label">Crafting: <strong id="idle-magecrafting-name">—</strong></div>
+            <div class="idle-track"><div class="idle-fill" id="idle-magecrafting-fill" style="width:0%"></div></div>
           </div>
-          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('runecrafting')">Stop</button>
+          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('magecrafting')">Stop</button>
         </div>
-        <div id="runecrafting-items"></div>
+        <div id="magecrafting-items"></div>
       </div>
 
-      <!-- CRAFTING -->
-      <div class="pane" id="pane-crafting">
+      <!-- LEATHERWORKING -->
+      <div class="pane" id="pane-leatherworking">
         <div class="activity-header">
           <div class="act-icon">🧶</div>
-          <div><div class="act-title">Crafting</div><div class="act-sub">Forge jewellery and armour</div></div>
-          <div style="text-align:right"><div class="act-lv" id="crafting-lv">1</div><div class="act-lv-lbl">Level</div></div>
+          <div><div class="act-title">Leatherworking</div><div class="act-sub">Craft leather and studded armour</div></div>
+          <div style="text-align:right"><div class="act-lv" id="leatherworking-lv">1</div><div class="act-lv-lbl">Level</div></div>
         </div>
-        <div id="crafting-idle-wrap" style="display:none">
+        <div id="leatherworking-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
-            <div class="idle-bar-label">Crafting: <strong id="idle-crafting-name">—</strong></div>
-            <div class="idle-track"><div class="idle-fill" id="idle-crafting-fill" style="width:0%"></div></div>
+            <div class="idle-bar-label">Crafting: <strong id="idle-leatherworking-name">—</strong></div>
+            <div class="idle-track"><div class="idle-fill" id="idle-leatherworking-fill" style="width:0%"></div></div>
           </div>
-          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('crafting')">Stop</button>
+          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('leatherworking')">Stop</button>
         </div>
-        <div id="crafting-items"></div>
+        <div id="leatherworking-items"></div>
       </div>
 
     </div><!-- /content -->
@@ -792,11 +859,13 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
     <nav class="side-nav" id="side-nav">
       <div class="nav-section">
         <div class="nav-section-label">Character</div>
-        <button class="nav-btn active" onclick="showPane('skills',this)"   ><span class="nav-icon">📊</span><span class="nav-label">Skills</span></button>
-        <button class="nav-btn"        onclick="showPane('habits',this)"   ><span class="nav-icon">📋</span><span class="nav-label">Habits</span></button>
+        <button class="nav-btn active" onclick="showPane('habits',this)"   ><span class="nav-icon">📋</span><span class="nav-label">Habits</span></button>
+        <button class="nav-btn"        onclick="showPane('skills',this)"   ><span class="nav-icon">📊</span><span class="nav-label">Skills</span></button>
         <button class="nav-btn"        onclick="showPane('equip',this)"    ><span class="nav-icon">🛡️</span><span class="nav-label">Equip</span></button>
         <button class="nav-btn"        onclick="showPane('bank',this)"     ><span class="nav-icon">🏦</span><span class="nav-label">Bank</span></button>
         <button class="nav-btn"        onclick="showPane('profile',this)"  ><span class="nav-icon">🧙</span><span class="nav-label">Profile</span></button>
+        <button class="nav-btn"        onclick="showPane('quests',this)"   ><span class="nav-icon">📜</span><span class="nav-label">Quests</span></button>
+        <button class="nav-btn"        onclick="showPane('settings',this)" ><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
       </div>
       <div class="nav-section">
         <div class="nav-section-label">Combat</div>
@@ -810,8 +879,8 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <button class="nav-btn"        onclick="showPane('cooking',this)"     ><span class="nav-icon">🍳</span><span class="nav-label">Cooking</span></button>
         <button class="nav-btn"        onclick="showPane('smithing',this)"    ><span class="nav-icon">🔨</span><span class="nav-label">Smith</span></button>
         <button class="nav-btn"        onclick="showPane('fletching',this)"   ><span class="nav-icon">🪶</span><span class="nav-label">Fletch</span></button>
-        <button class="nav-btn"        onclick="showPane('runecrafting',this)"><span class="nav-icon">🌀</span><span class="nav-label">RC</span></button>
-        <button class="nav-btn"        onclick="showPane('crafting',this)"    ><span class="nav-icon">🧶</span><span class="nav-label">Craft</span></button>
+        <button class="nav-btn"        onclick="showPane('magecrafting',this)"  ><span class="nav-icon">🌀</span><span class="nav-label">Mage</span></button>
+        <button class="nav-btn"        onclick="showPane('leatherworking',this)"><span class="nav-icon">🧶</span><span class="nav-label">Leather</span></button>
       </div>
     </nav>
 
@@ -825,19 +894,19 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 // GAME DATA
 // ═══════════════════════════════════════
 const SKILLS = {
-  attack:       {name:'Attack',       icon:'⚔️',  color:'#c05040', noTrain:false},
-  defence:      {name:'Defence',      icon:'🛡️',  color:'#5a8ab0', noTrain:false},
-  ranged:       {name:'Ranged',       icon:'🏹',  color:'#6dbf5a', noTrain:false},
-  magic:        {name:'Magic',        icon:'🔮',  color:'#8a60a0', noTrain:false},
-  hitpoints:    {name:'Hitpoints',    icon:'❤️',  color:'#c04040', noTrain:true},
-  mining:       {name:'Mining',       icon:'⛏️',  color:'#9a9070', noTrain:false},
-  smithing:     {name:'Smithing',     icon:'🔨',  color:'#c07840', noTrain:false},
-  woodcutting:  {name:'Woodcutting',  icon:'🪓',  color:'#8a6030', noTrain:false},
-  fletching:    {name:'Fletching',    icon:'🪶',  color:'#6a9a50', noTrain:false},
-  runecrafting: {name:'Runecrafting', icon:'🌀',  color:'#7a60c0', noTrain:false},
-  crafting:     {name:'Crafting',     icon:'🧶',  color:'#b06080', noTrain:false},
-  fishing:      {name:'Fishing',      icon:'🎣',  color:'#4a8ab0', noTrain:false},
-  cooking:      {name:'Cooking',      icon:'🍳',  color:'#c09040', noTrain:false},
+  attack:        {name:'Attack',        icon:'⚔️',  color:'#c05040', noTrain:false},
+  defence:       {name:'Defence',       icon:'🛡️',  color:'#5a8ab0', noTrain:false},
+  ranged:        {name:'Ranged',        icon:'🏹',  color:'#6dbf5a', noTrain:false},
+  magic:         {name:'Magic',         icon:'🔮',  color:'#8a60a0', noTrain:false},
+  hitpoints:     {name:'Hitpoints',     icon:'❤️',  color:'#c04040', noTrain:true},
+  mining:        {name:'Mining',        icon:'⛏️',  color:'#9a9070', noTrain:false},
+  smithing:      {name:'Smithing',      icon:'🔨',  color:'#c07840', noTrain:false},
+  woodcutting:   {name:'Woodcutting',   icon:'🪓',  color:'#8a6030', noTrain:false},
+  fletching:     {name:'Fletching',     icon:'🪶',  color:'#6a9a50', noTrain:false},
+  magecrafting:  {name:'Magecrafting',  icon:'🌀',  color:'#7a60c0', noTrain:false},
+  leatherworking:{name:'Leatherworking',icon:'🧶',  color:'#b06080', noTrain:false},
+  fishing:       {name:'Fishing',       icon:'🎣',  color:'#4a8ab0', noTrain:false},
+  cooking:       {name:'Cooking',       icon:'🍳',  color:'#c09040', noTrain:false},
 };
 const SKILL_KEYS = Object.keys(SKILLS);
 const MAX_LV = 99;
@@ -863,66 +932,159 @@ const MONSTERS = [
   {id:'black_knight',name:'Black Knight',icon:'🗡️',level:30,hp:70,maxhp:70,atk:25,def:22,xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:30,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
 ];
 
-// Activity definitions
+// Tool speed tiers — equipped tool reduces gather interval by 1 min per tier
+// bronze=600000ms(10min), iron=540000, steel=480000, mithril=420000, adamant=360000
+const TOOL_TIERS = {
+  bronze_axe:0, iron_axe:1, steel_axe:2, mithril_axe:3, adamant_axe:4,
+  bronze_pickaxe:0, iron_pickaxe:1, steel_pickaxe:2, mithril_pickaxe:3, adamant_pickaxe:4,
+  bronze_net:0, iron_net:1,
+};
+const BASE_GATHER = 600000; // 10 minutes
+const FOCUS_XP_INTERVAL = 300000; // 5 minutes
+
+function getToolInterval(skill){
+  // Find equipped tool for this skill
+  const toolSlot = skill==='woodcutting'?'weapon': skill==='mining'?'weapon': skill==='fishing'?'weapon':null;
+  const weapon = S.equipped?.weapon;
+  if(!weapon) return BASE_GATHER;
+  const tier = TOOL_TIERS[weapon.id];
+  if(tier===undefined) return BASE_GATHER;
+  // Check tool type matches skill
+  const isAxe = weapon.id.includes('axe');
+  const isPick = weapon.id.includes('pickaxe');
+  const isNet  = weapon.id.includes('net');
+  if(skill==='woodcutting' && !isAxe) return BASE_GATHER;
+  if(skill==='mining'      && !isPick) return BASE_GATHER;
+  if(skill==='fishing'     && !isNet) return BASE_GATHER;
+  return BASE_GATHER - (tier * 60000);
+}
+
+function hasTool(skill){
+  const weapon = S.equipped?.weapon;
+  if(!weapon) return false;
+  if(skill==='woodcutting') return weapon.id.includes('axe');
+  if(skill==='mining')      return weapon.id.includes('pickaxe');
+  if(skill==='fishing')     return weapon.id.includes('net');
+  return true;
+}
+
+// Activity definitions — base intervals are placeholders; actual interval computed from tool
 const ACTIVITIES = {
   mining: [
-    {id:'iron_ore',    name:'Iron Ore',   icon:'🪨',req:1, xp:35, interval:3000, gives:{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:1}},
-    {id:'steel_ore',   name:'Coal (Steel)',icon:'⚫',req:5, xp:50, interval:4000, gives:{item:'coal',name:'Coal',icon:'⚫',qty:1}},
-    {id:'mithril_ore', name:'Mithril Ore',icon:'🔵',req:20,xp:80, interval:6000, gives:{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:1}},
-    {id:'adamant_ore', name:'Adamant Ore',icon:'🟢',req:30,xp:95, interval:8000, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
+    {id:'iron_ore',    name:'Iron Ore',    icon:'🪨',req:1, xp:35, gives:{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:1}},
+    {id:'coal',        name:'Coal',        icon:'⚫',req:5, xp:50, gives:{item:'coal',name:'Coal',icon:'⚫',qty:1}},
+    {id:'mithril_ore', name:'Mithril Ore', icon:'🔵',req:20,xp:80, gives:{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:1}},
+    {id:'adamant_ore', name:'Adamant Ore', icon:'🟢',req:30,xp:95, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
   ],
   woodcutting: [
-    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, interval:3000, gives:{item:'logs',name:'Logs',icon:'🪵',qty:1}},
-    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, interval:4000, gives:{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:1}},
-    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, interval:6000, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
-    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:30,xp:88, interval:9000, gives:{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:1}},
+    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',name:'Logs',icon:'🪵',qty:1}},
+    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:1}},
+    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
+    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:30,xp:88, gives:{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:1}},
   ],
   fishing: [
-    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10, interval:3000, gives:{item:'raw_shrimp',name:'Raw Shrimp',icon:'🦐',qty:1}},
-    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50, interval:5000, gives:{item:'raw_trout',name:'Raw Trout',icon:'🐟',qty:1}},
-    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70, interval:6000, gives:{item:'raw_salmon',name:'Raw Salmon',icon:'🐠',qty:1}},
-    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90, interval:7000, gives:{item:'raw_lobster',name:'Raw Lobster',icon:'🦞',qty:1}},
-    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100,interval:9000, gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐡',qty:1}},
+    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10, gives:{item:'raw_shrimp',name:'Raw Shrimp',icon:'🦐',qty:1}},
+    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50, gives:{item:'raw_trout',name:'Raw Trout',icon:'🐟',qty:1}},
+    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70, gives:{item:'raw_salmon',name:'Raw Salmon',icon:'🐠',qty:1}},
+    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90, gives:{item:'raw_lobster',name:'Raw Lobster',icon:'🦞',qty:1}},
+    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100,gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐡',qty:1}},
   ],
   cooking: [
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:2000, needs:{item:'raw_shrimp',name:'Raw Shrimp'},gives:{item:'shrimp',name:'Shrimp',icon:'🦐',qty:1,heals:3}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:2500, needs:{item:'raw_trout',name:'Raw Trout'},gives:{item:'trout',name:'Trout',icon:'🐟',qty:1,heals:7}},
-    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:3000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
-    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:3500, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
-    {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:4000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
+    {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
+    {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',name:'Raw Shrimp'},gives:{item:'shrimp',name:'Shrimp',icon:'🦐',qty:1,heals:3}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',name:'Raw Trout'},gives:{item:'trout',name:'Trout',icon:'🐟',qty:1,heals:7}},
+    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
+    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
+    {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
   ],
   smithing_smelt: [
-    {id:'iron_bar',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:3000, needs:{item:'iron_ore',qty:2},gives:{item:'iron_bar',name:'Iron Bar',icon:'🔩',qty:1}},
-    {id:'steel_bar',   name:'Steel Bar',   icon:'🔧',req:5, xp:17, interval:4000, needs:{item:'iron_ore',qty:1,item2:'coal',qty2:2},gives:{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1}},
-    {id:'mithril_bar', name:'Mithril Bar', icon:'🔵',req:20,xp:30, interval:6000, needs:{item:'mithril_ore',qty:1,item2:'coal',qty2:4},gives:{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:1}},
-    {id:'adamant_bar', name:'Adamant Bar', icon:'🟢',req:30,xp:37, interval:8000, needs:{item:'adamant_ore',qty:1,item2:'coal',qty2:6},gives:{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1}},
+    {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:5000, needs:{item:'iron_ore',qty:2,name:'2x Iron Ore'},gives:{item:'iron_bar',name:'Iron Bar',icon:'🔩',qty:1}},
+    {id:'smelt_steel',   name:'Steel Bar',   icon:'🔧',req:5, xp:17, interval:6000, needs:{item:'iron_ore',qty:1,item2:'coal',qty2:2,name:'1x Iron Ore + 2x Coal'},gives:{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1}},
+    {id:'smelt_mithril', name:'Mithril Bar', icon:'🔵',req:20,xp:30, interval:8000, needs:{item:'mithril_ore',qty:1,item2:'coal',qty2:4,name:'1x Mithril Ore + 4x Coal'},gives:{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:1}},
+    {id:'smelt_adamant', name:'Adamant Bar', icon:'🟢',req:30,xp:37, interval:10000,needs:{item:'adamant_ore',qty:1,item2:'coal',qty2:6,name:'1x Adamant Ore + 6x Coal'},gives:{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1}},
   ],
   smithing_smith: [
-    {id:'iron_dagger',  name:'Iron Dagger',  icon:'🗡️',req:1, xp:25, interval:3000, needs:{item:'iron_bar',qty:1},gives:{item:'iron_dagger',name:'Iron Dagger',icon:'🗡️',qty:1,slot:'weapon',atk:4}},
-    {id:'iron_sword',   name:'Iron Sword',   icon:'⚔️',req:4, xp:50, interval:4000, needs:{item:'iron_bar',qty:2},gives:{item:'iron_sword',name:'Iron Sword',icon:'⚔️',qty:1,slot:'weapon',atk:7}},
-    {id:'steel_sword',  name:'Steel Sword',  icon:'⚔️',req:5, xp:75, interval:5000, needs:{item:'steel_bar',qty:2},gives:{item:'steel_sword',name:'Steel Sword',icon:'⚔️',qty:1,slot:'weapon',atk:14}},
-    {id:'mithril_sword',name:'Mithril Sword',icon:'⚔️',req:20,xp:100,interval:6000, needs:{item:'mithril_bar',qty:2},gives:{item:'mithril_sword',name:'Mithril Sword',icon:'⚔️',qty:1,slot:'weapon',atk:26}},
+    // Iron
+    {id:'iron_helm',     name:'Iron Full Helm',   icon:'🪖',req:1, xp:37, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_helm',name:'Iron Full Helm',icon:'🪖',qty:1,slot:'head',def:9}},
+    {id:'iron_body',     name:'Iron Platebody',   icon:'🛡️',req:1, xp:75, interval:6000, needs:{item:'iron_bar',qty:5,name:'5x Iron Bar'},   gives:{item:'iron_body',name:'Iron Platebody',icon:'🛡️',qty:1,slot:'body',def:18}},
+    {id:'iron_legs',     name:'Iron Platelegs',   icon:'👖',req:1, xp:62, interval:5500, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_legs',name:'Iron Platelegs',icon:'👖',qty:1,slot:'legs',def:14}},
+    {id:'iron_shield',   name:'Iron Kiteshield',  icon:'🛡️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_kite',name:'Iron Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:10}},
+    {id:'iron_long',     name:'Iron Longsword',   icon:'⚔️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_long',name:'Iron Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:10,str:8}},
+    {id:'iron_scim',     name:'Iron Scimitar',    icon:'⚔️',req:5, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_scim',name:'Iron Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:10,str:9}},
+    {id:'iron_2h',       name:'Iron 2H Sword',    icon:'⚔️',req:6, xp:75, interval:6000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_2h',name:'Iron 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:15,str:14}},
+    {id:'iron_axe',      name:'Iron Axe',         icon:'🪓',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},   gives:{item:'iron_axe',name:'Iron Axe',icon:'🪓',qty:1,slot:'weapon',toolType:'axe',tier:1}},
+    {id:'iron_pick',     name:'Iron Pickaxe',     icon:'⛏️',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},   gives:{item:'iron_pickaxe',name:'Iron Pickaxe',icon:'⛏️',qty:1,slot:'weapon',toolType:'pickaxe',tier:1}},
+    // Steel
+    {id:'steel_helm',    name:'Steel Full Helm',  icon:'🪖',req:5, xp:75, interval:6000, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_helm',name:'Steel Full Helm',icon:'🪖',qty:1,slot:'head',def:14}},
+    {id:'steel_body',    name:'Steel Platebody',  icon:'🛡️',req:5, xp:150,interval:8000, needs:{item:'steel_bar',qty:5,name:'5x Steel Bar'},  gives:{item:'steel_body',name:'Steel Platebody',icon:'🛡️',qty:1,slot:'body',def:28}},
+    {id:'steel_legs',    name:'Steel Platelegs',  icon:'👖',req:5, xp:125,interval:7000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_legs',name:'Steel Platelegs',icon:'👖',qty:1,slot:'legs',def:22}},
+    {id:'steel_shield',  name:'Steel Kiteshield', icon:'🛡️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_kite',name:'Steel Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:16}},
+    {id:'steel_long',    name:'Steel Longsword',  icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_long',name:'Steel Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:13}},
+    {id:'steel_scim',    name:'Steel Scimitar',   icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_scim',name:'Steel Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:14}},
+    {id:'steel_2h',      name:'Steel 2H Sword',   icon:'⚔️',req:6, xp:150,interval:8000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_2h',name:'Steel 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:24,str:22}},
+    {id:'steel_axe',     name:'Steel Axe',        icon:'🪓',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},  gives:{item:'steel_axe',name:'Steel Axe',icon:'🪓',qty:1,slot:'weapon',toolType:'axe',tier:2}},
+    {id:'steel_pick',    name:'Steel Pickaxe',    icon:'⛏️',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},  gives:{item:'steel_pickaxe',name:'Steel Pickaxe',icon:'⛏️',qty:1,slot:'weapon',toolType:'pickaxe',tier:2}},
+    // Mithril
+    {id:'mith_helm',     name:'Mithril Full Helm',icon:'🪖',req:20,xp:137,interval:7000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_helm',name:'Mithril Full Helm',icon:'🪖',qty:1,slot:'head',def:21}},
+    {id:'mith_body',     name:'Mithril Platebody',icon:'🛡️',req:20,xp:275,interval:9000, needs:{item:'mithril_bar',qty:5,name:'5x Mithril Bar'},gives:{item:'mith_body',name:'Mithril Platebody',icon:'🛡️',qty:1,slot:'body',def:42}},
+    {id:'mith_legs',     name:'Mithril Platelegs',icon:'👖',req:20,xp:225,interval:8000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_legs',name:'Mithril Platelegs',icon:'👖',qty:1,slot:'legs',def:34}},
+    {id:'mith_shield',   name:'Mithril Kiteshield',icon:'🛡️',req:20,xp:175,interval:7500,needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_kite',name:'Mithril Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:24}},
+    {id:'mith_long',     name:'Mithril Longsword',icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_long',name:'Mithril Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:26,str:22}},
+    {id:'mith_scim',     name:'Mithril Scimitar', icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_scim',name:'Mithril Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:26,str:23}},
+    {id:'mith_2h',       name:'Mithril 2H Sword', icon:'⚔️',req:21,xp:275,interval:9000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_2h',name:'Mithril 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:38,str:36}},
+    {id:'mith_axe',      name:'Mithril Axe',      icon:'🪓',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'},gives:{item:'mithril_axe',name:'Mithril Axe',icon:'🪓',qty:1,slot:'weapon',toolType:'axe',tier:3}},
+    {id:'mith_pick',     name:'Mithril Pickaxe',  icon:'⛏️',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'},gives:{item:'mithril_pickaxe',name:'Mithril Pickaxe',icon:'⛏️',qty:1,slot:'weapon',toolType:'pickaxe',tier:3}},
+    // Adamant
+    {id:'adam_helm',     name:'Adamant Full Helm',icon:'🪖',req:30,xp:200,interval:8000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_helm',name:'Adamant Full Helm',icon:'🪖',qty:1,slot:'head',def:28}},
+    {id:'adam_body',     name:'Adamant Platebody',icon:'🛡️',req:30,xp:400,interval:11000,needs:{item:'adamant_bar',qty:5,name:'5x Adamant Bar'},gives:{item:'adam_body',name:'Adamant Platebody',icon:'🛡️',qty:1,slot:'body',def:56}},
+    {id:'adam_legs',     name:'Adamant Platelegs',icon:'👖',req:30,xp:325,interval:9500, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_legs',name:'Adamant Platelegs',icon:'👖',qty:1,slot:'legs',def:46}},
+    {id:'adam_shield',   name:'Adamant Kiteshield',icon:'🛡️',req:30,xp:250,interval:9000,needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_kite',name:'Adamant Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:32}},
+    {id:'adam_long',     name:'Adamant Longsword',icon:'⚔️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_long',name:'Adamant Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:40,str:34}},
+    {id:'adam_scim',     name:'Adamant Scimitar', icon:'⚔️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_scim',name:'Adamant Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:40,str:35}},
+    {id:'adam_2h',       name:'Adamant 2H Sword', icon:'⚔️',req:31,xp:400,interval:11000,needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_2h',name:'Adamant 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:58,str:55}},
+    {id:'adam_axe',      name:'Adamant Axe',      icon:'🪓',req:30,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'},gives:{item:'adamant_axe',name:'Adamant Axe',icon:'🪓',qty:1,slot:'weapon',toolType:'axe',tier:4}},
+    {id:'adam_pick',     name:'Adamant Pickaxe',  icon:'⛏️',req:30,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'},gives:{item:'adamant_pickaxe',name:'Adamant Pickaxe',icon:'⛏️',qty:1,slot:'weapon',toolType:'pickaxe',tier:4}},
   ],
   fletching: [
-    {id:'iron_arrows',    name:'Iron Arrows',    icon:'🏹',req:1, xp:13, interval:2000, needs:{item:'logs',qty:1,item2:'iron_bar',qty2:1},gives:{item:'iron_arrows',name:'Iron Arrows',icon:'🏹',qty:15,slot:'ammo',rng:7}},
-    {id:'steel_arrows',   name:'Steel Arrows',   icon:'🏹',req:5, xp:19, interval:2500, needs:{item:'oak_logs',qty:1,item2:'steel_bar',qty2:1},gives:{item:'steel_arrows',name:'Steel Arrows',icon:'🏹',qty:15,slot:'ammo',rng:14}},
-    {id:'mithril_arrows', name:'Mithril Arrows', icon:'🏹',req:20,xp:38, interval:3000, needs:{item:'willow_logs',qty:1,item2:'mithril_bar',qty2:1},gives:{item:'mithril_arrows',name:'Mithril Arrows',icon:'🏹',qty:15,slot:'ammo',rng:28}},
-    {id:'adamant_arrows', name:'Adamant Arrows', icon:'🏹',req:30,xp:63, interval:4000, needs:{item:'yew_logs',qty:1,item2:'adamant_bar',qty2:1},gives:{item:'adamant_arrows',name:'Adamant Arrows',icon:'🏹',qty:15,slot:'ammo',rng:42}},
+    {id:'iron_bow',    name:'Iron Bow',    icon:'🏹',req:1, xp:20, interval:8000,  needs:{item:'logs',qty:2,name:'2x Logs'},              gives:{item:'iron_bow',    name:'Iron Bow',    icon:'🏹',qty:1,slot:'weapon',rng:9}},
+    {id:'steel_bow',   name:'Steel Bow',   icon:'🏹',req:5, xp:35, interval:10000, needs:{item:'oak_logs',qty:2,name:'2x Oak Logs'},       gives:{item:'steel_bow',   name:'Steel Bow',   icon:'🏹',qty:1,slot:'weapon',rng:18}},
+    {id:'mithril_bow', name:'Mithril Bow', icon:'🏹',req:20,xp:60, interval:13000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'mithril_bow', name:'Mithril Bow', icon:'🏹',qty:1,slot:'weapon',rng:32}},
+    {id:'adamant_bow', name:'Adamant Bow', icon:'🏹',req:30,xp:90, interval:16000, needs:{item:'yew_logs',qty:2,name:'2x Yew Logs'},       gives:{item:'adamant_bow', name:'Adamant Bow', icon:'🏹',qty:1,slot:'weapon',rng:50}},
   ],
-  runecrafting: [
-    {id:'air_rune',   name:'Air Runes',   icon:'💨',req:1, xp:5,  interval:2000, needs:{item:'rune_essence',qty:1},gives:{item:'air_rune',name:'Air Runes',icon:'💨',qty:10}},
-    {id:'water_rune', name:'Water Runes', icon:'💧',req:1, xp:6,  interval:2000, needs:{item:'rune_essence',qty:1},gives:{item:'water_rune',name:'Water Runes',icon:'💧',qty:10}},
-    {id:'earth_rune', name:'Earth Runes', icon:'🌍',req:1, xp:7,  interval:2000, needs:{item:'rune_essence',qty:1},gives:{item:'earth_rune',name:'Earth Runes',icon:'🌍',qty:10}},
-    {id:'fire_rune',  name:'Fire Runes',  icon:'🔥',req:1, xp:7,  interval:2000, needs:{item:'rune_essence',qty:1},gives:{item:'fire_rune',name:'Fire Runes',icon:'🔥',qty:10}},
-    {id:'mind_rune',  name:'Mind Runes',  icon:'🧠',req:1, xp:6,  interval:2000, needs:{item:'rune_essence',qty:1},gives:{item:'mind_rune',name:'Mind Runes',icon:'🧠',qty:10}},
-    {id:'chaos_rune', name:'Chaos Runes', icon:'☄️',req:10,xp:8,  interval:3000, needs:{item:'rune_essence',qty:2},gives:{item:'chaos_rune',name:'Chaos Runes',icon:'☄️',qty:10}},
-    {id:'death_rune', name:'Death Runes', icon:'💀',req:20,xp:10, interval:4000, needs:{item:'rune_essence',qty:3},gives:{item:'death_rune',name:'Death Runes',icon:'💀',qty:10}},
+  magecrafting: [
+    // Staves
+    {id:'iron_staff',    name:'Iron Staff',    icon:'🪄',req:1, xp:30, interval:6000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_staff',   name:'Iron Staff',    icon:'🪄',qty:1,slot:'weapon',mag:8}},
+    {id:'steel_staff',   name:'Steel Staff',   icon:'🪄',req:5, xp:55, interval:8000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_staff',  name:'Steel Staff',   icon:'🪄',qty:1,slot:'weapon',mag:16}},
+    {id:'mithril_staff', name:'Mithril Staff', icon:'🪄',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_staff',name:'Mithril Staff', icon:'🪄',qty:1,slot:'weapon',mag:28}},
+    {id:'adamant_staff', name:'Adamant Staff', icon:'🪄',req:30,xp:130,interval:13000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_staff',name:'Adamant Staff', icon:'🪄',qty:1,slot:'weapon',mag:44}},
+    // Magic armour
+    {id:'iron_robe_top',    name:'Iron Robe Top',    icon:'👘',req:1, xp:25, interval:5000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_robe_top',   name:'Iron Robe Top',   icon:'👘',qty:1,slot:'body',mag:5,def:4}},
+    {id:'iron_robe_legs',   name:'Iron Robe Legs',   icon:'👖',req:1, xp:20, interval:5000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_robe_legs',  name:'Iron Robe Legs',  icon:'👖',qty:1,slot:'legs',mag:4,def:3}},
+    {id:'iron_hat',         name:'Iron Wizard Hat',  icon:'🎩',req:1, xp:15, interval:4000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_hat',        name:'Iron Wizard Hat', icon:'🎩',qty:1,slot:'head',mag:3,def:2}},
+    {id:'steel_robe_top',   name:'Steel Robe Top',   icon:'👘',req:5, xp:50, interval:7000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_robe_top',  name:'Steel Robe Top',  icon:'👘',qty:1,slot:'body',mag:9,def:7}},
+    {id:'steel_robe_legs',  name:'Steel Robe Legs',  icon:'👖',req:5, xp:40, interval:6000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_robe_legs', name:'Steel Robe Legs', icon:'👖',qty:1,slot:'legs',mag:7,def:5}},
+    {id:'steel_hat',        name:'Steel Wizard Hat', icon:'🎩',req:5, xp:30, interval:5000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_hat',       name:'Steel Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:5,def:4}},
+    {id:'mithril_robe_top', name:'Mithril Robe Top', icon:'👘',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_robe_top',name:'Mithril Robe Top',icon:'👘',qty:1,slot:'body',mag:16,def:12}},
+    {id:'mithril_robe_legs',name:'Mithril Robe Legs',icon:'👖',req:20,xp:75, interval:9000,  needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_robe_legs',name:'Mithril Robe Legs',icon:'👖',qty:1,slot:'legs',mag:12,def:9}},
+    {id:'mithril_hat',      name:'Mithril Wizard Hat',icon:'🎩',req:20,xp:55, interval:7000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_hat',     name:'Mithril Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:9,def:7}},
+    {id:'adamant_robe_top', name:'Adamant Robe Top', icon:'👘',req:30,xp:140,interval:14000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_robe_top',name:'Adamant Robe Top',icon:'👘',qty:1,slot:'body',mag:24,def:18}},
+    {id:'adamant_robe_legs',name:'Adamant Robe Legs',icon:'👖',req:30,xp:115,interval:12000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_robe_legs',name:'Adamant Robe Legs',icon:'👖',qty:1,slot:'legs',mag:18,def:14}},
+    {id:'adamant_hat',      name:'Adamant Wizard Hat',icon:'🎩',req:30,xp:85, interval:10000,needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_hat',     name:'Adamant Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:13,def:10}},
   ],
-  crafting: [
-    {id:'iron_ring',    name:'Iron Ring',    icon:'💍',req:1, xp:13, interval:2500, needs:{item:'iron_bar',qty:1},gives:{item:'iron_ring',name:'Iron Ring',icon:'💍',qty:1,slot:'ring',atk:1,def:1}},
-    {id:'iron_necklace',name:'Iron Necklace',icon:'📿',req:3, xp:20, interval:3000, needs:{item:'iron_bar',qty:1},gives:{item:'iron_necklace',name:'Iron Necklace',icon:'📿',qty:1,slot:'neck',def:2}},
-    {id:'steel_ring',   name:'Steel Ring',   icon:'💍',req:5, xp:22, interval:3000, needs:{item:'steel_bar',qty:1},gives:{item:'steel_ring',name:'Steel Ring',icon:'💍',qty:1,slot:'ring',atk:2,def:2}},
-    {id:'steel_necklace',name:'Steel Necklace',icon:'📿',req:5,xp:35, interval:3500, needs:{item:'steel_bar',qty:1},gives:{item:'steel_necklace',name:'Steel Necklace',icon:'📿',qty:1,slot:'neck',def:4}},
+  leatherworking: [
+    // Leather (no bar needed — raw material)
+    {id:'leather_coif',     name:'Leather Coif',      icon:'🧢',req:1, xp:13, interval:4000, needs:{item:'leather',qty:1,name:'1x Leather'},             gives:{item:'leather_coif',    name:'Leather Coif',      icon:'🧢',qty:1,slot:'head',def:3,rng:2}},
+    {id:'leather_body',     name:'Leather Body',      icon:'🥋',req:1, xp:25, interval:5000, needs:{item:'leather',qty:3,name:'3x Leather'},             gives:{item:'leather_body',    name:'Leather Body',      icon:'🥋',qty:1,slot:'body',def:6,rng:4}},
+    {id:'leather_chaps',    name:'Leather Chaps',     icon:'👖',req:1, xp:18, interval:4000, needs:{item:'leather',qty:2,name:'2x Leather'},             gives:{item:'leather_chaps',   name:'Leather Chaps',     icon:'👖',qty:1,slot:'legs',def:4,rng:3}},
+    // Hard Leather
+    {id:'hardleather_coif', name:'Hard Leather Coif', icon:'🧢',req:3, xp:22, interval:5000, needs:{item:'hard_leather',qty:1,name:'1x Hard Leather'},   gives:{item:'hardleather_coif',name:'Hard Leather Coif', icon:'🧢',qty:1,slot:'head',def:6,rng:4}},
+    {id:'hardleather_body', name:'Hard Leather Body', icon:'🥋',req:3, xp:43, interval:6000, needs:{item:'hard_leather',qty:3,name:'3x Hard Leather'},   gives:{item:'hardleather_body',name:'Hard Leather Body', icon:'🥋',qty:1,slot:'body',def:12,rng:8}},
+    {id:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',req:3, xp:30, interval:5000, needs:{item:'hard_leather',qty:2,name:'2x Hard Leather'},   gives:{item:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',qty:1,slot:'legs',def:8,rng:6}},
+    // Studded (Hard Leather + bar)
+    {id:'studded_chaps',    name:'Studded Chaps',     icon:'👖',req:10,xp:56, interval:7000, needs:{item:'hardleather_chaps',qty:1,item2:'iron_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Iron Bar'},   gives:{item:'studded_chaps',   name:'Studded Chaps',        icon:'👖',qty:1,slot:'legs',def:12,rng:10}},
+    {id:'mith_studded_chaps',name:'Mithril Studded Chaps',icon:'👖',req:20,xp:95,interval:9000,needs:{item:'hardleather_chaps',qty:1,item2:'mithril_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Mithril Bar'},gives:{item:'mith_studded_chaps',name:'Mithril Studded Chaps',icon:'👖',qty:1,slot:'legs',def:18,rng:16}},
+    {id:'adam_studded_chaps',name:'Adamant Studded Chaps',icon:'👖',req:30,xp:140,interval:11000,needs:{item:'hardleather_chaps',qty:1,item2:'adamant_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Adamant Bar'},gives:{item:'adam_studded_chaps',name:'Adamant Studded Chaps',icon:'👖',qty:1,slot:'legs',def:25,rng:22}},
   ],
 };
 
@@ -934,16 +1096,26 @@ let S = loadState();
 function defaultState(){
   const skills={};
   SKILL_KEYS.forEach(k=>skills[k]={xp: k==='hitpoints'?xpForLevel(10):0});
+  const startingBank = {
+    bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:4, str:3},
+    bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'weapon', toolType:'axe',     tier:0},
+    bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'weapon', toolType:'pickaxe', tier:0},
+    bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'weapon', toolType:'net',     tier:0},
+    shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon', rng:5},
+    leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
+    hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
+  };
   return {
     onboarded:false, name:'', avatar:'🧙', title:'Apprentice of Life',
     startDate:todayStr(), lastActiveDate:todayStr(), streak:0, totalXP:0,
     skills,
     habits:[], vices:[], log:[],
-    bank:{slots:20,items:{}},
-    equipped:{head:null,cape:null,neck:null,weapon:null,body:null,shield:null,legs:null,hands:null,feet:null,ring:null,ammo:null},
+    bank:{slots:50, items:startingBank},
+    equipped:{head:null,weapon:null,body:null,shield:null,legs:null,feet:null},
     hp:{current:10,max:10},
-    activeActivity:null, // {skill, itemId, smithMode}
-    combat:null, // {monsterId, playerHp, monsterHp, style}
+    activeActivity:null,
+    activeMode:'gather', // 'gather' or 'focus'
+    combat:null,
   };
 }
 
@@ -973,9 +1145,13 @@ function checkRollover(){
 // ═══════════════════════════════════════
 window.addEventListener('DOMContentLoaded',()=>{
   SKILL_KEYS.forEach(k=>{ if(!S.skills[k]) S.skills[k]={xp:k==='hitpoints'?xpForLevel(10):0}; });
-  if(!S.bank) S.bank={slots:20,items:{}};
-  if(!S.equipped) S.equipped={head:null,cape:null,neck:null,weapon:null,body:null,shield:null,legs:null,hands:null,feet:null,ring:null,ammo:null};
+  if(!S.bank) S.bank={slots:50,items:{}};
+  if(S.bank.slots<50) S.bank.slots=50; // migrate old saves
+  if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null};
+  // migrate old saves — remove removed slots
+  ['cape','neck','hands','ring','ammo'].forEach(s=>{ if(s in S.equipped) delete S.equipped[s]; });
   if(!S.hp) S.hp={current:10,max:10};
+  if(!S.activeMode) S.activeMode='gather';
   checkRollover();
   if(!S.onboarded){
     document.getElementById('onboarding').style.display='flex';
@@ -1015,6 +1191,8 @@ function showPane(id, btn){
   document.getElementById('content').scrollTop=0;
   if(id==='bank') renderBank();
   if(id==='skills') renderSkillsPane();
+  if(id==='quests') renderQuestsPane();
+  if(id==='settings') renderSettingsPane();
 }
 
 // ═══════════════════════════════════════
@@ -1124,8 +1302,8 @@ function renderHabitsPane(){
         <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
       </div>
       <div class="habit-actions">
-        <button class="h-act h-act-edit" onclick="openEditHabit('${h.id}')">Edit</button>
-        <button class="h-act h-act-del"  onclick="deleteHabit('${h.id}')">Del</button>
+        <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')">Edit</button>
+        <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
       </div>
     `;
     hl.appendChild(row);
@@ -1269,9 +1447,40 @@ function toggleManage(){
   btn.className='manage-toggle '+(on?'on':'off');
   btn.textContent=on?'Done':'Manage';
 }
-function deleteHabit(id){ if(!confirm('Remove?')) return; S.habits=S.habits.filter(h=>h.id!==id); saveState(); renderAll(); }
-function deleteVice(id){ if(!confirm('Remove?')) return; S.vices=S.vices.filter(v=>v.id!==id); saveState(); renderAll(); }
-function confirmReset(){ if(!confirm('Reset today? XP stays.')) return; S.habits.forEach(h=>h.doneToday=false); S.vices.forEach(v=>v.checkedToday=false); S.log=[]; saveState(); renderAll(); }
+function deleteHabit(id){
+  const h=S.habits.find(x=>x.id===id); if(!h) return;
+  openModal('Remove Habit',`
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">Remove <strong style="color:var(--text)">${h.name}</strong>? This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmDeleteHabit('${id}')">Remove</button>
+    </div>
+  `);
+}
+function confirmDeleteHabit(id){ S.habits=S.habits.filter(h=>h.id!==id); saveState(); closeModal(); renderAll(); }
+
+function deleteVice(id){
+  const v=S.vices.find(x=>x.id===id); if(!v) return;
+  openModal('Remove Resistance',`
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">Remove <strong style="color:var(--text)">${v.name}</strong>? Your streak will be lost.</div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmDeleteVice('${id}')">Remove</button>
+    </div>
+  `);
+}
+function confirmDeleteVice(id){ S.vices=S.vices.filter(v=>v.id!==id); saveState(); closeModal(); renderAll(); }
+
+function confirmReset(){
+  openModal('Reset Today',`
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">Reset all habits and check-ins for today? Your XP stays.</div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="doReset()">Reset</button>
+    </div>
+  `);
+}
+function doReset(){ S.habits.forEach(h=>h.doneToday=false); S.vices.forEach(v=>v.checkedToday=false); S.log=[]; saveState(); closeModal(); renderAll(); }
 
 // ═══════════════════════════════════════
 // ADD/EDIT HABITS
@@ -1400,27 +1609,25 @@ function saveProfile(){
 // EQUIPMENT
 // ═══════════════════════════════════════
 function renderEquipPane(){
-  const slots=['head','cape','neck','weapon','body','shield','legs','hands','feet','ring','ammo'];
+  const slots=['head','weapon','body','shield','legs','feet'];
   slots.forEach(s=>{
     const el=document.getElementById('eq-'+s+'-item'); if(!el) return;
     const item=S.equipped[s];
     el.textContent=item?item.name:'';
     el.closest('.eq-slot').classList.toggle('filled',!!item);
   });
-  // Compute bonuses
-  let atk=0,def=0,rng=0,mag=0,str=0,pry=0;
+  let atk=0,def=0,rng=0,mag=0,str=0;
   Object.values(S.equipped).forEach(item=>{
     if(!item) return;
     if(item.atk) atk+=item.atk; if(item.def) def+=item.def;
     if(item.rng) rng+=item.rng; if(item.mag) mag+=item.mag;
-    if(item.str) str+=item.str; if(item.pry) pry+=item.pry;
+    if(item.str) str+=item.str;
   });
   document.getElementById('eq-atk').textContent=atk;
   document.getElementById('eq-def').textContent=def;
   document.getElementById('eq-rng').textContent=rng;
   document.getElementById('eq-mag').textContent=mag;
   document.getElementById('eq-str').textContent=str;
-  document.getElementById('eq-pry').textContent=pry;
 }
 
 function openEquipSlot(slot){
@@ -1482,10 +1689,19 @@ function addToBank(id,itemData){
   return true;
 }
 
+let incinerateMode=false;
+function toggleIncinerator(){
+  incinerateMode=!incinerateMode;
+  const btn=document.getElementById('incinerate-toggle');
+  if(btn){ btn.textContent=incinerateMode?'Disable':'Enable'; btn.style.color=incinerateMode?'var(--red)':''; btn.style.borderColor=incinerateMode?'var(--red)':''; }
+  renderBank();
+}
+
 function renderBank(){
   const search=(document.getElementById('bank-search')?.value||'').toLowerCase();
-  const items=Object.values(S.bank.items||{}).filter(i=>i.qty>0&&(!search||i.name.toLowerCase().includes(search)));
-  const used=Object.keys(S.bank.items||{}).filter(k=>S.bank.items[k].qty>0).length;
+  const allItems=Object.values(S.bank.items||{}).filter(i=>i.qty>0);
+  const items=allItems.filter(i=>!search||i.name.toLowerCase().includes(search));
+  const used=allItems.length;
   document.getElementById('bank-slots-info').textContent=`${used} / ${S.bank.slots} slots used`;
   const grid=document.getElementById('bank-grid');
   grid.innerHTML='';
@@ -1496,22 +1712,52 @@ function renderBank(){
     slot.className='bank-slot'+(item?' filled':'empty-slot');
     if(item){
       slot.innerHTML=`<span class="bs-icon">${item.icon||'📦'}</span><span class="bs-name">${item.name}</span><span class="bs-qty">${item.qty}</span>`;
-      slot.onclick=()=>openBankItem(item.id);
+      if(incinerateMode){
+        slot.style.borderColor='var(--red-d)';
+        slot.onclick=()=>incinerateItem(item.id);
+      } else {
+        slot.onclick=()=>openBankItem(item.id);
+      }
     }
     grid.appendChild(slot);
   }
 }
 
+function incinerateItem(id){
+  const item=S.bank.items[id]; if(!item) return;
+  openModal('Incinerate',`
+    <div style="text-align:center;font-size:32px;margin-bottom:8px">🔥</div>
+    <div style="text-align:center;font-size:13px;color:var(--text-m);margin-bottom:14px">Destroy all <strong style="color:var(--text)">${item.qty}x ${item.name}</strong>?<br><span style="font-style:italic;color:var(--text-d)">This cannot be undone.</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmIncinerate('${id}')">Incinerate</button>
+    </div>
+  `);
+}
+function confirmIncinerate(id){
+  delete S.bank.items[id];
+  saveState(); closeModal(); renderBank();
+  showToast('Incinerated','Item destroyed.',true);
+}
+
 function openBankItem(id){
   const item=S.bank.items[id]; if(!item) return;
-  const canEquip=item.slot&&['head','cape','neck','weapon','body','shield','legs','hands','feet','ring','ammo'].includes(item.slot);
+  const canEquip=item.slot&&['head','weapon','body','shield','legs','feet'].includes(item.slot);
   const canEat=item.heals>0;
+  const statLines=[];
+  if(item.atk) statLines.push(`Attack Bonus: +${item.atk}`);
+  if(item.def) statLines.push(`Defence Bonus: +${item.def}`);
+  if(item.str) statLines.push(`Strength Bonus: +${item.str}`);
+  if(item.rng) statLines.push(`Ranged Bonus: +${item.rng}`);
+  if(item.heals) statLines.push(`Heals: ${item.heals} HP`);
+  if(item.toolType) statLines.push(`Tool: ${item.toolType} (Tier ${item.tier})`);
   openModal(item.name,`
     <div style="text-align:center;font-size:36px;margin-bottom:8px">${item.icon||'📦'}</div>
-    <div style="text-align:center;font-size:13px;color:var(--text-m);margin-bottom:12px">Quantity: ${item.qty}</div>
+    <div style="text-align:center;font-size:13px;color:var(--text-m);margin-bottom:6px">Quantity: <strong style="color:var(--text)">${item.qty}</strong></div>
+    ${statLines.length?`<div style="font-size:11px;color:var(--text-d);text-align:center;margin-bottom:10px;line-height:1.8">${statLines.join('<br>')}</div>`:''}
     ${canEquip?`<button class="btn btn-gold btn-block" style="margin-bottom:6px" onclick="equipItem('${item.slot}','${id}');closeModal()">Equip</button>`:''}
     ${canEat?`<button class="btn btn-green btn-block" style="margin-bottom:6px" onclick="eatFood('${id}');closeModal()">Eat (heals ${item.heals} HP)</button>`:''}
-    <div class="modal-actions"><button class="btn btn-dim" onclick="closeModal()">Close</button></div>
+    <div class="modal-actions"><button class="btn btn-dim" onclick="closeModal()">Close</button><button class="btn btn-red btn-sm" onclick="closeModal();incinerateItem('${id}')">🔥 Destroy</button></div>
   `);
 }
 
@@ -1532,50 +1778,108 @@ let idleInterval=3000;
 
 function buildActivityPane(skill, items, smithMode){
   const lv=getLvForXP(S.skills[skill]?.xp||0);
-  const container=document.getElementById((smithMode?'smithing':skill)+'-items');
+  const key = (skill==='smithing'?'smithing':skill);
+  const container=document.getElementById(key+'-items');
   if(!container) return;
   container.innerHTML='';
-  const isSmith=skill==='smithing';
-  const listItems=isSmith?(smithMode==='smelt'?ACTIVITIES.smithing_smelt:ACTIVITIES.smithing_smith):items;
+
+  const isGather = ['mining','woodcutting','fishing'].includes(skill);
+  const isSmith  = skill==='smithing';
+  const listItems= isSmith?(smithMode==='smelt'?ACTIVITIES.smithing_smelt:ACTIVITIES.smithing_smith):items;
+
+  // Tool check for gather skills
+  if(isGather){
+    const toolOk = hasTool(skill);
+    if(!toolOk){
+      const toolName = skill==='woodcutting'?'an Axe':skill==='mining'?'a Pickaxe':'a Fishing Net';
+      container.innerHTML=`<div class="empty" style="margin-top:0"><div class="empty-icon">${skill==='woodcutting'?'🪓':skill==='mining'?'⛏️':'🪤'}</div><div class="empty-title">No Tool Equipped</div><div class="empty-sub">Equip ${toolName} to ${skill==='fishing'?'fish':'gather'}.<br>Check your bank — you started with one!</div></div>`;
+      return;
+    }
+    // Mode toggle — gather vs focus
+    const isActive = !!S.activeActivity && S.activeActivity.skill===skill;
+    const mode = S.activeMode||'gather';
+    const interval = getToolInterval(skill);
+    const focusInterval = FOCUS_XP_INTERVAL;
+    const modeBar = document.createElement('div');
+    modeBar.className='smithing-tabs'; modeBar.style.marginBottom='8px';
+    modeBar.innerHTML=`
+      <button class="sm-tab ${mode==='gather'?'active-sm':''}" onclick="setActivityMode('gather',this,'${skill}')">⛏ Gather Resources</button>
+      <button class="sm-tab ${mode==='focus'?'active-sm':''}"  onclick="setActivityMode('focus',this,'${skill}')">✨ Focus XP</button>
+    `;
+    container.appendChild(modeBar);
+
+    if(mode==='focus'){
+      const focusDiv = document.createElement('div');
+      focusDiv.innerHTML=`
+        <div class="card" style="margin-bottom:8px;padding:10px 12px">
+          <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-d);margin-bottom:5px">Focus XP Mode</div>
+          <div style="font-size:12px;font-style:italic;color:var(--text-m);line-height:1.6;margin-bottom:8px">Gain 1 XP every 5 minutes passively. No resources gathered. Keeps you progressing while you're away.</div>
+          <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--text-d)">Rate: 1 XP / 5 min &nbsp;|&nbsp; No materials required</div>
+        </div>
+      `;
+      container.appendChild(focusDiv);
+      // Single start button
+      const isActiveFocus = isActive && S.activeActivity.focusMode;
+      const btn = document.createElement('button');
+      btn.className=`btn btn-block ${isActiveFocus?'btn-red':'btn-gold'}`;
+      btn.style.marginBottom='8px';
+      btn.textContent = isActiveFocus ? 'Stop Focusing' : 'Start Focusing';
+      btn.onclick = () => isActiveFocus ? stopActivity(skill) : startActivity(skill, 'focus_xp', smithMode, true);
+      container.appendChild(btn);
+      return;
+    }
+  }
+
   listItems.forEach(item=>{
     const locked=lv<item.req;
     const isActive=S.activeActivity&&S.activeActivity.skill===skill&&S.activeActivity.itemId===item.id&&(!isSmith||S.activeActivity.smithMode===smithMode);
-    const needsStr=item.needs?buildNeedsStr(item):null;
+    const interval = isGather ? getToolInterval(skill) : (item.interval||5000);
+    const needsStr = item.needs?.name || (item.needs?.item ? buildNeedsStr(item) : null);
+
     const div=document.createElement('div');
     div.className='activity-item'+(locked?' locked':'')+(isActive?' active-activity':'');
     div.innerHTML=`
       <div class="ai-icon">${item.gives?.icon||item.icon||'📦'}</div>
       <div class="ai-info">
         <div class="ai-name">${item.name}</div>
-        ${needsStr?`<div class="ai-sub">Requires: ${needsStr}</div>`:''}
-        <div class="ai-req">Level ${item.req} required</div>
+        ${needsStr?`<div class="ai-sub">Needs: ${needsStr}</div>`:''}
+        <div class="ai-req">Level ${item.req}${locked?' — Locked':''}</div>
       </div>
       <div class="ai-right">
-        <div class="ai-xp">+${item.xp} XP</div>
-        <div class="ai-interval">${(item.interval/1000).toFixed(0)}s</div>
+        <div class="ai-xp">+1 XP</div>
+        <div class="ai-interval">${isGather?(interval/60000).toFixed(0)+'m':(interval/1000).toFixed(0)+'s'}</div>
       </div>
     `;
-    if(!locked) div.onclick=()=>startActivity(skill,item.id,smithMode);
+    if(!locked) div.onclick=()=>startActivity(skill,item.id,smithMode,false);
     container.appendChild(div);
   });
 }
 
+function setActivityMode(mode, btn, skill){
+  S.activeMode=mode;
+  // Stop any running gather for this skill if switching modes
+  if(S.activeActivity?.skill===skill) stopActivity(skill,true);
+  saveState();
+  buildActivityPane(skill, ACTIVITIES[skill], currentSmithMode);
+}
+
 function buildNeedsStr(item){
+  if(item.needs?.name) return item.needs.name;
   const parts=[];
-  if(item.needs?.item){ const qty=item.needs.qty||1; const bank=S.bank.items[item.needs.item]; parts.push(`${qty}x ${item.needs.name||item.needs.item} (have ${bank?.qty||0})`); }
-  if(item.needs?.item2){ const qty=item.needs.qty2||1; const bank=S.bank.items[item.needs.item2]; parts.push(`${qty}x ${item.needs.item2} (have ${bank?.qty||0})`); }
+  if(item.needs?.item){ const qty=item.needs.qty||1; const bank=S.bank.items[item.needs.item]; parts.push(`${qty}x ${item.needs.item.replace(/_/g,' ')} (have ${bank?.qty||0})`); }
+  if(item.needs?.item2){ const qty=item.needs.qty2||1; const bank=S.bank.items[item.needs.item2]; parts.push(`${qty}x ${item.needs.item2.replace(/_/g,' ')} (have ${bank?.qty||0})`); }
   return parts.join(', ');
 }
 
 function buildActivityPanes(){
-  buildActivityPane('mining',    ACTIVITIES.mining);
-  buildActivityPane('woodcutting',ACTIVITIES.woodcutting);
-  buildActivityPane('fishing',   ACTIVITIES.fishing);
-  buildActivityPane('cooking',   ACTIVITIES.cooking);
-  buildActivityPane('fletching', ACTIVITIES.fletching);
-  buildActivityPane('runecrafting',ACTIVITIES.runecrafting);
-  buildActivityPane('crafting',  ACTIVITIES.crafting);
-  buildActivityPane('smithing',  null, currentSmithMode);
+  buildActivityPane('mining',         ACTIVITIES.mining);
+  buildActivityPane('woodcutting',    ACTIVITIES.woodcutting);
+  buildActivityPane('fishing',        ACTIVITIES.fishing);
+  buildActivityPane('cooking',        ACTIVITIES.cooking);
+  buildActivityPane('fletching',      ACTIVITIES.fletching);
+  buildActivityPane('magecrafting',   ACTIVITIES.magecrafting);
+  buildActivityPane('leatherworking', ACTIVITIES.leatherworking);
+  buildActivityPane('smithing',       null, currentSmithMode);
 }
 
 let currentSmithMode='smelt';
@@ -1586,15 +1890,18 @@ function setSmithMode(mode,btn){
   buildActivityPane('smithing',null,mode);
 }
 
-function startActivity(skill,itemId,smithMode){
+function startActivity(skill,itemId,smithMode,focusMode){
   stopActivity(null,true);
-  S.activeActivity={skill,itemId,smithMode:smithMode||null};
+  S.activeActivity={skill,itemId,smithMode:smithMode||null,focusMode:!!focusMode};
   idleProgress=0;
+  const isGather=['mining','woodcutting','fishing'].includes(skill);
+  idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
+  saveState(); buildActivityPanes(); showActivityBar(skill,itemId,smithMode,focusMode);
+}
+
+function getActivityItem(skill,itemId,smithMode){
   const items=getActivityItems(skill,smithMode);
-  const item=items.find(i=>i.id===itemId);
-  if(!item) return;
-  idleInterval=item.interval;
-  saveState(); buildActivityPanes(); showActivityBar(skill,item);
+  return items.find(i=>i.id===itemId);
 }
 
 function getActivityItems(skill,smithMode){
@@ -1602,24 +1909,30 @@ function getActivityItems(skill,smithMode){
   return ACTIVITIES[skill]||[];
 }
 
-function showActivityBar(skill,item){
-  const wrap=document.getElementById((skill==='smithing'?'smithing':skill)+'-idle-wrap');
+function showActivityBar(skill,itemId,smithMode,focusMode){
+  const key=skill==='smithing'?'smithing':skill;
+  const wrap=document.getElementById(key+'-idle-wrap');
   if(!wrap) return;
   wrap.style.display='';
-  const nameEl=document.getElementById('idle-'+(skill==='smithing'?'smithing':skill)+'-name');
-  if(nameEl) nameEl.textContent=item.name;
+  const nameEl=document.getElementById('idle-'+key+'-name');
+  if(focusMode){ if(nameEl) nameEl.textContent='Focus XP'; }
+  else {
+    const item=getActivityItem(skill,itemId,smithMode);
+    if(nameEl&&item) nameEl.textContent=item.name;
+  }
   if(skill==='smithing'){
     const lbl=document.getElementById('smithing-idle-label');
-    if(lbl) lbl.innerHTML=(currentSmithMode==='smelt'?'Smelting: ':'Smithing: ')+'<strong id="idle-smithing-name">'+item.name+'</strong>';
+    if(lbl) lbl.innerHTML=(smithMode==='smelt'?'Smelting: ':'Smithing: ')+'<strong id="idle-smithing-name">'+(focusMode?'Focus XP':(getActivityItem(skill,itemId,smithMode)?.name||''))+'</strong>';
   }
 }
 
 function stopActivity(skill,silent){
   if(!S.activeActivity) return;
   const s=S.activeActivity.skill;
-  const wrap=document.getElementById((s==='smithing'?'smithing':s)+'-idle-wrap');
+  const key=s==='smithing'?'smithing':s;
+  const wrap=document.getElementById(key+'-idle-wrap');
   if(wrap) wrap.style.display='none';
-  const fill=document.getElementById('idle-'+(s==='smithing'?'smithing':s)+'-fill');
+  const fill=document.getElementById('idle-'+key+'-fill');
   if(fill) fill.style.width='0%';
   S.activeActivity=null; idleProgress=0;
   saveState(); buildActivityPanes();
@@ -1632,11 +1945,15 @@ function startIdleTick(){
 
 function idleTick(){
   if(!S.activeActivity) return;
+  // Recalculate interval in case tool changed
+  const {skill,itemId,smithMode,focusMode}=S.activeActivity;
+  const isGather=['mining','woodcutting','fishing'].includes(skill);
+  idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
+
   idleProgress+=100;
   const pct=Math.min((idleProgress/idleInterval)*100,100);
-  const skill=S.activeActivity.skill;
-  const fillId='idle-'+(skill==='smithing'?'smithing':skill)+'-fill';
-  const fill=document.getElementById(fillId);
+  const key=skill==='smithing'?'smithing':skill;
+  const fill=document.getElementById('idle-'+key+'-fill');
   if(fill) fill.style.width=pct+'%';
 
   if(idleProgress>=idleInterval){
@@ -1647,39 +1964,45 @@ function idleTick(){
 
 function completeActivityCycle(){
   if(!S.activeActivity) return;
-  const {skill,itemId,smithMode}=S.activeActivity;
+  const {skill,itemId,smithMode,focusMode}=S.activeActivity;
+
+  // FOCUS MODE — 1 passive XP, no resources
+  if(focusMode){
+    awardXP(skill,1,false);
+    saveState(); updateActivityLevels(); renderSkillsPane();
+    return;
+  }
+
   const items=getActivityItems(skill,smithMode);
   const item=items.find(i=>i.id===itemId);
   if(!item) return;
 
-  // Check requirements
+  // Check material requirements
   if(item.needs){
     const have1=(S.bank.items[item.needs.item]?.qty||0)>=(item.needs.qty||1);
     const need2=item.needs.item2;
     const have2=!need2||(S.bank.items[item.needs.item2]?.qty||0)>=(item.needs.qty2||1);
     if(!have1||!have2){
-      showToast('Out of Materials','Need: '+buildNeedsStr(item),false);
+      showToast('Out of Materials','Need: '+(item.needs.name||buildNeedsStr(item)),false);
       stopActivity(skill); return;
     }
-    // Consume
     S.bank.items[item.needs.item].qty-=(item.needs.qty||1);
     if(S.bank.items[item.needs.item].qty<=0) delete S.bank.items[item.needs.item];
     if(item.needs.item2){
+      if(!S.bank.items[item.needs.item2]) S.bank.items[item.needs.item2]={qty:0};
       S.bank.items[item.needs.item2].qty-=(item.needs.qty2||1);
       if(S.bank.items[item.needs.item2].qty<=0) delete S.bank.items[item.needs.item2];
     }
   }
 
-  // Award XP — but only if player has a habit assigned to this skill or activity
-  const hasSkillHabit=(S.habits||[]).some(h=>h.skill===skill&&h.doneToday)||(S.vices||[]).some(v=>v.skill===skill&&v.checkedToday);
-  const hasActivityHabit=(S.habits||[]).some(h=>h.skill==='activity'&&h.doneToday)||(S.vices||[]).some(v=>v.skill==='activity'&&v.checkedToday);
-  // Activities give resources always, but XP only with matching habit
-  if(hasSkillHabit||hasActivityHabit) awardXP(skill,item.xp,false);
+  // Award 1 passive XP always
+  awardXP(skill,1,false);
 
   // Give item
   if(item.gives){
-    addToBank(item.gives.item,{...item.gives,id:item.gives.item,icon:item.gives.icon,name:item.gives.name,slot:item.gives.slot,atk:item.gives.atk,def:item.gives.def,rng:item.gives.rng,mag:item.gives.mag,heals:item.gives.heals,qty:item.gives.qty||1});
-    showLootToast(item.gives.icon,item.gives.name,item.gives.qty||1);
+    const g=item.gives;
+    addToBank(g.item,{...g,id:g.item,icon:g.icon,name:g.name,slot:g.slot,atk:g.atk,def:g.def,rng:g.rng,mag:g.mag,heals:g.heals,str:g.str,toolType:g.toolType,tier:g.tier,qty:g.qty||1});
+    showLootToast(g.icon,g.name,g.qty||1);
   }
 
   saveState(); updateActivityLevels();
@@ -1779,6 +2102,7 @@ function combatTick(monster){
   // Monster dead
   if(S.combat.monsterHp<=0){
     addCombatLog(`You defeated the ${monster.name}!`,'hit-monster');
+    S.monstersKilled=(S.monstersKilled||0)+1;
     // XP — only if relevant habit done today
     const style=S.combat.style||combatStyle;
     const hasHabit=(S.habits||[]).some(h=>(h.skill===style||h.skill==='attack')&&h.doneToday);
@@ -1904,6 +2228,151 @@ function showLootToast(icon,name,qty){
   if(lootT) clearTimeout(lootT);
   lootT=setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function renderSettingsPane(){
+  const el=document.getElementById('settings-name');
+  if(el) el.textContent=S.name||'—';
+}
+
+function logout(){
+  openModal('Log Out',`
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">You'll return to the name screen. Your save is kept and you can log back in anytime.</div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="doLogout()">Log Out</button>
+    </div>
+  `);
+}
+function doLogout(){
+  S.onboarded=false; saveState(); closeModal();
+  document.getElementById('app').classList.remove('ready');
+  document.getElementById('onboarding').style.display='flex';
+  document.getElementById('ob-name').value='';
+}
+
+function resetEverything(){
+  openModal('Reset Everything',`
+    <div style="font-size:13px;color:var(--red);margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:1px">⚠ This cannot be undone</div>
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">All habits, XP, items, and progress will be permanently deleted.</div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" onclick="doResetEverything()">Delete Everything</button>
+    </div>
+  `);
+}
+function doResetEverything(){
+  localStorage.removeItem('habitscape_v1');
+  location.reload();
+}
+
+function exportSave(){
+  const data=btoa(JSON.stringify(S));
+  openModal('Export Save',`
+    <div style="font-size:12px;font-style:italic;color:var(--text-m);margin-bottom:8px">Copy this text and keep it somewhere safe.</div>
+    <textarea style="width:100%;height:100px;background:var(--bg-deep);border:1px solid var(--border);color:var(--text-d);font-size:10px;padding:8px;resize:none;font-family:monospace" readonly onclick="this.select()">${data}</textarea>
+    <div class="modal-actions"><button class="btn btn-gold" onclick="navigator.clipboard?.writeText('${data}').then(()=>showToast('Copied!','Save data copied to clipboard',true));closeModal()">Copy &amp; Close</button></div>
+  `);
+}
+
+function importSave(){
+  openModal('Import Save',`
+    <div style="font-size:12px;font-style:italic;color:var(--text-m);margin-bottom:8px">Paste your exported save text below. This will overwrite your current save.</div>
+    <textarea id="import-data" style="width:100%;height:100px;background:var(--bg-deep);border:1px solid var(--border);color:var(--text);font-size:10px;padding:8px;resize:none;font-family:monospace" placeholder="Paste save data here..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="doImport()">Import</button>
+    </div>
+  `);
+}
+function doImport(){
+  try{
+    const raw=document.getElementById('import-data').value.trim();
+    const parsed=JSON.parse(atob(raw));
+    localStorage.setItem('habitscape_v1',JSON.stringify(parsed));
+    closeModal(); location.reload();
+  }catch(e){
+    showToast('Import Failed','Invalid save data.',false);
+  }
+}
+// ═══════════════════════════════════════
+const QUESTS = [
+  {id:'q_first_habit',   name:'First Step',          icon:'👣', desc:'Complete your first habit.',                  xp:100,  check:()=>(S.habits||[]).some(h=>h.doneToday)},
+  {id:'q_habit_7',       name:'One Week Warrior',     icon:'🗓️', desc:'Log a habit 7 days in a row.',               xp:500,  check:()=>(S.streak||0)>=7},
+  {id:'q_habit_30',      name:'Thirty Day Legend',    icon:'🏆', desc:'Log a habit 30 days in a row.',              xp:2500, check:()=>(S.streak||0)>=30},
+  {id:'q_vice_10',       name:'Iron Will',            icon:'🔥', desc:'Reach a 10-day streak on any resistance.',   xp:300,  check:()=>(S.vices||[]).some(v=>v.streak>=10)},
+  {id:'q_vice_30',       name:'Unbreakable',          icon:'💎', desc:'Reach a 30-day streak on any resistance.',   xp:1500, check:()=>(S.vices||[]).some(v=>v.streak>=30)},
+  {id:'q_vice_100',      name:'Century of Sobriety',  icon:'👑', desc:'Reach a 100-day streak on any resistance.',  xp:5000, check:()=>(S.vices||[]).some(v=>v.streak>=100)},
+  {id:'q_lv5_any',       name:'Getting Started',      icon:'⭐', desc:'Reach level 5 in any skill.',               xp:200,  check:()=>SKILL_KEYS.some(k=>getLvForXP(S.skills[k]?.xp||0)>=5)},
+  {id:'q_lv10_any',      name:'Skilled Adventurer',   icon:'⭐', desc:'Reach level 10 in any skill.',              xp:500,  check:()=>SKILL_KEYS.some(k=>getLvForXP(S.skills[k]?.xp||0)>=10)},
+  {id:'q_smith_iron',    name:'Iron Smith',           icon:'🔨', desc:'Smith any iron item.',                       xp:300,  check:()=>!!(S.bank.items?.iron_helm||S.bank.items?.iron_body||S.bank.items?.iron_long||S.bank.items?.iron_scim)},
+  {id:'q_cook_first',    name:'Chef Initiate',        icon:'🍳', desc:'Cook any food item.',                        xp:150,  check:()=>!!(S.bank.items?.chicken||S.bank.items?.beef||S.bank.items?.shrimp||S.bank.items?.trout)},
+  {id:'q_kill_10',       name:'Monster Slayer',       icon:'⚔️', desc:'Defeat 10 monsters.',                       xp:400,  check:()=>(S.monstersKilled||0)>=10},
+  {id:'q_total_50',      name:'Half Century',         icon:'📊', desc:'Reach a total level of 50.',                xp:600,  check:()=>SKILL_KEYS.reduce((t,k)=>t+getLvForXP(S.skills[k]?.xp||0),0)>=50},
+];
+
+function renderQuestsPane(){
+  if(!S.questsDone) S.questsDone={};
+  const list=document.getElementById('quests-list'); if(!list) return;
+  list.innerHTML='';
+
+  // Check for newly completed quests
+  QUESTS.forEach(q=>{
+    if(!S.questsDone[q.id] && q.check()){
+      S.questsDone[q.id]=true;
+      awardXP('attack',q.xp,false); // quests give to a general pool — award to total XP
+      S.totalXP=(S.totalXP||0); // already added via awardXP
+      showLevelUp('Quest Complete!',0);
+      setTimeout(()=>showToast('Quest Complete!',q.name+' — +'+q.xp+' XP',true),400);
+      saveState();
+    }
+  });
+
+  const done=QUESTS.filter(q=>S.questsDone[q.id]);
+  const pending=QUESTS.filter(q=>!S.questsDone[q.id]);
+
+  if(pending.length){
+    const sec=document.createElement('div'); sec.className='sec'; sec.textContent='Active Quests'; list.appendChild(sec);
+    pending.forEach(q=>{
+      const div=document.createElement('div');
+      div.className='card'; div.style.padding='10px 12px'; div.style.marginBottom='6px';
+      div.innerHTML=`
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px">${q.icon}</span>
+          <div style="flex:1">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--text);letter-spacing:.5px">${q.name}</div>
+            <div style="font-size:11px;font-style:italic;color:var(--text-m);margin-top:2px">${q.desc}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--gold)">+${q.xp}</div>
+            <div style="font-size:8px;color:var(--text-d);letter-spacing:1px;text-transform:uppercase">XP</div>
+          </div>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  if(done.length){
+    const sec=document.createElement('div'); sec.className='sec'; sec.textContent='Completed'; list.appendChild(sec);
+    done.forEach(q=>{
+      const div=document.createElement('div');
+      div.className='card'; div.style.padding='10px 12px'; div.style.marginBottom='6px'; div.style.opacity='.5';
+      div.innerHTML=`
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px">${q.icon}</span>
+          <div style="flex:1">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--green-m);letter-spacing:.5px">✓ ${q.name}</div>
+            <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-top:2px">${q.desc}</div>
+          </div>
+          <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold-d)">+${q.xp} XP</div>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+}
+
 </script>
 </body>
 </html>
