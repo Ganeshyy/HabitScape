@@ -522,19 +522,43 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Your Habits</span>
           <button class="manage-toggle off" id="manage-toggle" onclick="toggleManage()">Manage</button>
         </div>
+
+        <!-- Empty state -->
         <div id="habits-empty" class="empty" style="display:none">
           <div class="empty-icon">⚔️</div>
           <div class="empty-title">No Habits Yet</div>
-          <div class="empty-sub">Add habits and assign them to skills or to your active activity.</div>
-          <button class="btn btn-gold" onclick="openAddHabit()">+ Add First Habit</button>
+          <div class="empty-sub">Add habits, dailies, or milestones and assign them to skills.</div>
+          <button class="btn btn-gold" onclick="openAddHabit('habit')">+ Add First Habit</button>
         </div>
-        <div id="habits-list"></div>
+
+        <!-- Habits (repeatable) -->
+        <div id="habits-section" style="display:none">
+          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--green-m)">⚡ Habits — 10 XP each</div><div class="vsh-line"></div></div>
+          <div id="habits-list"></div>
+        </div>
+
+        <!-- Dailies (once per day) -->
+        <div id="dailies-section" style="display:none">
+          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--gold)">📅 Dailies — 100 XP</div><div class="vsh-line"></div></div>
+          <div id="dailies-list"></div>
+        </div>
+
+        <!-- Milestones (one-time) -->
+        <div id="milestones-section" style="display:none">
+          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--fire)">🏆 Milestones — 2,000 XP</div><div class="vsh-line"></div></div>
+          <div id="milestones-list"></div>
+        </div>
+
+        <!-- Vices -->
         <div id="vices-section" style="display:none">
           <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl">⚠ Resisting</div><div class="vsh-line"></div></div>
           <div id="vices-list"></div>
         </div>
+
         <div class="add-row" id="add-row" style="display:none">
-          <button class="add-btn" onclick="openAddHabit()">+ Add Habit</button>
+          <button class="add-btn" onclick="openAddHabit('habit')" style="border-color:var(--green-d);color:var(--green-m)">+ Add Habit &nbsp;<span style="opacity:.6;font-size:8px">repeatable · 10 XP</span></button>
+          <button class="add-btn" onclick="openAddHabit('daily')" style="border-color:var(--gold-d);color:var(--gold)">+ Add Daily &nbsp;<span style="opacity:.6;font-size:8px">once/day · 100 XP</span></button>
+          <button class="add-btn" onclick="openAddHabit('milestone')" style="border-color:var(--fire-d);color:var(--fire)">+ Add Milestone &nbsp;<span style="opacity:.6;font-size:8px">one-time · 2,000 XP</span></button>
           <button class="add-btn vice-add" onclick="openAddVice()">+ Add Something to Resist</button>
           <button class="reset-btn" onclick="confirmReset()">↺ Reset Today</button>
         </div>
@@ -565,7 +589,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <!-- BANK -->
       <div class="pane" id="pane-bank">
         <div class="bank-header">
-          <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Bank</span>
+          <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Inventory</span>
           <span class="bank-slots-info" id="bank-slots-info">0 / 50 slots used</span>
         </div>
         <input class="bank-search" type="text" id="bank-search" placeholder="Search items..." oninput="renderBank()">
@@ -601,6 +625,29 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <div class="card" style="padding:10px;display:none" id="p-vices-card"><div id="p-vices-list"></div></div>
         <div class="sec">Today's Log</div>
         <div class="card" style="padding:8px"><div id="p-log"></div></div>
+      </div>
+
+      <!-- STORE -->
+      <div class="pane" id="pane-store">
+        <div class="activity-header">
+          <div class="act-icon">🏪</div>
+          <div><div class="act-title">General Store</div><div class="act-sub">Sell items from your inventory</div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:11px;font-style:italic;color:var(--text-d)">Prices drop the more you sell. Resets every hour.</div>
+          <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold)" id="store-coins">🪙 0</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);padding:8px 10px;margin-bottom:10px;font-size:10px;color:var(--text-d);font-style:italic">
+          <span style="color:var(--gold-d)">Base price:</span> 70% of item value &nbsp;|&nbsp;
+          <span style="color:var(--text-d)">After selling 10:</span> 50% &nbsp;|&nbsp;
+          <span style="color:var(--green-m)" id="store-reset-timer">Resets in: —</span>
+        </div>
+        <div class="sec">Your Inventory</div>
+        <div id="store-inventory-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:10px"></div>
+        <div id="store-sell-panel" style="display:none">
+          <div class="sec" id="store-sell-title">Sell</div>
+          <div id="store-sell-content"></div>
+        </div>
       </div>
 
       <!-- SETTINGS -->
@@ -851,6 +898,10 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('leatherworking')">Stop</button>
         </div>
         <div id="leatherworking-items"></div>
+
+        <div class="sec" style="margin-top:16px">🧴 Tanner</div>
+        <div style="font-size:11px;font-style:italic;color:var(--text-d);margin-bottom:8px;padding:0 2px">Convert hides into leather instantly. Costs coins.</div>
+        <div id="tanner-list"></div>
       </div>
 
     </div><!-- /content -->
@@ -862,7 +913,8 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <button class="nav-btn active" onclick="showPane('habits',this)"   ><span class="nav-icon">📋</span><span class="nav-label">Habits</span></button>
         <button class="nav-btn"        onclick="showPane('skills',this)"   ><span class="nav-icon">📊</span><span class="nav-label">Skills</span></button>
         <button class="nav-btn"        onclick="showPane('equip',this)"    ><span class="nav-icon">🛡️</span><span class="nav-label">Equip</span></button>
-        <button class="nav-btn"        onclick="showPane('bank',this)"     ><span class="nav-icon">🏦</span><span class="nav-label">Bank</span></button>
+        <button class="nav-btn"        onclick="showPane('bank',this)"     ><span class="nav-icon">🎒</span><span class="nav-label">Inventory</span></button>
+        <button class="nav-btn"        onclick="showPane('store',this)"    ><span class="nav-icon">🏪</span><span class="nav-label">Store</span></button>
         <button class="nav-btn"        onclick="showPane('profile',this)"  ><span class="nav-icon">🧙</span><span class="nav-label">Profile</span></button>
         <button class="nav-btn"        onclick="showPane('quests',this)"   ><span class="nav-icon">📜</span><span class="nav-label">Quests</span></button>
         <button class="nav-btn"        onclick="showPane('settings',this)" ><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
@@ -925,11 +977,13 @@ function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 
 // Monsters
 const MONSTERS = [
-  {id:'chicken',   name:'Chicken',     icon:'🐔', level:1,  hp:5,  maxhp:5,  atk:1, def:1, xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
-  {id:'cow',       name:'Cow',         icon:'🐄', level:2,  hp:8,  maxhp:8,  atk:2, def:2, xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
-  {id:'goblin',    name:'Goblin',      icon:'👺', level:3,  hp:12, maxhp:12, atk:3, def:3, xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
-  {id:'giant',     name:'Giant',       icon:'👾', level:20, hp:50, maxhp:50, atk:18,def:15,xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
-  {id:'black_knight',name:'Black Knight',icon:'🗡️',level:30,hp:70,maxhp:70,atk:25,def:22,xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:30,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  def:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
+  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:8,   maxhp:8,   atk:2,  def:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
+  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:12,  maxhp:12,  atk:3,  def:3,  xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
+  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:18, def:15, xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
+  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:30,  hp:70,  maxhp:70,  atk:25, def:22, xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:40, def:35, xp:250, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
+  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:75, def:65, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
 ];
 
 // Tool speed tiers — equipped tool reduces gather interval by 1 min per tier
@@ -1133,7 +1187,14 @@ function checkRollover(){
   const today=todayStr();
   if(S.lastActiveDate===today) return;
   const diff=Math.round((new Date(today+'T12:00:00')-new Date(S.lastActiveDate+'T12:00:00'))/86400000);
-  S.habits.forEach(h=>h.doneToday=false);
+  (S.habits||[]).forEach(h=>{
+    if(h.type==='habit'){ h.timesToday=0; }
+    else if(h.type==='daily'){
+      if(!h.doneToday && diff<=1) h.streak=Math.max(0,(h.streak||1)-1); // missed day breaks streak
+      h.doneToday=false;
+    }
+    // milestones: never touch doneToday
+  });
   S.vices.forEach(v=>{ if(!v.checkedToday) v.streak=0; v.checkedToday=false; });
   if(diff>1) S.streak=0;
   S.log=[]; S.lastActiveDate=today;
@@ -1152,6 +1213,20 @@ window.addEventListener('DOMContentLoaded',()=>{
   ['cape','neck','hands','ring','ammo'].forEach(s=>{ if(s in S.equipped) delete S.equipped[s]; });
   if(!S.hp) S.hp={current:10,max:10};
   if(!S.activeMode) S.activeMode='gather';
+  if(!S.store) S.store={soldCounts:{},lastReset:Date.now()};
+  // seed starter items for existing saves that have an empty bank
+  if(S.onboarded && Object.keys(S.bank.items||{}).length===0){
+    S.bank.items = {
+      bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:4, str:3},
+      bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'weapon', toolType:'axe',     tier:0},
+      bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'weapon', toolType:'pickaxe', tier:0},
+      bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'weapon', toolType:'net',     tier:0},
+      shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon', rng:5},
+      leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
+      hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
+    };
+    saveState();
+  }
   checkRollover();
   if(!S.onboarded){
     document.getElementById('onboarding').style.display='flex';
@@ -1178,6 +1253,8 @@ function init(){
   buildMonsterList();
   startIdleTick();
   updateHPBar();
+  initStore();
+  renderTanner();
 }
 
 // ═══════════════════════════════════════
@@ -1193,6 +1270,8 @@ function showPane(id, btn){
   if(id==='skills') renderSkillsPane();
   if(id==='quests') renderQuestsPane();
   if(id==='settings') renderSettingsPane();
+  if(id==='store') renderStore();
+  if(id==='leatherworking'){ buildActivityPane('leatherworking',ACTIVITIES.leatherworking); renderTanner(); }
 }
 
 // ═══════════════════════════════════════
@@ -1275,27 +1354,31 @@ function updateActivityLevels(){
 // HABITS PANE
 // ═══════════════════════════════════════
 function renderHabitsPane(){
-  const hl=document.getElementById('habits-list');
-  const vl=document.getElementById('vices-list');
-  const vsec=document.getElementById('vices-section');
-  const addRow=document.getElementById('add-row');
-  const empty=document.getElementById('habits-empty');
-  hl.innerHTML=''; vl.innerHTML='';
-  const hasH=(S.habits||[]).length>0, hasV=(S.vices||[]).length>0;
-  empty.style.display=(!hasH&&!hasV)?'':'none';
-  addRow.style.display=(hasH||hasV)?'':'none';
-  vsec.style.display=hasV?'':'none';
+  const hasH=(S.habits||[]).filter(h=>h.type==='habit').length>0;
+  const hasD=(S.habits||[]).filter(h=>h.type==='daily').length>0;
+  const hasM=(S.habits||[]).filter(h=>h.type==='milestone').length>0;
+  const hasV=(S.vices||[]).length>0;
+  const hasAny=hasH||hasD||hasM||hasV;
 
-  (S.habits||[]).forEach(h=>{
+  document.getElementById('habits-empty').style.display=hasAny?'none':'';
+  document.getElementById('add-row').style.display=hasAny?'':'none';
+  document.getElementById('habits-section').style.display=hasH?'':'none';
+  document.getElementById('dailies-section').style.display=hasD?'':'none';
+  document.getElementById('milestones-section').style.display=hasM?'':'none';
+  document.getElementById('vices-section').style.display=hasV?'':'none';
+
+  // ── Habits (repeatable, 10 XP each click) ──
+  const hl=document.getElementById('habits-list'); hl.innerHTML='';
+  (S.habits||[]).filter(h=>h.type==='habit').forEach(h=>{
     const isAct=h.skill==='activity';
     const sk=isAct?null:SKILLS[h.skill];
     const row=document.createElement('div');
-    row.className='habit-row'+(h.doneToday?' done':'');
+    row.className='habit-row';
     row.innerHTML=`
-      <div class="h-check ${h.doneToday?'done':''}" onclick="doHabit(event,'${h.id}')">${h.doneToday?'✓':''}</div>
+      <div class="h-check" onclick="doHabit(event,'${h.id}')">+</div>
       <div class="habit-info">
         <div class="habit-name">${h.name}</div>
-        <div class="habit-meta">${h.doneToday?'✓ +'+h.xp+' XP earned':'+'+h.xp+' XP'}</div>
+        <div class="habit-meta" style="color:var(--green-m)">+10 XP per tap &nbsp;·&nbsp; done ${h.timesToday||0}× today</div>
       </div>
       <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
         <span class="sb-icon">${isAct?'⚡':(sk?.icon||'?')}</span>
@@ -1304,11 +1387,70 @@ function renderHabitsPane(){
       <div class="habit-actions">
         <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')">Edit</button>
         <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
-      </div>
-    `;
+      </div>`;
     hl.appendChild(row);
   });
 
+  // ── Dailies (once per day, 100 XP, streak) ──
+  const dl=document.getElementById('dailies-list'); dl.innerHTML='';
+  (S.habits||[]).filter(h=>h.type==='daily').forEach(h=>{
+    const isAct=h.skill==='activity';
+    const sk=isAct?null:SKILLS[h.skill];
+    const row=document.createElement('div');
+    row.className='habit-row'+(h.doneToday?' done':'');
+    row.innerHTML=`
+      <div class="h-check ${h.doneToday?'done':''}" onclick="doHabit(event,'${h.id}')">${h.doneToday?'✓':''}</div>
+      <div class="habit-info">
+        <div class="habit-name">${h.name}</div>
+        <div class="habit-meta">
+          ${h.doneToday
+            ? `<span style="color:var(--green-m)">✓ +100 XP earned</span>`
+            : `<span style="color:var(--gold)">+100 XP</span>`}
+          &nbsp;·&nbsp; 🔥 ${h.streak||0} day streak
+        </div>
+      </div>
+      <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
+        <span class="sb-icon">${isAct?'⚡':(sk?.icon||'?')}</span>
+        <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
+      </div>
+      <div class="habit-actions">
+        <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')">Edit</button>
+        <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
+      </div>`;
+    dl.appendChild(row);
+  });
+
+  // ── Milestones (one-time, 2000 XP) ──
+  const ml=document.getElementById('milestones-list'); ml.innerHTML='';
+  (S.habits||[]).filter(h=>h.type==='milestone').forEach(h=>{
+    const isAct=h.skill==='activity';
+    const sk=isAct?null:SKILLS[h.skill];
+    const row=document.createElement('div');
+    row.className='habit-row'+(h.doneToday?' done':'');
+    row.style.background=h.doneToday?'rgba(74,96,48,.08)':'';
+    row.innerHTML=`
+      <div class="h-check ${h.doneToday?'done':''}" onclick="doHabit(event,'${h.id}')">${h.doneToday?'✓':'🏆'}</div>
+      <div class="habit-info">
+        <div class="habit-name">${h.name}</div>
+        <div class="habit-meta">
+          ${h.doneToday
+            ? `<span style="color:var(--green-m)">✓ Achieved! +2,000 XP</span>`
+            : `<span style="color:var(--fire)">+2,000 XP · one-time</span>`}
+        </div>
+      </div>
+      <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
+        <span class="sb-icon">${isAct?'⚡':(sk?.icon||'?')}</span>
+        <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
+      </div>
+      <div class="habit-actions">
+        <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')" ${h.doneToday?'disabled style="opacity:.4"':''}>Edit</button>
+        <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
+      </div>`;
+    ml.appendChild(row);
+  });
+
+  // ── Vices ──
+  const vl=document.getElementById('vices-list'); vl.innerHTML='';
   (S.vices||[]).forEach(v=>{
     const isAct=v.skill==='activity';
     const sk=isAct?null:SKILLS[v.skill];
@@ -1327,8 +1469,7 @@ function renderHabitsPane(){
         <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
       </div>
       <span class="relapse-btn" onclick="event.stopPropagation();doRelapse('${v.id}')">relapsed</span>
-      <div class="vice-actions"><button class="h-act h-act-del" onclick="event.stopPropagation();deleteVice('${v.id}')">Del</button></div>
-    `;
+      <div class="vice-actions"><button class="h-act h-act-del" onclick="event.stopPropagation();deleteVice('${v.id}')">Del</button></div>`;
     vl.appendChild(row);
   });
 }
@@ -1339,13 +1480,31 @@ function renderHabitsPane(){
 function doHabit(e,id){
   e.stopPropagation();
   if(document.body.classList.contains('manage-mode')) return;
-  const h=(S.habits||[]).find(x=>x.id===id);
-  if(!h||h.doneToday) return;
-  h.doneToday=true;
-  if(h.skill==='activity') awardActivityBoost(h.xp);
-  else awardXP(h.skill,h.xp,false);
-  addLog(h.skill==='activity'?'activity':h.skill,`Completed <strong>${h.name}</strong>`,h.xp);
-  saveState(); xpPop(e.clientX,e.clientY,h.xp,false); renderAll();
+  const h=(S.habits||[]).find(x=>x.id===id); if(!h) return;
+  const type=h.type||'daily';
+
+  if(type==='habit'){
+    h.timesToday=(h.timesToday||0)+1;
+    const xp=10;
+    if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
+    addLog(h.skill==='activity'?'activity':h.skill,`<strong>${h.name}</strong> (×${h.timesToday})`,xp);
+    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderHabitsPane();
+  } else if(type==='daily'){
+    if(h.doneToday) return;
+    h.doneToday=true; h.streak=(h.streak||0)+1;
+    const xp=100;
+    if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
+    addLog(h.skill==='activity'?'activity':h.skill,`Daily: <strong>${h.name}</strong>`,xp);
+    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderAll();
+  } else if(type==='milestone'){
+    if(h.doneToday) return;
+    h.doneToday=true;
+    const xp=2000;
+    if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
+    addLog(h.skill==='activity'?'activity':h.skill,`🏆 Milestone: <strong>${h.name}</strong>`,xp);
+    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderAll();
+    setTimeout(()=>showToast('Milestone Achieved!',h.name+' — +2,000 XP 🏆',true),300);
+  }
 }
 
 function doViceCheckin(e,id){
@@ -1480,7 +1639,15 @@ function confirmReset(){
     </div>
   `);
 }
-function doReset(){ S.habits.forEach(h=>h.doneToday=false); S.vices.forEach(v=>v.checkedToday=false); S.log=[]; saveState(); closeModal(); renderAll(); }
+function doReset(){
+  (S.habits||[]).forEach(h=>{
+    if(h.type==='habit') h.timesToday=0;
+    else if(h.type==='daily') h.doneToday=false;
+    // milestones never reset
+  });
+  (S.vices||[]).forEach(v=>v.checkedToday=false);
+  S.log=[]; saveState(); closeModal(); renderAll();
+}
 
 // ═══════════════════════════════════════
 // ADD/EDIT HABITS
@@ -1504,40 +1671,51 @@ function selectSP(el,k){
 }
 function getSelectedSP(){ const el=document.querySelector('#m-sp .sp-opt.sel'); return el?el.getAttribute('onclick').match(/'([^']+)'\)/)[1]:null; }
 
-function openAddHabit(){
-  openModal('Add Habit',`
-    <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="e.g. Workout 1 hour" maxlength="40"></div>
-    <div class="field"><label>XP Reward</label><input type="number" id="m-xp" value="40" min="1" max="999"></div>
+function openAddHabit(type){
+  const labels={habit:'Habit',daily:'Daily',milestone:'Milestone'};
+  const hints={habit:'e.g. Drank a glass of water',daily:'e.g. Workout 1 hour',milestone:'e.g. Run my first 5K'};
+  const xpDesc={habit:'10 XP per tap · unlimited per day',daily:'100 XP · once per day · builds streak',milestone:'2,000 XP · one-time achievement'};
+  const colors={habit:'var(--green-m)',daily:'var(--gold)',milestone:'var(--fire)'};
+  openModal(`Add ${labels[type]}`,`
+    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:${colors[type]}">${xpDesc[type]}</div>
+    <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="${hints[type]}" maxlength="50"></div>
     <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker('attack')}</div></div>
     <div class="modal-actions">
       <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveHabit(null)">Add</button>
+      <button class="btn btn-gold" onclick="saveHabit(null,'${type}')">Add</button>
     </div>
   `);
-  setTimeout(()=>document.getElementById('m-name').focus(),80);
+  setTimeout(()=>document.getElementById('m-name')?.focus(),80);
 }
 
 function openEditHabit(id){
   const h=(S.habits||[]).find(x=>x.id===id); if(!h) return;
-  openModal('Edit Habit',`
-    <div class="field"><label>Name</label><input type="text" id="m-name" value="${h.name}" maxlength="40"></div>
-    <div class="field"><label>XP Reward</label><input type="number" id="m-xp" value="${h.xp}" min="1" max="999"></div>
+  const type=h.type||'daily';
+  const labels={habit:'Habit',daily:'Daily',milestone:'Milestone'};
+  openModal(`Edit ${labels[type]}`,`
+    <div class="field"><label>Name</label><input type="text" id="m-name" value="${h.name}" maxlength="50"></div>
     <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker(h.skill)}</div></div>
     <div class="modal-actions">
       <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveHabit('${id}')">Save</button>
+      <button class="btn btn-gold" onclick="saveHabit('${id}','${type}')">Save</button>
     </div>
   `);
-  setTimeout(()=>document.getElementById('m-name').focus(),80);
+  setTimeout(()=>document.getElementById('m-name')?.focus(),80);
 }
 
-function saveHabit(id){
+function saveHabit(id,type){
   const name=document.getElementById('m-name').value.trim();
-  const xp=Math.min(Math.max(1,parseInt(document.getElementById('m-xp').value)||40),999);
   const skill=getSelectedSP()||'attack';
   if(!name){ document.getElementById('m-name').focus(); return; }
-  if(id){ const h=S.habits.find(x=>x.id===id); if(h){h.name=name;h.xp=xp;h.skill=skill;} }
-  else { S.habits.push({id:'h'+Date.now(),skill,name,xp,doneToday:false}); }
+  if(id){
+    const h=S.habits.find(x=>x.id===id);
+    if(h){ h.name=name; h.skill=skill; }
+  } else {
+    const base={id:'h'+Date.now(),type:type||'daily',skill,name,doneToday:false};
+    if(type==='habit') base.timesToday=0;
+    if(type==='daily') base.streak=0;
+    S.habits.push(base);
+  }
   saveState(); closeModal(); renderAll();
 }
 
@@ -1648,7 +1826,7 @@ function openEquipSlot(slot){
       </div>
     `).join('');
   } else if(!equipped){
-    html+='<div style="font-size:12px;font-style:italic;color:var(--text-d);text-align:center;padding:12px">No items in bank for this slot</div>';
+    html+='<div style="font-size:12px;font-style:italic;color:var(--text-d);text-align:center;padding:12px">No items in inventory for this slot</div>';
   }
   openModal('Equip — '+slot.charAt(0).toUpperCase()+slot.slice(1), html+'<div class="modal-actions"><button class="btn btn-dim" onclick="closeModal()">Close</button></div>');
 }
@@ -1683,7 +1861,7 @@ function addToBank(id,itemData){
   if(S.bank.items[id]){ S.bank.items[id].qty=(S.bank.items[id].qty||0)+(itemData.qty||1); }
   else {
     const used=Object.keys(S.bank.items).length;
-    if(used>=S.bank.slots) { showToast('Bank Full','Increase your bank slots!',false); return false; }
+    if(used>=S.bank.slots) { showToast('Inventory Full','No slots remaining!',false); return false; }
     S.bank.items[id]={...itemData};
   }
   return true;
@@ -1792,7 +1970,7 @@ function buildActivityPane(skill, items, smithMode){
     const toolOk = hasTool(skill);
     if(!toolOk){
       const toolName = skill==='woodcutting'?'an Axe':skill==='mining'?'a Pickaxe':'a Fishing Net';
-      container.innerHTML=`<div class="empty" style="margin-top:0"><div class="empty-icon">${skill==='woodcutting'?'🪓':skill==='mining'?'⛏️':'🪤'}</div><div class="empty-title">No Tool Equipped</div><div class="empty-sub">Equip ${toolName} to ${skill==='fishing'?'fish':'gather'}.<br>Check your bank — you started with one!</div></div>`;
+      container.innerHTML=`<div class="empty" style="margin-top:0"><div class="empty-icon">${skill==='woodcutting'?'🪓':skill==='mining'?'⛏️':'🪤'}</div><div class="empty-title">No Tool Equipped</div><div class="empty-sub">Equip ${toolName} to ${skill==='fishing'?'fish':'gather'}.<br>Check your inventory — you started with one!</div></div>`;
       return;
     }
     // Mode toggle — gather vs focus
@@ -2068,7 +2246,7 @@ function startCombat(monsterId){
   clearCombatLog();
   addCombatLog(`You attack the ${monster.name}!`,'info');
   saveState();
-  combatTimer=setInterval(()=>combatTick(monster),1800);
+  combatTimer=setInterval(()=>combatTick(monster),60000);
 }
 
 function stopCombat(silent){
@@ -2121,7 +2299,7 @@ function combatTick(monster){
     combatTimer=null;
     S.combat.monsterHp=monster.maxhp;
     updateCombatHP(monster);
-    setTimeout(()=>{ if(S.combat) combatTimer=setInterval(()=>combatTick(monster),1800); },2000);
+    setTimeout(()=>{ if(S.combat) combatTimer=setInterval(()=>combatTick(monster),60000); },3000);
     return;
   }
 
@@ -2230,7 +2408,231 @@ function showLootToast(icon,name,qty){
 }
 
 // ═══════════════════════════════════════
-// SETTINGS
+// TANNER
+// ═══════════════════════════════════════
+const TANNER_RECIPES = [
+  {id:'tan_leather',     name:'Tan Cowhide → Leather',        input:'cowhide',    output:'leather',      outputName:'Leather',       outputIcon:'🟫', cost:0,  gives:1},
+  {id:'tan_hard',        name:'Tan Cowhide → Hard Leather',   input:'cowhide',    output:'hard_leather', outputName:'Hard Leather',  outputIcon:'🟤', cost:5,  gives:1},
+  {id:'tan_green_drag',  name:'Tan Green Dragonhide',         input:'green_hide', output:'green_leather',outputName:'Green Dragonleather',outputIcon:'🟢',cost:20, gives:1},
+  {id:'tan_black_drag',  name:'Tan Black Dragonhide',         input:'black_hide', output:'black_leather',outputName:'Black Dragonleather',outputIcon:'⬛',cost:50, gives:1},
+];
+
+function renderTanner(){
+  const list=document.getElementById('tanner-list'); if(!list) return;
+  list.innerHTML='';
+  TANNER_RECIPES.forEach(recipe=>{
+    const have=(S.bank.items[recipe.input]?.qty||0);
+    const coins=(S.bank.items['coins']?.qty||0);
+    const canAfford=coins>=recipe.cost||recipe.cost===0;
+    const hasHide=have>0;
+    const div=document.createElement('div');
+    div.className='card';
+    div.style.cssText='padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px';
+    div.innerHTML=`
+      <div style="font-size:22px">${recipe.outputIcon}</div>
+      <div style="flex:1">
+        <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.5px">${recipe.name}</div>
+        <div style="font-size:10px;color:var(--text-d);margin-top:2px">
+          Have: <span style="color:${hasHide?'var(--green-m)':'var(--red)'}">${have}x ${recipe.input.replace(/_/g,' ')}</span>
+          ${recipe.cost>0?`&nbsp;·&nbsp; Cost: <span style="color:${canAfford?'var(--gold)':'var(--red)'}">🪙 ${recipe.cost} per hide</span>`:'&nbsp;·&nbsp; <span style="color:var(--green-m)">Free</span>'}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+        <button class="btn btn-gold btn-sm" ${(!hasHide||!canAfford)?'disabled style="opacity:.4"':''} onclick="tanHide('${recipe.id}',1)">Tan 1</button>
+        <button class="btn btn-dim btn-sm"  ${(!hasHide||!canAfford)?'disabled style="opacity:.4"':''} onclick="tanHide('${recipe.id}',${have})">Tan All (${have})</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function tanHide(recipeId, qty){
+  const recipe=TANNER_RECIPES.find(r=>r.id===recipeId); if(!recipe) return;
+  const have=(S.bank.items[recipe.input]?.qty||0);
+  const coins=(S.bank.items['coins']?.qty||0);
+  qty=Math.min(qty,have);
+  if(qty<=0){ showToast('No Hides','You don\'t have any to tan.',false); return; }
+  const totalCost=recipe.cost*qty;
+  if(totalCost>coins){ 
+    const canDo=recipe.cost>0?Math.floor(coins/recipe.cost):qty;
+    if(canDo<=0){ showToast('Not Enough Coins',`Need 🪙${recipe.cost} per hide.`,false); return; }
+    qty=canDo;
+  }
+  // Consume hides
+  S.bank.items[recipe.input].qty-=qty;
+  if(S.bank.items[recipe.input].qty<=0) delete S.bank.items[recipe.input];
+  // Consume coins
+  if(recipe.cost>0){
+    S.bank.items['coins'].qty-=(recipe.cost*qty);
+    if(S.bank.items['coins'].qty<=0) delete S.bank.items['coins'];
+  }
+  // Give leather
+  const totalGives=qty*recipe.gives;
+  addToBank(recipe.output,{id:recipe.output,name:recipe.outputName,icon:recipe.outputIcon,qty:totalGives});
+  saveState(); renderTanner();
+  showToast('Tanned!',`${totalGives}x ${recipe.outputName} added to inventory.`,true);
+}
+
+// ═══════════════════════════════════════
+// ITEM BASE VALUES (for store pricing)
+// ═══════════════════════════════════════
+const ITEM_VALUES = {
+  // Raw materials
+  iron_ore:4, coal:3, mithril_ore:10, adamant_ore:18,
+  logs:2, oak_logs:5, willow_logs:12, yew_logs:25,
+  raw_shrimp:2, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30,
+  raw_chicken:1, raw_beef:2, cowhide:4,
+  rune_essence:3, leather:3, hard_leather:8,
+  green_hide:30, black_hide:80, green_leather:50, black_leather:120,
+  dragon_bones:60, big_bones:10, bones:2,
+  // Bars
+  iron_bar:10, steel_bar:25, mithril_bar:50, adamant_bar:90,
+  // Cooked food
+  shrimp:3, beef:4, chicken:3, trout:12, salmon:18, lobster:30, swordfish:40,
+  // Weapons / armour — sell value lower than craft cost
+  iron_long:30, iron_scim:32, iron_2h:45, iron_helm:20, iron_body:55, iron_legs:40, iron_kite:30,
+  steel_long:60, steel_scim:62, steel_2h:90, steel_helm:40, steel_body:110, steel_legs:80, steel_kite:60,
+  mith_long:120, mith_scim:122, mith_2h:180, mith_helm:80, mith_body:220, mith_legs:160, mith_kite:120,
+  adam_long:220, adam_scim:222, adam_2h:340, adam_helm:150, adam_body:420, adam_legs:300, adam_kite:220,
+  iron_bow:25, steel_bow:55, mithril_bow:110, adamant_bow:200,
+  iron_staff:28, steel_staff:58, mithril_staff:115, adamant_staff:210,
+  leather_coif:8, leather_body:18, leather_chaps:12,
+  hardleather_coif:16, hardleather_body:35, hardleather_chaps:24,
+  studded_chaps:45, mith_studded_chaps:90, adam_studded_chaps:160,
+};
+
+// ═══════════════════════════════════════
+// STORE
+// ═══════════════════════════════════════
+// S.store = { soldCounts:{itemId:count}, lastReset: timestamp }
+let storeResetTimer=null;
+
+function initStore(){
+  if(!S.store) S.store={soldCounts:{},lastReset:Date.now()};
+  // Check if an hour has passed
+  if(Date.now()-S.store.lastReset >= 3600000){
+    S.store.soldCounts={};
+    S.store.lastReset=Date.now();
+    saveState();
+  }
+  startStoreResetTimer();
+}
+
+function startStoreResetTimer(){
+  if(storeResetTimer) clearInterval(storeResetTimer);
+  storeResetTimer=setInterval(()=>{
+    if(!S.store) return;
+    if(Date.now()-S.store.lastReset >= 3600000){
+      S.store.soldCounts={};
+      S.store.lastReset=Date.now();
+      saveState();
+      if(document.getElementById('pane-store').classList.contains('active')) renderStore();
+      showToast('Store Reset','Prices are back to 70%!',true);
+    }
+    updateStoreTimer();
+  },10000);
+}
+
+function updateStoreTimer(){
+  const el=document.getElementById('store-reset-timer'); if(!el||!S.store) return;
+  const ms=3600000-(Date.now()-S.store.lastReset);
+  const mins=Math.floor(ms/60000);
+  const secs=Math.floor((ms%60000)/1000);
+  el.textContent=`Resets in: ${mins}m ${secs}s`;
+}
+
+function getSellPrice(itemId, qty){
+  const base=ITEM_VALUES[itemId]||1;
+  const sold=(S.store?.soldCounts?.[itemId]||0);
+  // Price starts at 70%, drops linearly to 50% at 10 sold, stays at 50% after
+  const pct=Math.max(0.5, 0.7 - (sold/10)*0.2);
+  return Math.max(1, Math.floor(base * pct * qty));
+}
+
+function getPricePct(itemId){
+  const sold=(S.store?.soldCounts?.[itemId]||0);
+  return Math.max(50, Math.round(70 - (sold/10)*20));
+}
+
+function renderStore(){
+  if(!S.store) initStore();
+  updateStoreTimer();
+  // Coins display
+  const coins=S.bank.items['coins']?.qty||0;
+  const coinsEl=document.getElementById('store-coins');
+  if(coinsEl) coinsEl.textContent=`🪙 ${coins}`;
+
+  const grid=document.getElementById('store-inventory-grid'); if(!grid) return;
+  grid.innerHTML='';
+  // Show all sellable items (those with a base value, excluding coins/tools)
+  const sellable=Object.values(S.bank.items||{}).filter(i=>i.qty>0&&i.id!=='coins'&&ITEM_VALUES[i.id]);
+  if(!sellable.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:20px;font-style:italic;color:var(--text-d)">Nothing to sell — gather resources or defeat monsters first.</div>`;
+    document.getElementById('store-sell-panel').style.display='none';
+    return;
+  }
+  sellable.forEach(item=>{
+    const pct=getPricePct(item.id);
+    const unitPrice=Math.max(1,Math.floor((ITEM_VALUES[item.id]||1)*(pct/100)));
+    const slot=document.createElement('div');
+    slot.className='bank-slot filled';
+    slot.style.cursor='pointer';
+    slot.innerHTML=`<span class="bs-icon">${item.icon||'📦'}</span><span class="bs-name">${item.name}</span><span class="bs-qty">${item.qty}</span>`;
+    slot.onclick=()=>openSellPanel(item.id);
+    grid.appendChild(slot);
+  });
+  document.getElementById('store-sell-panel').style.display='none';
+}
+
+function openSellPanel(itemId){
+  const item=S.bank.items[itemId]; if(!item) return;
+  const panel=document.getElementById('store-sell-panel');
+  const titleEl=document.getElementById('store-sell-title');
+  const content=document.getElementById('store-sell-content');
+  panel.style.display='';
+  titleEl.textContent=`Sell — ${item.name}`;
+  const pct=getPricePct(itemId);
+  const baseVal=ITEM_VALUES[itemId]||1;
+  const unitPrice=Math.max(1,Math.floor(baseVal*(pct/100)));
+  const totalAll=getSellPrice(itemId,item.qty);
+  content.innerHTML=`
+    <div class="card" style="padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:28px">${item.icon||'📦'}</span>
+        <div>
+          <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--text)">${item.name}</div>
+          <div style="font-size:11px;color:var(--text-d);margin-top:2px">You have: <strong style="color:var(--text)">${item.qty}</strong></div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)">🪙 ${unitPrice} each</div>
+          <div style="font-size:9px;color:${pct<=50?'var(--red)':pct<70?'var(--fire)':'var(--green-m)'};letter-spacing:1px;text-transform:uppercase">${pct}% of base</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',1)">Sell 1 &nbsp;(🪙${unitPrice})</button>
+        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',10)">Sell 10 &nbsp;(🪙${getSellPrice(itemId,10)})</button>
+        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',${item.qty})">Sell All &nbsp;(🪙${totalAll})</button>
+      </div>
+    </div>`;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function sellItem(itemId, qty){
+  const item=S.bank.items[itemId]; if(!item) return;
+  qty=Math.min(qty,item.qty);
+  if(qty<=0) return;
+  const earned=getSellPrice(itemId,qty);
+  // Remove items
+  item.qty-=qty;
+  if(item.qty<=0) delete S.bank.items[itemId];
+  // Add coins
+  addToBank('coins',{id:'coins',name:'Coins',icon:'🪙',qty:earned});
+  // Track sold count (for price degradation)
+  if(!S.store.soldCounts[itemId]) S.store.soldCounts[itemId]=0;
+  S.store.soldCounts[itemId]+=qty;
+  saveState();
+  showToast('Sold!',`${qty}x ${item.name} → 🪙 ${earned}`,true);
+  renderStore();
+}
 // ═══════════════════════════════════════
 function renderSettingsPane(){
   const el=document.getElementById('settings-name');
