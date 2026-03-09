@@ -998,21 +998,254 @@ function getLvForXP(xp){ let l=1; while(l<MAX_LV && XP_TABLE[l]<=xp) l++; return
 function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 
 // Monsters
+// ─────────────────────────────────────────────────────────────────────────────
+// ITEM REGISTRY — single source of truth for item name + icon
+// Add new items here; drop tables reference by id only
+// ─────────────────────────────────────────────────────────────────────────────
+const ITEM_META = {
+  coins:           {name:'Coins',              icon:'🪙'},
+  bones:           {name:'Bones',              icon:'🦴'},
+  big_bones:       {name:'Big Bones',          icon:'🦴'},
+  dragon_bones:    {name:'Dragon Bones',       icon:'🦴'},
+  raw_chicken:     {name:'Raw Chicken',        icon:'🍗'},
+  raw_beef:        {name:'Raw Beef',           icon:'🥩'},
+  cowhide:         {name:'Cowhide',            icon:'🐄'},
+  feather:         {name:'Feather',            icon:'🪶'},
+  rune_essence:    {name:'Rune Essence',       icon:'🔮'},
+  iron_ore:        {name:'Iron Ore',           icon:'🪨'},
+  steel_ore:       {name:'Steel Ore',          icon:'🩶'},
+  mithril_ore:     {name:'Mithril Ore',        icon:'🔵'},
+  adamant_ore:     {name:'Adamant Ore',        icon:'🟢'},
+  iron_bar:        {name:'Iron Bar',           icon:'🔩'},
+  steel_bar:       {name:'Steel Bar',          icon:'🔧'},
+  mithril_bar:     {name:'Mithril Bar',        icon:'🔵'},
+  adamant_bar:     {name:'Adamant Bar',        icon:'🟢'},
+  bronze_sword:    {name:'Bronze Sword',       icon:'🗡️'},
+  iron_sword:      {name:'Iron Sword',         icon:'🗡️'},
+  steel_sword:     {name:'Steel Sword',        icon:'🗡️'},
+  iron_dagger:     {name:'Iron Dagger',        icon:'🔪'},
+  steel_dagger:    {name:'Steel Dagger',       icon:'🔪'},
+  iron_shield:     {name:'Iron Shield',        icon:'🛡️'},
+  steel_shield:    {name:'Steel Shield',       icon:'🛡️'},
+  green_hide:      {name:'Green Dragonhide',   icon:'🟢'},
+  black_hide:      {name:'Black Dragonhide',   icon:'⬛'},
+  leather:         {name:'Leather',            icon:'🟫'},
+  hard_leather:    {name:'Hard Leather',       icon:'🟤'},
+  logs:            {name:'Logs',               icon:'🪵'},
+  oak_logs:        {name:'Oak Logs',           icon:'🪵'},
+  coins_small:     {name:'Coins',              icon:'🪙'},
+  loop_half:       {name:'Loop Half of Key',   icon:'🔑'},
+  tooth_half:      {name:'Tooth Half of Key',  icon:'🔑'},
+  crystal_key:     {name:'Crystal Key',        icon:'🗝️'},
+};
+
+// Helper: resolve item metadata from registry
+function resolveItem(id) {
+  return ITEM_META[id] || {name: id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), icon:'📦'};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DROP TABLE SYSTEM
+//
+// Each monster has a drops object with tiers:
+//   always    — 100% chance, every kill (bones, hides)
+//   common    — rolls each entry independently (chance 0–1)
+//   uncommon  — rolls each entry independently (chance 0–1)
+//   rare      — rolls each entry independently (chance 0–1)
+//   veryRare  — rolls each entry independently (chance 0–1)
+//   unique    — ONE roll across the entire pool (1-in-N chance per entry)
+//               use for special/named drops that feel like a real rare
+//
+// qty can be a number (exact) or [min, max] array (random range)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Rolls a drop table and returns array of {id, name, icon, qty, tier}
+function rollDrops(monster) {
+  const dt = monster.drops || {};
+  const results = [];
+
+  function resolveQty(qty) {
+    if (Array.isArray(qty)) return Math.floor(Math.random()*(qty[1]-qty[0]+1))+qty[0];
+    return qty || 1;
+  }
+
+  function tryDrop(id, qty, tier, chance) {
+    if (Math.random() < chance) {
+      const meta = resolveItem(id);
+      results.push({id, name:meta.name, icon:meta.icon, qty:resolveQty(qty), tier});
+    }
+  }
+
+  // Always drops
+  (dt.always||[]).forEach(d => {
+    const meta = resolveItem(d.id);
+    results.push({id:d.id, name:meta.name, icon:meta.icon, qty:resolveQty(d.qty), tier:'always'});
+  });
+
+  // Standard tiered rolls — each entry rolled independently
+  ['common','uncommon','rare','veryRare'].forEach(tier => {
+    (dt[tier]||[]).forEach(d => tryDrop(d.id, d.qty, tier, d.chance));
+  });
+
+  // Unique pool — one roll across all entries (like OSRS rare drop table)
+  if ((dt.unique||[]).length > 0) {
+    for (const d of dt.unique) {
+      if (Math.random() < d.chance) {
+        const meta = resolveItem(d.id);
+        results.push({id:d.id, name:meta.name, icon:meta.icon, qty:resolveQty(d.qty), tier:'unique'});
+        break; // only one unique drop per kill
+      }
+    }
+  }
+
+  return results;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MONSTER DEFINITIONS
+// Edit drop tables here or export/import via the Google Sheets tool
+// ─────────────────────────────────────────────────────────────────────────────
 const MONSTERS = [
-  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  def:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1},{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1}]},
-  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:8,   maxhp:8,   atk:2,  def:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9},{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1}]},
-  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:12,  maxhp:12,  atk:3,  def:3,  xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
-  {id:'wolf',        name:'Wolf',         icon:'🐺', level:7,   hp:18,  maxhp:18,  atk:7,  def:5,  xp:28,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:8,chance:.6}]},
-  {id:'dark_wizard', name:'Dark Wizard',  icon:'🧙', level:9,   hp:20,  maxhp:20,  atk:8,  def:4,  xp:35,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:12,chance:.9},{item:'rune_essence',name:'Rune Essence',icon:'🔮',qty:3,chance:.5}]},
-  {id:'skeleton',    name:'Skeleton',     icon:'💀', level:13,  hp:28,  maxhp:28,  atk:12, def:8,  xp:50,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:18,chance:.8},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:2,chance:.3}]},
-  {id:'guard',       name:'Guard',        icon:'💂', level:16,  hp:35,  maxhp:35,  atk:15, def:12, xp:70,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:30,chance:1},{item:'iron_bar',name:'Iron Bar',icon:'🔩',qty:1,chance:.2}]},
-  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:18, def:15, xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
-  {id:'hobgoblin',   name:'Hobgoblin',    icon:'👹', level:25,  hp:60,  maxhp:60,  atk:22, def:18, xp:105, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:40,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.15}]},
-  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:28, def:24, xp:130, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
-  {id:'moss_giant',  name:'Moss Giant',   icon:'🌿', level:42,  hp:90,  maxhp:90,  atk:35, def:28, xp:180, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:80,chance:1},{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:2,chance:.4}]},
-  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:40, def:35, xp:250, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
-  {id:'lesser_demon',name:'Lesser Demon', icon:'😈', level:65,  hp:160, maxhp:160, atk:55, def:48, xp:350, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:200,chance:1},{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:3,chance:.5}]},
-  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:75, def:65, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
+  { id:'chicken', name:'Chicken', icon:'🐔', level:1, hp:5, maxhp:5, atk:1, def:1, xp:5,
+    drops:{
+      always:   [ {id:'bones', qty:1}, {id:'raw_chicken', qty:1} ],
+      common:   [ {id:'feather', qty:[5,15], chance:0.75} ],
+      uncommon: [ {id:'feather', qty:[20,30], chance:0.1} ],
+      rare:     [],
+      veryRare: [],
+      unique:   [],
+    }
+  },
+  { id:'cow', name:'Cow', icon:'🐄', level:2, hp:8, maxhp:8, atk:2, def:2, xp:8,
+    drops:{
+      always:   [ {id:'bones', qty:1}, {id:'raw_beef', qty:1}, {id:'cowhide', qty:1} ],
+      common:   [ {id:'coins', qty:[1,5], chance:0.5} ],
+      uncommon: [],
+      rare:     [],
+      veryRare: [],
+      unique:   [],
+    }
+  },
+  { id:'goblin', name:'Goblin', icon:'👺', level:3, hp:12, maxhp:12, atk:3, def:3, xp:15,
+    drops:{
+      always:   [ {id:'bones', qty:1} ],
+      common:   [ {id:'coins', qty:[1,8], chance:0.8} ],
+      uncommon: [ {id:'iron_dagger', qty:1, chance:0.1}, {id:'iron_ore', qty:[1,3], chance:0.15} ],
+      rare:     [ {id:'bronze_sword', qty:1, chance:0.05} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.0008} ],
+    }
+  },
+  { id:'wolf', name:'Wolf', icon:'🐺', level:7, hp:18, maxhp:18, atk:7, def:5, xp:28,
+    drops:{
+      always:   [ {id:'bones', qty:1} ],
+      common:   [ {id:'coins', qty:[5,12], chance:0.7} ],
+      uncommon: [ {id:'leather', qty:[1,3], chance:0.3} ],
+      rare:     [ {id:'hard_leather', qty:1, chance:0.08} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.001} ],
+    }
+  },
+  { id:'dark_wizard', name:'Dark Wizard', icon:'🧙', level:9, hp:20, maxhp:20, atk:8, def:4, xp:35,
+    drops:{
+      always:   [ {id:'bones', qty:1} ],
+      common:   [ {id:'coins', qty:[8,20], chance:0.9}, {id:'rune_essence', qty:[2,5], chance:0.5} ],
+      uncommon: [ {id:'rune_essence', qty:[8,15], chance:0.15} ],
+      rare:     [ {id:'iron_sword', qty:1, chance:0.06} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.001} ],
+    }
+  },
+  { id:'skeleton', name:'Skeleton', icon:'💀', level:13, hp:28, maxhp:28, atk:12, def:8, xp:50,
+    drops:{
+      always:   [ {id:'bones', qty:[1,2]} ],
+      common:   [ {id:'coins', qty:[10,25], chance:0.85}, {id:'iron_ore', qty:[1,3], chance:0.35} ],
+      uncommon: [ {id:'iron_bar', qty:1, chance:0.2}, {id:'iron_sword', qty:1, chance:0.12} ],
+      rare:     [ {id:'steel_ore', qty:[1,2], chance:0.05} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.0015}, {id:'tooth_half', qty:1, chance:0.0015} ],
+    }
+  },
+  { id:'guard', name:'Guard', icon:'💂', level:16, hp:35, maxhp:35, atk:15, def:12, xp:70,
+    drops:{
+      always:   [ {id:'bones', qty:1} ],
+      common:   [ {id:'coins', qty:[20,45], chance:1.0} ],
+      uncommon: [ {id:'iron_bar', qty:[1,2], chance:0.25}, {id:'iron_shield', qty:1, chance:0.1} ],
+      rare:     [ {id:'steel_ore', qty:[2,4], chance:0.06}, {id:'steel_sword', qty:1, chance:0.04} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.002}, {id:'tooth_half', qty:1, chance:0.002} ],
+    }
+  },
+  { id:'giant', name:'Giant', icon:'👾', level:20, hp:50, maxhp:50, atk:18, def:15, xp:85,
+    drops:{
+      always:   [ {id:'big_bones', qty:1} ],
+      common:   [ {id:'coins', qty:[15,35], chance:1.0}, {id:'iron_ore', qty:[2,5], chance:0.6} ],
+      uncommon: [ {id:'iron_bar', qty:[2,3], chance:0.2}, {id:'steel_ore', qty:[1,3], chance:0.15} ],
+      rare:     [ {id:'steel_bar', qty:1, chance:0.07} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.002}, {id:'tooth_half', qty:1, chance:0.002} ],
+    }
+  },
+  { id:'hobgoblin', name:'Hobgoblin', icon:'👹', level:25, hp:60, maxhp:60, atk:22, def:18, xp:105,
+    drops:{
+      always:   [ {id:'big_bones', qty:1} ],
+      common:   [ {id:'coins', qty:[30,55], chance:1.0} ],
+      uncommon: [ {id:'steel_ore', qty:[2,4], chance:0.25}, {id:'steel_bar', qty:1, chance:0.15} ],
+      rare:     [ {id:'steel_sword', qty:1, chance:0.06}, {id:'mithril_ore', qty:[1,2], chance:0.04} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.003}, {id:'tooth_half', qty:1, chance:0.003} ],
+    }
+  },
+  { id:'black_knight', name:'Black Knight', icon:'🗡️', level:33, hp:70, maxhp:70, atk:28, def:24, xp:130,
+    drops:{
+      always:   [ {id:'big_bones', qty:1} ],
+      common:   [ {id:'coins', qty:[50,80], chance:1.0} ],
+      uncommon: [ {id:'steel_bar', qty:[1,2], chance:0.25}, {id:'mithril_ore', qty:[1,3], chance:0.2} ],
+      rare:     [ {id:'mithril_bar', qty:1, chance:0.07}, {id:'steel_shield', qty:1, chance:0.05} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.004}, {id:'tooth_half', qty:1, chance:0.004} ],
+    }
+  },
+  { id:'moss_giant', name:'Moss Giant', icon:'🌿', level:42, hp:90, maxhp:90, atk:35, def:28, xp:180,
+    drops:{
+      always:   [ {id:'big_bones', qty:1} ],
+      common:   [ {id:'coins', qty:[60,100], chance:1.0}, {id:'mithril_ore', qty:[1,3], chance:0.45} ],
+      uncommon: [ {id:'mithril_bar', qty:[1,2], chance:0.2}, {id:'iron_bar', qty:[3,5], chance:0.2} ],
+      rare:     [ {id:'adamant_ore', qty:[1,2], chance:0.05} ],
+      veryRare: [],
+      unique:   [ {id:'loop_half', qty:1, chance:0.005}, {id:'tooth_half', qty:1, chance:0.005} ],
+    }
+  },
+  { id:'green_dragon', name:'Green Dragon', icon:'🐉', level:50, hp:120, maxhp:120, atk:40, def:35, xp:250,
+    drops:{
+      always:   [ {id:'dragon_bones', qty:1}, {id:'green_hide', qty:1} ],
+      common:   [ {id:'coins', qty:[100,200], chance:1.0} ],
+      uncommon: [ {id:'mithril_bar', qty:[1,3], chance:0.3}, {id:'adamant_ore', qty:[2,4], chance:0.25} ],
+      rare:     [ {id:'adamant_bar', qty:1, chance:0.06} ],
+      veryRare: [ {id:'mithril_bar', qty:[5,8], chance:0.02} ],
+      unique:   [ {id:'loop_half', qty:1, chance:0.008}, {id:'tooth_half', qty:1, chance:0.008} ],
+    }
+  },
+  { id:'lesser_demon', name:'Lesser Demon', icon:'😈', level:65, hp:160, maxhp:160, atk:55, def:48, xp:350,
+    drops:{
+      always:   [],
+      common:   [ {id:'coins', qty:[150,250], chance:1.0}, {id:'adamant_ore', qty:[2,5], chance:0.55} ],
+      uncommon: [ {id:'adamant_bar', qty:[1,2], chance:0.2}, {id:'mithril_bar', qty:[2,4], chance:0.2} ],
+      rare:     [ {id:'adamant_bar', qty:[3,5], chance:0.05} ],
+      veryRare: [ {id:'rune_essence', qty:[20,30], chance:0.015} ],
+      unique:   [ {id:'loop_half', qty:1, chance:0.012}, {id:'tooth_half', qty:1, chance:0.012} ],
+    }
+  },
+  { id:'black_dragon', name:'Black Dragon', icon:'🐲', level:100, hp:250, maxhp:250, atk:75, def:65, xp:600,
+    drops:{
+      always:   [ {id:'dragon_bones', qty:1}, {id:'black_hide', qty:1} ],
+      common:   [ {id:'coins', qty:[300,500], chance:1.0} ],
+      uncommon: [ {id:'adamant_bar', qty:[2,4], chance:0.35}, {id:'adamant_ore', qty:[5,10], chance:0.3} ],
+      rare:     [ {id:'adamant_bar', qty:[5,8], chance:0.06} ],
+      veryRare: [ {id:'rune_essence', qty:[30,50], chance:0.01} ],
+      unique:   [ {id:'loop_half', qty:1, chance:0.02}, {id:'tooth_half', qty:1, chance:0.02}, {id:'crystal_key', qty:1, chance:0.005} ],
+    }
+  },
 ];
 
 // Tool speed tiers — equipped tool reduces gather interval by 1 min per tier
@@ -2368,7 +2601,13 @@ function buildMonsterList(){
       <div class="mc-info">
         <div class="mc-name">${m.name}</div>
         <div class="mc-level">Combat Level ${m.level}</div>
-        <div class="mc-drops">Drops: ${m.drops.map(d=>d.name).join(', ')}</div>
+        <div class="mc-drops">Drops: ${[
+          ...(m.drops.always||[]),
+          ...(m.drops.common||[]),
+          ...(m.drops.uncommon||[]),
+          ...(m.drops.rare||[]),
+        ].map(d=>resolveItem(d.id).name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(', ')}${(m.drops.unique||[]).length?' + ✨rare':''}
+        </div>
       </div>
       <div class="mc-combat-lv">${m.level}</div>
     `;
@@ -2505,13 +2744,19 @@ function combatTick(monster){
     S.monstersKilled=(S.monstersKilled||0)+1;
     const style=S.combat.style||combatStyle;
     awardCombatXP(style,monster.xp);
-    // Loot
-    monster.drops.forEach(drop=>{
-      if(Math.random()<drop.chance){
-        const qty=drop.qty||1;
-        addToBank(drop.item,{...drop,id:drop.item,qty});
-        addCombatLog(`Loot: ${qty}x ${drop.name}`,'loot');
-        showLootToast(drop.icon,drop.name,qty);
+    // Loot — use tiered drop table system
+    const drops = rollDrops(monster);
+    drops.forEach(drop => {
+      addToBank(drop.id, {id:drop.id, name:drop.name, icon:drop.icon, qty:drop.qty});
+      if(drop.tier==='unique'){
+        addCombatLog(`🌟 RARE DROP: ${drop.qty}x ${drop.name}!`,'loot');
+        showLootToast(drop.icon, drop.name, drop.qty, true);
+      } else if(drop.tier==='veryRare'){
+        addCombatLog(`✨ ${drop.qty}x ${drop.name}!`,'loot');
+        showLootToast(drop.icon, drop.name, drop.qty, false);
+      } else if(drop.tier!=='always' || drop.id!=='bones' && drop.id!=='big_bones' && drop.id!=='dragon_bones'){
+        addCombatLog(`Loot: ${drop.qty}x ${drop.name}`,'loot');
+        showLootToast(drop.icon, drop.name, drop.qty, false);
       }
     });
     clearInterval(combatTimer);
@@ -2629,12 +2874,21 @@ function showToast(title,sub,ok){
 }
 
 let lootT=null;
-function showLootToast(icon,name,qty){
+function showLootToast(icon,name,qty,isUnique){
   const t=document.getElementById('loot-toast');
-  document.getElementById('loot-item').textContent=(icon||'📦')+' '+qty+'x '+name;
+  const item=document.getElementById('loot-item');
+  if(isUnique){
+    t.style.border='1px solid var(--gold)';
+    t.style.background='rgba(201,168,76,0.15)';
+    item.innerHTML=`<span style="color:var(--gold);font-weight:bold">🌟 RARE! </span>${icon||'📦'} ${qty}x ${name}`;
+  } else {
+    t.style.border='';
+    t.style.background='';
+    item.textContent=(icon||'📦')+' '+qty+'x '+name;
+  }
   t.classList.add('show');
   if(lootT) clearTimeout(lootT);
-  lootT=setTimeout(()=>t.classList.remove('show'),2500);
+  lootT=setTimeout(()=>t.classList.remove('show'), isUnique ? 4000 : 2500);
 }
 
 // ═══════════════════════════════════════
