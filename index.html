@@ -499,10 +499,15 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <span class="hp-text" id="hp-text">10/10</span>
     </div>
     <div class="day-badge" id="day-badge">DAY 1</div>
+    <div id="boost-badge" style="display:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:var(--green-m);background:rgba(74,140,58,.12);border:1px solid rgba(74,140,58,.3);padding:3px 7px;white-space:nowrap">⚡ +10% Speed</div>
   </div>
 
   <div class="main-body">
     <div class="content" id="content">
+
+      <div class="pane" id="pane-help">
+        <div id="help-content"></div>
+      </div>
 
       <!-- SKILLS -->
       <div class="pane" id="pane-skills">
@@ -762,7 +767,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
             </label>
             <span style="font-size:10px;color:var(--text-d);font-style:italic" id="auto-eat-status"></span>
           </div>
-          <button class="btn btn-red btn-block btn-sm" style="margin-top:6px" onclick="stopCombat()">Flee</button>
+          <button class="btn btn-red btn-block btn-sm" style="margin-top:6px" onclick="fleeCombat()">Flee</button>
         </div>
         <div id="combat-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
@@ -934,6 +939,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <button class="nav-btn"        onclick="showPane('profile',this)"  ><span class="nav-icon">🧙</span><span class="nav-label">Profile</span></button>
         <button class="nav-btn"        onclick="showPane('quests',this)"   ><span class="nav-icon">📜</span><span class="nav-label">Quests</span></button>
         <button class="nav-btn"        onclick="showPane('settings',this)" ><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
+        <button class="nav-btn"        onclick="showPane('help',this)"     ><span class="nav-icon">📖</span><span class="nav-label">Help</span></button>
       </div>
       <div class="nav-section">
         <div class="nav-section-label">Combat</div>
@@ -1064,13 +1070,13 @@ const ACTIVITIES = {
   cooking: [
     {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
     {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',   name:'Raw Shrimp'},   gives:{item:'shrimp',   name:'Shrimp',   icon:'🦐',qty:1,heals:3}},
-    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:1, xp:40, interval:4000, needs:{item:'raw_sardine',  name:'Raw Sardine'},  gives:{item:'sardine',  name:'Sardine',  icon:'🐟',qty:1,heals:4}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',   name:'Raw Trout'},    gives:{item:'trout',    name:'Trout',    icon:'🐟',qty:1,heals:7}},
-    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',  name:'Raw Salmon'},   gives:{item:'salmon',   name:'Salmon',   icon:'🐠',qty:1,heals:9}},
-    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster', name:'Raw Lobster'},  gives:{item:'lobster',  name:'Lobster',  icon:'🦞',qty:1,heals:12}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',  name:'Raw Shrimp'},  gives:{item:'shrimp',   name:'Shrimp',   icon:'🦐',qty:1,heals:3}},
+    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:1, xp:40, interval:4000, needs:{item:'raw_sardine', name:'Raw Sardine'}, gives:{item:'sardine',  name:'Sardine',  icon:'🐟',qty:1,heals:4}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',  name:'Raw Trout'},   gives:{item:'trout',    name:'Trout',    icon:'🐟',qty:1,heals:7}},
+    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon', name:'Raw Salmon'},  gives:{item:'salmon',   name:'Salmon',   icon:'🐠',qty:1,heals:9}},
+    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'}, gives:{item:'lobster',  name:'Lobster',  icon:'🦞',qty:1,heals:12}},
     {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
-    {id:'cook_shark',     name:'Shark',     icon:'🦈',req:80,xp:210,interval:9000, needs:{item:'raw_shark',   name:'Raw Shark'},    gives:{item:'shark',    name:'Shark',    icon:'🦈',qty:1,heals:20}},
+    {id:'cook_shark',     name:'Shark',     icon:'🦈',req:80,xp:210,interval:9000, needs:{item:'raw_shark',  name:'Raw Shark'},   gives:{item:'shark',    name:'Shark',    icon:'🦈',qty:1,heals:20}},
   ],
   smithing_smelt: [
     {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:5000, needs:{item:'iron_ore',   qty:2,name:'2x Iron Ore'},   gives:{item:'iron_bar',   name:'Iron Bar',   icon:'🔩',qty:1}},
@@ -1284,7 +1290,6 @@ window.addEventListener('DOMContentLoaded',()=>{
       shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
       leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
       hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
-      coins:          {id:'coins',          name:'Coins',          icon:'🪙', qty:100},
     };
     saveState();
   }
@@ -1341,6 +1346,7 @@ function showPane(id, btn){
   if(id==='quests') renderQuestsPane();
   if(id==='settings') renderSettingsPane();
   if(id==='store') renderStore();
+  if(id==='help') renderHelpPane();
   if(id==='leatherworking'){ buildActivityPane('leatherworking',ACTIVITIES.leatherworking); renderTanner(); }
 }
 
@@ -1354,11 +1360,17 @@ function renderAll(){
   renderEquipPane();
   updateActivityLevels();
   updateDayBadge();
+  renderBoostBadge();
 }
 
 function updateDayBadge(){
   const diff=Math.max(1,Math.round((new Date(todayStr()+'T12:00:00')-new Date(S.startDate+'T12:00:00'))/86400000)+1);
   document.getElementById('day-badge').textContent='DAY '+diff;
+}
+
+function renderBoostBadge(){
+  const el=document.getElementById('boost-badge');
+  if(el) el.style.display=hasActivityBoost()?'':'none';
 }
 
 // ═══════════════════════════════════════
@@ -1558,7 +1570,7 @@ function doHabit(e,id){
     const xp=50;
     if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
     addLog(h.skill==='activity'?'activity':h.skill,`<strong>${h.name}</strong> (×${h.timesToday})`,xp);
-    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderHabitsPane();
+    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderHabitsPane(); renderBoostBadge();
   } else if(type==='daily'){
     if(h.doneToday) return;
     h.doneToday=true; h.streak=(h.streak||0)+1;
@@ -2154,12 +2166,35 @@ function setSmithMode(mode,btn){
 }
 
 function startActivity(skill,itemId,smithMode,focusMode){
+  // Warn if in combat
+  if(S.combat){
+    const monster=MONSTERS.find(m=>m.id===S.combat.monsterId);
+    const name=monster?monster.name:'the current monster';
+    openModal('Leave Combat?',`
+      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
+        You are fighting <strong style="color:var(--text)">${name}</strong>. Starting an activity will stop combat and any progress toward this kill will be lost.
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="closeModal();doStartActivity('${skill}','${itemId}','${smithMode||''}',${!!focusMode})">Start Activity</button>
+      </div>
+    `);
+    return;
+  }
+  doStartActivity(skill,itemId,smithMode,focusMode);
+}
+
+function doStartActivity(skill,itemId,smithMode,focusMode){
+  stopCombat(true);
   stopActivity(null,true);
   S.activeActivity={skill,itemId,smithMode:smithMode||null,focusMode:!!focusMode};
   idleProgress=0;
   const isGather=['mining','woodcutting','fishing'].includes(skill);
   idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
+  // Apply habit boost to gathering
+  if(isGather && hasActivityBoost()) idleInterval=Math.floor(idleInterval*0.9);
   saveState(); buildActivityPanes(); showActivityBar(skill,itemId,smithMode,focusMode);
+  renderBoostBadge();
 }
 
 function getActivityItem(skill,itemId,smithMode){
@@ -2208,10 +2243,13 @@ function startIdleTick(){
 
 function idleTick(){
   if(!S.activeActivity) return;
-  // Recalculate interval in case tool changed
+  // Recalculate interval in case tool changed or boost status changed
   const {skill,itemId,smithMode,focusMode}=S.activeActivity;
   const isGather=['mining','woodcutting','fishing'].includes(skill);
-  idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
+  let base = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
+  // Apply 10% speed boost if player has done at least one habit today
+  if(isGather && hasActivityBoost()) base = Math.floor(base * 0.9);
+  idleInterval = base;
 
   idleProgress+=100;
   const pct=Math.min((idleProgress/idleInterval)*100,100);
@@ -2284,23 +2322,38 @@ let combatTimer=null;
 let combatStyle='attack'; // attack, defence, ranged, magic
 let combatBarTimer=null;
 let combatBarProgress=0;
-const COMBAT_INTERVAL=3000;
+const BASE_COMBAT_INTERVAL = 3000;
+
+// Returns true if player has completed at least one habit today
+function hasActivityBoost(){
+  return (S.habits||[]).some(h=>
+    (h.type==='habit' && (h.timesToday||0)>0) ||
+    (h.type==='daily' && h.doneToday) ||
+    (h.type==='milestone' && h.doneToday)
+  );
+}
+
+// Get current combat interval accounting for habit boost
+function getCombatInterval(){
+  return hasActivityBoost() ? Math.floor(BASE_COMBAT_INTERVAL * 0.9) : BASE_COMBAT_INTERVAL;
+}
 
 function startCombatBar(){
   if(combatBarTimer) clearInterval(combatBarTimer);
   combatBarProgress=0;
   combatBarTimer=setInterval(()=>{
     if(!S.combat){ clearInterval(combatBarTimer); combatBarTimer=null; return; }
-    combatBarProgress=Math.min(combatBarProgress+100, COMBAT_INTERVAL);
-    const pct=(combatBarProgress/COMBAT_INTERVAL)*100;
+    const ci=getCombatInterval();
+    combatBarProgress=Math.min(combatBarProgress+100, ci);
+    const pct=(combatBarProgress/ci)*100;
     const fill=document.getElementById('idle-combat-fill');
     const timer=document.getElementById('idle-combat-timer');
     if(fill) fill.style.width=pct+'%';
     if(timer){
-      const secsLeft=Math.max(0,Math.ceil((COMBAT_INTERVAL-combatBarProgress)/1000));
+      const secsLeft=Math.max(0,Math.ceil((ci-combatBarProgress)/1000));
       timer.textContent=secsLeft>0?secsLeft+'s':'';
     }
-    if(combatBarProgress>=COMBAT_INTERVAL) combatBarProgress=0;
+    if(combatBarProgress>=ci) combatBarProgress=0;
   },100);
 }
 
@@ -2341,9 +2394,31 @@ function setCombatStyle(style){
 }
 
 function startCombat(monsterId){
-  stopCombat(true);
   const monster=MONSTERS.find(m=>m.id===monsterId);
   if(!monster) return;
+
+  // Warn if an activity is currently running
+  if(S.activeActivity){
+    const actName = S.activeActivity.skill.charAt(0).toUpperCase()+S.activeActivity.skill.slice(1);
+    openModal('Start Combat?',`
+      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
+        You are currently <strong style="color:var(--text)">${actName}</strong>. Starting combat will stop this activity.
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="closeModal();doStartCombat('${monsterId}')">Fight</button>
+      </div>
+    `);
+    return;
+  }
+  doStartCombat(monsterId);
+}
+
+function doStartCombat(monsterId){
+  const monster=MONSTERS.find(m=>m.id===monsterId);
+  if(!monster) return;
+  stopActivity(null,true);
+  stopCombat(true);
   S.combat={monsterId, monsterHp:monster.maxhp, style:combatStyle};
   buildMonsterList();
   updateCombatStyles();
@@ -2357,13 +2432,28 @@ function startCombat(monsterId){
   clearCombatLog();
   addCombatLog(`You attack the ${monster.name}!`,'info');
   saveState();
-  combatTimer=setInterval(()=>combatTick(monster),3000);
+  combatTimer=setInterval(()=>combatTick(monster),getCombatInterval());
   startCombatBar();
   updateAutoEatStatus();
+  renderBoostBadge();
+}
+
+function fleeCombat(){
+  if(!S.combat) return;
+  const monster=MONSTERS.find(m=>m.id===S.combat.monsterId);
+  const name=monster?monster.name:'the monster';
+  openModal('Flee Combat?',`
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
+      Stop fighting <strong style="color:var(--text)">${name}</strong>? Any progress toward this kill will be lost.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Keep Fighting</button>
+      <button class="btn btn-red" onclick="closeModal();stopCombat()">Flee</button>
+    </div>
+  `);
 }
 
 function stopCombat(silent){
-  if(combatTimer){ clearInterval(combatTimer); combatTimer=null; }
   if(combatBarTimer){ clearInterval(combatBarTimer); combatBarTimer=null; }
   const fill=document.getElementById('idle-combat-fill');
   const timer=document.getElementById('idle-combat-timer');
@@ -2429,7 +2519,7 @@ function combatTick(monster){
     combatTimer=null;
     S.combat.monsterHp=monster.maxhp;
     updateCombatHP(monster);
-    setTimeout(()=>{ if(S.combat){ combatTimer=setInterval(()=>combatTick(monster),3000); startCombatBar(); } },1000);
+    setTimeout(()=>{ if(S.combat){ combatTimer=setInterval(()=>combatTick(monster),getCombatInterval()); startCombatBar(); } },1000);
     return;
   }
 
@@ -2774,6 +2864,75 @@ function sellItem(itemId, qty){
   renderStore();
 }
 // ═══════════════════════════════════════
+function renderHelpPane(){
+  const el=document.getElementById('help-content'); if(!el) return;
+  const sections=[
+    {
+      icon:'🌟', title:'Getting Started',
+      body:`LifeSkills is a habit tracker where your real-world actions train a fantasy RPG character. Every habit you complete awards XP to a skill of your choice. Level up your skills by doing real things — working out trains Attack, meditating trains Magic, cooking real food trains Cooking. The game world grows as you do.`
+    },
+    {
+      icon:'📊', title:'Your Skills',
+      body:`Open the <strong>Skills</strong> tab to see your skill grid. Each skill has a level from 1–99 based on XP earned. Your <strong>Total Level</strong> is the sum of all skill levels — the main measure of your overall progress. Hitpoints is a special skill trained passively through combat. Click any skill tile to see your XP progress and what you can unlock next.`
+    },
+    {
+      icon:'📋', title:'Habits, Dailies & Milestones',
+      body:`There are three types of habits:<br><br>
+      <strong style="color:var(--green-m)">Habits</strong> — Repeatable, unlimited per day. Award <strong>50 XP</strong> per tap. Great for things you do multiple times (drinking water, short walks).<br><br>
+      <strong style="color:var(--gold)">Dailies</strong> — Once per day. Award <strong>500 XP</strong> and build a streak. Missing a day resets your streak. Best for consistent daily goals like workouts or journaling.<br><br>
+      <strong style="color:var(--fire)">Milestones</strong> — One-time achievements. Award <strong>10,000 XP</strong>. Use these for big life goals like running your first 5K or quitting something for 30 days.`
+    },
+    {
+      icon:'🔥', title:'Resistances',
+      body:`Resistances (Vices) track things you are trying to stop doing — smoking, alcohol, junk food, etc. Tap the row each day you successfully resisted. Your streak grows and so does the XP reward: <strong>Day 1 = 100 XP, Day 2 = 150 XP</strong>, adding 50 per day up to a max of 2,000 XP. Missing a day resets your streak to zero. Use the <em>relapsed</em> button honestly — the point is progress, not perfection.`
+    },
+    {
+      icon:'⚡', title:'Activity Speed Boost',
+      body:`Complete at least one habit today and you will earn a <strong style="color:var(--green-m)">+10% Speed Boost</strong> on all gathering skills and combat. You will see the boost indicator in the top bar when it is active. This is the direct link between your real-world effort and your in-game performance — do something, move faster.`
+    },
+    {
+      icon:'⚔️', title:'Combat',
+      body:`Go to the <strong>Combat</strong> tab to fight monsters. Choose a combat style — <strong>Attack</strong> or <strong>Defence</strong> for melee, <strong>Ranged</strong> for bows, <strong>Magic</strong> for staves. The style you use determines which skill gains XP. Hitpoints trains passively alongside any combat skill. Enable <strong>Auto-Eat</strong> to automatically consume food when your HP drops below 50%. If you die you respawn at 30% HP. Starting combat will stop any active gathering activity.`
+    },
+    {
+      icon:'⛏️', title:'Gathering Skills',
+      body:`<strong>Mining</strong>, <strong>Woodcutting</strong>, and <strong>Fishing</strong> are idle skills — equip the right tool from your Inventory first (axe for woodcutting, pickaxe for mining, net for fishing), then pick a resource and it runs automatically. Better tools speed up gathering. Higher level resources give more XP per action. Starting a gathering skill will stop any active combat.`
+    },
+    {
+      icon:'🍳', title:'Crafting Skills',
+      body:`<strong>Cooking</strong>, <strong>Smithing</strong>, <strong>Fletching</strong>, <strong>Magecrafting</strong>, and <strong>Leatherworking</strong> convert materials into useful items. Each recipe requires ingredients in your inventory and takes a few seconds per item. Cooked food heals HP in combat. Smithed gear improves your combat stats. The <strong>Leatherworking</strong> tab also has a Tanner to convert hides into leather.`
+    },
+    {
+      icon:'🎒', title:'Inventory & Equipment',
+      body:`Your <strong>Inventory</strong> (bank) holds up to 50 item stacks. Open any item to equip it, eat it, or destroy it. The <strong>Equip</strong> tab shows your current gear and total combat stats. Tools (axe, pickaxe, net) have their own equipment slots separate from combat gear — you can carry a weapon and tools simultaneously.`
+    },
+    {
+      icon:'🏪', title:'The Store',
+      body:`Sell unwanted items for <strong>Coins</strong> at the Store. Prices start at 70% of base value and drop to 50% as you sell more of the same item. Prices reset hourly. Use coins to pay the Tanner in the Leatherworking tab to convert dragonhide into leather.`
+    },
+    {
+      icon:'📜', title:'Quests',
+      body:`Quests track your achievements automatically. When you complete a quest's condition it will appear in the <strong>Quests</strong> tab ready to claim. You choose which skill receives the XP reward — use this to boost the skill you care about most.`
+    },
+  ];
+
+  el.innerHTML=`
+    <div class="activity-header" style="margin-bottom:4px">
+      <div class="act-icon">📖</div>
+      <div><div class="act-title">Help & Guide</div><div class="act-sub">Everything you need to know</div></div>
+    </div>
+    ${sections.map(s=>`
+      <div class="card" style="margin-bottom:8px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">${s.icon}</span>
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;color:var(--gold)">${s.title}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-m);line-height:1.7">${s.body}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
 function renderSettingsPane(){
   const el=document.getElementById('settings-name');
   if(el) el.textContent=S.name||'—';
