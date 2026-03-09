@@ -993,12 +993,19 @@ function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 
 // Monsters
 const MONSTERS = [
-  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  def:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
-  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:8,   maxhp:8,   atk:2,  def:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
+  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  def:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1},{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1}]},
+  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:8,   maxhp:8,   atk:2,  def:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9},{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1}]},
   {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:12,  maxhp:12,  atk:3,  def:3,  xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
+  {id:'wolf',        name:'Wolf',         icon:'🐺', level:7,   hp:18,  maxhp:18,  atk:7,  def:5,  xp:28,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:8,chance:.6}]},
+  {id:'dark_wizard', name:'Dark Wizard',  icon:'🧙', level:9,   hp:20,  maxhp:20,  atk:8,  def:4,  xp:35,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:12,chance:.9},{item:'rune_essence',name:'Rune Essence',icon:'🔮',qty:3,chance:.5}]},
+  {id:'skeleton',    name:'Skeleton',     icon:'💀', level:13,  hp:28,  maxhp:28,  atk:12, def:8,  xp:50,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:18,chance:.8},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:2,chance:.3}]},
+  {id:'guard',       name:'Guard',        icon:'💂', level:16,  hp:35,  maxhp:35,  atk:15, def:12, xp:70,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:30,chance:1},{item:'iron_bar',name:'Iron Bar',icon:'🔩',qty:1,chance:.2}]},
   {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:18, def:15, xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
-  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:30,  hp:70,  maxhp:70,  atk:25, def:22, xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'hobgoblin',   name:'Hobgoblin',    icon:'👹', level:25,  hp:60,  maxhp:60,  atk:22, def:18, xp:105, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:40,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.15}]},
+  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:28, def:24, xp:130, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'moss_giant',  name:'Moss Giant',   icon:'🌿', level:42,  hp:90,  maxhp:90,  atk:35, def:28, xp:180, drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:80,chance:1},{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:2,chance:.4}]},
   {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:40, def:35, xp:250, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
+  {id:'lesser_demon',name:'Lesser Demon', icon:'😈', level:65,  hp:160, maxhp:160, atk:55, def:48, xp:350, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:200,chance:1},{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:3,chance:.5}]},
   {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:75, def:65, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
 ];
 
@@ -1039,26 +1046,31 @@ const ACTIVITIES = {
     {id:'adamant_ore', name:'Adamant Ore', icon:'🟢',req:30,xp:95, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
   ],
   woodcutting: [
-    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',name:'Logs',icon:'🪵',qty:1}},
-    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:1}},
-    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
-    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:30,xp:88, gives:{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:1}},
+    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',        name:'Logs',        icon:'🪵',qty:1}},
+    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',    name:'Oak Logs',    icon:'🪵',qty:1}},
+    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs', name:'Willow Logs', icon:'🪵',qty:1}},
+    {id:'maple_logs',  name:'Maple Tree',  icon:'🍁',req:45,xp:100,gives:{item:'maple_logs',  name:'Maple Logs',  icon:'🍁',qty:1}},
+    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:60,xp:175,gives:{item:'yew_logs',    name:'Yew Logs',    icon:'🪵',qty:1}},
   ],
   fishing: [
-    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10, gives:{item:'raw_shrimp',name:'Raw Shrimp',icon:'🦐',qty:1}},
-    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50, gives:{item:'raw_trout',name:'Raw Trout',icon:'🐟',qty:1}},
-    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70, gives:{item:'raw_salmon',name:'Raw Salmon',icon:'🐠',qty:1}},
-    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90, gives:{item:'raw_lobster',name:'Raw Lobster',icon:'🦞',qty:1}},
-    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100,gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐡',qty:1}},
+    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10,  gives:{item:'raw_shrimp',   name:'Raw Shrimp',   icon:'🦐',qty:1}},
+    {id:'sardine',   name:'Sardine',   icon:'🐟',req:5, xp:20,  gives:{item:'raw_sardine',  name:'Raw Sardine',  icon:'🐟',qty:1}},
+    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50,  gives:{item:'raw_trout',    name:'Raw Trout',    icon:'🐟',qty:1}},
+    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70,  gives:{item:'raw_salmon',   name:'Raw Salmon',   icon:'🐠',qty:1}},
+    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90,  gives:{item:'raw_lobster',  name:'Raw Lobster',  icon:'🦞',qty:1}},
+    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100, gives:{item:'raw_swordfish', name:'Raw Swordfish',icon:'🐡',qty:1}},
+    {id:'shark',     name:'Shark',     icon:'🦈',req:76,xp:110, gives:{item:'raw_shark',    name:'Raw Shark',    icon:'🦈',qty:1}},
   ],
   cooking: [
     {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
     {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',name:'Raw Shrimp'},gives:{item:'shrimp',name:'Shrimp',icon:'🦐',qty:1,heals:3}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',name:'Raw Trout'},gives:{item:'trout',name:'Trout',icon:'🐟',qty:1,heals:7}},
-    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
-    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',   name:'Raw Shrimp'},   gives:{item:'shrimp',   name:'Shrimp',   icon:'🦐',qty:1,heals:3}},
+    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:1, xp:40, interval:4000, needs:{item:'raw_sardine',  name:'Raw Sardine'},  gives:{item:'sardine',  name:'Sardine',  icon:'🐟',qty:1,heals:4}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',   name:'Raw Trout'},    gives:{item:'trout',    name:'Trout',    icon:'🐟',qty:1,heals:7}},
+    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',  name:'Raw Salmon'},   gives:{item:'salmon',   name:'Salmon',   icon:'🐠',qty:1,heals:9}},
+    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster', name:'Raw Lobster'},  gives:{item:'lobster',  name:'Lobster',  icon:'🦞',qty:1,heals:12}},
     {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
+    {id:'cook_shark',     name:'Shark',     icon:'🦈',req:80,xp:210,interval:9000, needs:{item:'raw_shark',   name:'Raw Shark'},    gives:{item:'shark',    name:'Shark',    icon:'🦈',qty:1,heals:20}},
   ],
   smithing_smelt: [
     {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:5000, needs:{item:'iron_ore',   qty:2,name:'2x Iron Ore'},   gives:{item:'iron_bar',   name:'Iron Bar',   icon:'🔩',qty:1}},
@@ -1165,9 +1177,10 @@ function defaultState(){
     bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'net',     toolType:'net',     tier:0},
     shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon',  rng:5},
     iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  mag:8},
-    shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
+    shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5,  heals:3},
     leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
     hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
+    coins:          {id:'coins',          name:'Coins',          icon:'🪙', qty:100},
   };
   return {
     onboarded:false, name:'', avatar:'🧙', title:'Apprentice of Life',
@@ -1271,6 +1284,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
       leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
       hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
+      coins:          {id:'coins',          name:'Coins',          icon:'🪙', qty:100},
     };
     saveState();
   }
@@ -1400,7 +1414,7 @@ function renderSkillDetail(k){
 }
 
 function updateActivityLevels(){
-  ['mining','woodcutting','fishing','cooking','smithing','fletching','runecrafting','crafting'].forEach(k=>{
+  ['mining','woodcutting','fishing','cooking','smithing','fletching','magecrafting','leatherworking'].forEach(k=>{
     const el=document.getElementById(k+'-lv');
     if(el) el.textContent=getLvForXP(S.skills[k]?.xp||0);
   });
@@ -2095,7 +2109,7 @@ function buildActivityPane(skill, items, smithMode){
         <div class="ai-req">Level ${item.req}${locked?' — Locked':''}</div>
       </div>
       <div class="ai-right">
-        <div class="ai-xp">+1 XP</div>
+        <div class="ai-xp">+${item.xp||1} XP</div>
         <div class="ai-interval">${isGather?(interval/60000).toFixed(0)+'m':(interval/1000).toFixed(0)+'s'}</div>
       </div>
     `;
@@ -2249,8 +2263,8 @@ function completeActivityCycle(){
     }
   }
 
-  // Award 1 passive XP always
-  awardXP(skill,1,false);
+  // Award XP based on activity definition
+  awardXP(skill, item.xp || 1, false);
 
   // Give item
   if(item.gives){
@@ -2399,10 +2413,8 @@ function combatTick(monster){
   if(S.combat.monsterHp<=0){
     addCombatLog(`You defeated the ${monster.name}!`,'hit-monster');
     S.monstersKilled=(S.monstersKilled||0)+1;
-    // XP — only if relevant habit done today
     const style=S.combat.style||combatStyle;
-    const hasHabit=(S.habits||[]).some(h=>(h.skill===style||h.skill==='attack')&&h.doneToday);
-    if(hasHabit) awardCombatXP(style,monster.xp);
+    awardCombatXP(style,monster.xp);
     // Loot
     monster.drops.forEach(drop=>{
       if(Math.random()<drop.chance){
@@ -2606,8 +2618,8 @@ function tanHide(recipeId, qty){
 const ITEM_VALUES = {
   // Raw materials
   iron_ore:4, steel_ore:8, mithril_ore:10, adamant_ore:18,
-  logs:2, oak_logs:5, willow_logs:12, yew_logs:25,
-  raw_shrimp:2, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30,
+  logs:2, oak_logs:5, willow_logs:12, maple_logs:20, yew_logs:25,
+  raw_shrimp:2, raw_sardine:4, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30, raw_shark:60,
   raw_chicken:1, raw_beef:2, cowhide:4,
   rune_essence:3, leather:3, hard_leather:8,
   green_hide:30, black_hide:80, green_leather:50, black_leather:120,
@@ -2615,7 +2627,7 @@ const ITEM_VALUES = {
   // Bars
   iron_bar:10, steel_bar:25, mithril_bar:50, adamant_bar:90,
   // Cooked food
-  shrimp:3, beef:4, chicken:3, trout:12, salmon:18, lobster:30, swordfish:40,
+  shrimp:3, sardine:5, beef:4, chicken:3, trout:12, salmon:18, lobster:30, swordfish:40, shark:100,
   // Weapons / armour — sell value lower than craft cost
   iron_long:30, iron_scim:32, iron_2h:45, iron_helm:20, iron_body:55, iron_legs:40, iron_kite:30,
   steel_long:60, steel_scim:62, steel_2h:90, steel_helm:40, steel_body:110, steel_legs:80, steel_kite:60,
