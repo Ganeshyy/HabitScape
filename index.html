@@ -499,15 +499,10 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <span class="hp-text" id="hp-text">10/10</span>
     </div>
     <div class="day-badge" id="day-badge">DAY 1</div>
-    <div id="boost-badge" style="display:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:var(--green-m);background:rgba(74,140,58,.12);border:1px solid rgba(74,140,58,.3);padding:3px 7px;white-space:nowrap">⚡ +10% Speed</div>
   </div>
 
   <div class="main-body">
     <div class="content" id="content">
-
-      <div class="pane" id="pane-help">
-        <div id="help-content"></div>
-      </div>
 
       <!-- SKILLS -->
       <div class="pane" id="pane-skills">
@@ -593,10 +588,9 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <div class="sec">Bonuses</div>
         <div class="eq-stats" id="eq-stats-wrap">
           <div class="eq-stat"><span class="eq-stat-name">Attack</span><span class="eq-stat-val" id="eq-atk">0</span></div>
-          <div class="eq-stat"><span class="eq-stat-name">Defence</span><span class="eq-stat-val" id="eq-def">0</span></div>
-          <div class="eq-stat"><span class="eq-stat-name">Ranged</span><span class="eq-stat-val" id="eq-rng">0</span></div>
-          <div class="eq-stat"><span class="eq-stat-name">Magic</span><span class="eq-stat-val" id="eq-mag">0</span></div>
           <div class="eq-stat"><span class="eq-stat-name">Strength</span><span class="eq-stat-val" id="eq-str">0</span></div>
+          <div class="eq-stat"><span class="eq-stat-name">Defence</span><span class="eq-stat-val" id="eq-def">0</span></div>
+          <div class="eq-stat"><span class="eq-stat-name">DR%</span><span class="eq-stat-val" id="eq-dr">0%</span></div>
         </div>
       </div>
 
@@ -767,7 +761,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
             </label>
             <span style="font-size:10px;color:var(--text-d);font-style:italic" id="auto-eat-status"></span>
           </div>
-          <button class="btn btn-red btn-block btn-sm" style="margin-top:6px" onclick="fleeCombat()">Flee</button>
+          <button class="btn btn-red btn-block btn-sm" style="margin-top:6px" onclick="stopCombat()">Flee</button>
         </div>
         <div id="combat-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
@@ -939,7 +933,6 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <button class="nav-btn"        onclick="showPane('profile',this)"  ><span class="nav-icon">🧙</span><span class="nav-label">Profile</span></button>
         <button class="nav-btn"        onclick="showPane('quests',this)"   ><span class="nav-icon">📜</span><span class="nav-label">Quests</span></button>
         <button class="nav-btn"        onclick="showPane('settings',this)" ><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
-        <button class="nav-btn"        onclick="showPane('help',this)"     ><span class="nav-icon">📖</span><span class="nav-label">Help</span></button>
       </div>
       <div class="nav-section">
         <div class="nav-section-label">Combat</div>
@@ -998,254 +991,16 @@ function getLvForXP(xp){ let l=1; while(l<MAX_LV && XP_TABLE[l]<=xp) l++; return
 function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 
 // Monsters
-// ─────────────────────────────────────────────────────────────────────────────
-// ITEM REGISTRY — single source of truth for item name + icon
-// Add new items here; drop tables reference by id only
-// ─────────────────────────────────────────────────────────────────────────────
-const ITEM_META = {
-  coins:           {name:'Coins',              icon:'🪙'},
-  bones:           {name:'Bones',              icon:'🦴'},
-  big_bones:       {name:'Big Bones',          icon:'🦴'},
-  dragon_bones:    {name:'Dragon Bones',       icon:'🦴'},
-  raw_chicken:     {name:'Raw Chicken',        icon:'🍗'},
-  raw_beef:        {name:'Raw Beef',           icon:'🥩'},
-  cowhide:         {name:'Cowhide',            icon:'🐄'},
-  feather:         {name:'Feather',            icon:'🪶'},
-  rune_essence:    {name:'Rune Essence',       icon:'🔮'},
-  iron_ore:        {name:'Iron Ore',           icon:'🪨'},
-  steel_ore:       {name:'Steel Ore',          icon:'🩶'},
-  mithril_ore:     {name:'Mithril Ore',        icon:'🔵'},
-  adamant_ore:     {name:'Adamant Ore',        icon:'🟢'},
-  iron_bar:        {name:'Iron Bar',           icon:'🔩'},
-  steel_bar:       {name:'Steel Bar',          icon:'🔧'},
-  mithril_bar:     {name:'Mithril Bar',        icon:'🔵'},
-  adamant_bar:     {name:'Adamant Bar',        icon:'🟢'},
-  bronze_sword:    {name:'Bronze Sword',       icon:'🗡️'},
-  iron_sword:      {name:'Iron Sword',         icon:'🗡️'},
-  steel_sword:     {name:'Steel Sword',        icon:'🗡️'},
-  iron_dagger:     {name:'Iron Dagger',        icon:'🔪'},
-  steel_dagger:    {name:'Steel Dagger',       icon:'🔪'},
-  iron_shield:     {name:'Iron Shield',        icon:'🛡️'},
-  steel_shield:    {name:'Steel Shield',       icon:'🛡️'},
-  green_hide:      {name:'Green Dragonhide',   icon:'🟢'},
-  black_hide:      {name:'Black Dragonhide',   icon:'⬛'},
-  leather:         {name:'Leather',            icon:'🟫'},
-  hard_leather:    {name:'Hard Leather',       icon:'🟤'},
-  logs:            {name:'Logs',               icon:'🪵'},
-  oak_logs:        {name:'Oak Logs',           icon:'🪵'},
-  coins_small:     {name:'Coins',              icon:'🪙'},
-  loop_half:       {name:'Loop Half of Key',   icon:'🔑'},
-  tooth_half:      {name:'Tooth Half of Key',  icon:'🔑'},
-  crystal_key:     {name:'Crystal Key',        icon:'🗝️'},
-};
-
-// Helper: resolve item metadata from registry
-function resolveItem(id) {
-  return ITEM_META[id] || {name: id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), icon:'📦'};
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DROP TABLE SYSTEM
-//
-// Each monster has a drops object with tiers:
-//   always    — 100% chance, every kill (bones, hides)
-//   common    — rolls each entry independently (chance 0–1)
-//   uncommon  — rolls each entry independently (chance 0–1)
-//   rare      — rolls each entry independently (chance 0–1)
-//   veryRare  — rolls each entry independently (chance 0–1)
-//   unique    — ONE roll across the entire pool (1-in-N chance per entry)
-//               use for special/named drops that feel like a real rare
-//
-// qty can be a number (exact) or [min, max] array (random range)
-// ─────────────────────────────────────────────────────────────────────────────
-
-// Rolls a drop table and returns array of {id, name, icon, qty, tier}
-function rollDrops(monster) {
-  const dt = monster.drops || {};
-  const results = [];
-
-  function resolveQty(qty) {
-    if (Array.isArray(qty)) return Math.floor(Math.random()*(qty[1]-qty[0]+1))+qty[0];
-    return qty || 1;
-  }
-
-  function tryDrop(id, qty, tier, chance) {
-    if (Math.random() < chance) {
-      const meta = resolveItem(id);
-      results.push({id, name:meta.name, icon:meta.icon, qty:resolveQty(qty), tier});
-    }
-  }
-
-  // Always drops
-  (dt.always||[]).forEach(d => {
-    const meta = resolveItem(d.id);
-    results.push({id:d.id, name:meta.name, icon:meta.icon, qty:resolveQty(d.qty), tier:'always'});
-  });
-
-  // Standard tiered rolls — each entry rolled independently
-  ['common','uncommon','rare','veryRare'].forEach(tier => {
-    (dt[tier]||[]).forEach(d => tryDrop(d.id, d.qty, tier, d.chance));
-  });
-
-  // Unique pool — one roll across all entries (like OSRS rare drop table)
-  if ((dt.unique||[]).length > 0) {
-    for (const d of dt.unique) {
-      if (Math.random() < d.chance) {
-        const meta = resolveItem(d.id);
-        results.push({id:d.id, name:meta.name, icon:meta.icon, qty:resolveQty(d.qty), tier:'unique'});
-        break; // only one unique drop per kill
-      }
-    }
-  }
-
-  return results;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MONSTER DEFINITIONS
-// Edit drop tables here or export/import via the Google Sheets tool
-// ─────────────────────────────────────────────────────────────────────────────
 const MONSTERS = [
-  { id:'chicken', name:'Chicken', icon:'🐔', level:1, hp:5, maxhp:5, atk:1, def:1, xp:5,
-    drops:{
-      always:   [ {id:'bones', qty:1}, {id:'raw_chicken', qty:1} ],
-      common:   [ {id:'feather', qty:[5,15], chance:0.75} ],
-      uncommon: [ {id:'feather', qty:[20,30], chance:0.1} ],
-      rare:     [],
-      veryRare: [],
-      unique:   [],
-    }
-  },
-  { id:'cow', name:'Cow', icon:'🐄', level:2, hp:8, maxhp:8, atk:2, def:2, xp:8,
-    drops:{
-      always:   [ {id:'bones', qty:1}, {id:'raw_beef', qty:1}, {id:'cowhide', qty:1} ],
-      common:   [ {id:'coins', qty:[1,5], chance:0.5} ],
-      uncommon: [],
-      rare:     [],
-      veryRare: [],
-      unique:   [],
-    }
-  },
-  { id:'goblin', name:'Goblin', icon:'👺', level:3, hp:12, maxhp:12, atk:3, def:3, xp:15,
-    drops:{
-      always:   [ {id:'bones', qty:1} ],
-      common:   [ {id:'coins', qty:[1,8], chance:0.8} ],
-      uncommon: [ {id:'iron_dagger', qty:1, chance:0.1}, {id:'iron_ore', qty:[1,3], chance:0.15} ],
-      rare:     [ {id:'bronze_sword', qty:1, chance:0.05} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.0008} ],
-    }
-  },
-  { id:'wolf', name:'Wolf', icon:'🐺', level:7, hp:18, maxhp:18, atk:7, def:5, xp:28,
-    drops:{
-      always:   [ {id:'bones', qty:1} ],
-      common:   [ {id:'coins', qty:[5,12], chance:0.7} ],
-      uncommon: [ {id:'leather', qty:[1,3], chance:0.3} ],
-      rare:     [ {id:'hard_leather', qty:1, chance:0.08} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.001} ],
-    }
-  },
-  { id:'dark_wizard', name:'Dark Wizard', icon:'🧙', level:9, hp:20, maxhp:20, atk:8, def:4, xp:35,
-    drops:{
-      always:   [ {id:'bones', qty:1} ],
-      common:   [ {id:'coins', qty:[8,20], chance:0.9}, {id:'rune_essence', qty:[2,5], chance:0.5} ],
-      uncommon: [ {id:'rune_essence', qty:[8,15], chance:0.15} ],
-      rare:     [ {id:'iron_sword', qty:1, chance:0.06} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.001} ],
-    }
-  },
-  { id:'skeleton', name:'Skeleton', icon:'💀', level:13, hp:28, maxhp:28, atk:12, def:8, xp:50,
-    drops:{
-      always:   [ {id:'bones', qty:[1,2]} ],
-      common:   [ {id:'coins', qty:[10,25], chance:0.85}, {id:'iron_ore', qty:[1,3], chance:0.35} ],
-      uncommon: [ {id:'iron_bar', qty:1, chance:0.2}, {id:'iron_sword', qty:1, chance:0.12} ],
-      rare:     [ {id:'steel_ore', qty:[1,2], chance:0.05} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.0015}, {id:'tooth_half', qty:1, chance:0.0015} ],
-    }
-  },
-  { id:'guard', name:'Guard', icon:'💂', level:16, hp:35, maxhp:35, atk:15, def:12, xp:70,
-    drops:{
-      always:   [ {id:'bones', qty:1} ],
-      common:   [ {id:'coins', qty:[20,45], chance:1.0} ],
-      uncommon: [ {id:'iron_bar', qty:[1,2], chance:0.25}, {id:'iron_shield', qty:1, chance:0.1} ],
-      rare:     [ {id:'steel_ore', qty:[2,4], chance:0.06}, {id:'steel_sword', qty:1, chance:0.04} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.002}, {id:'tooth_half', qty:1, chance:0.002} ],
-    }
-  },
-  { id:'giant', name:'Giant', icon:'👾', level:20, hp:50, maxhp:50, atk:18, def:15, xp:85,
-    drops:{
-      always:   [ {id:'big_bones', qty:1} ],
-      common:   [ {id:'coins', qty:[15,35], chance:1.0}, {id:'iron_ore', qty:[2,5], chance:0.6} ],
-      uncommon: [ {id:'iron_bar', qty:[2,3], chance:0.2}, {id:'steel_ore', qty:[1,3], chance:0.15} ],
-      rare:     [ {id:'steel_bar', qty:1, chance:0.07} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.002}, {id:'tooth_half', qty:1, chance:0.002} ],
-    }
-  },
-  { id:'hobgoblin', name:'Hobgoblin', icon:'👹', level:25, hp:60, maxhp:60, atk:22, def:18, xp:105,
-    drops:{
-      always:   [ {id:'big_bones', qty:1} ],
-      common:   [ {id:'coins', qty:[30,55], chance:1.0} ],
-      uncommon: [ {id:'steel_ore', qty:[2,4], chance:0.25}, {id:'steel_bar', qty:1, chance:0.15} ],
-      rare:     [ {id:'steel_sword', qty:1, chance:0.06}, {id:'mithril_ore', qty:[1,2], chance:0.04} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.003}, {id:'tooth_half', qty:1, chance:0.003} ],
-    }
-  },
-  { id:'black_knight', name:'Black Knight', icon:'🗡️', level:33, hp:70, maxhp:70, atk:28, def:24, xp:130,
-    drops:{
-      always:   [ {id:'big_bones', qty:1} ],
-      common:   [ {id:'coins', qty:[50,80], chance:1.0} ],
-      uncommon: [ {id:'steel_bar', qty:[1,2], chance:0.25}, {id:'mithril_ore', qty:[1,3], chance:0.2} ],
-      rare:     [ {id:'mithril_bar', qty:1, chance:0.07}, {id:'steel_shield', qty:1, chance:0.05} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.004}, {id:'tooth_half', qty:1, chance:0.004} ],
-    }
-  },
-  { id:'moss_giant', name:'Moss Giant', icon:'🌿', level:42, hp:90, maxhp:90, atk:35, def:28, xp:180,
-    drops:{
-      always:   [ {id:'big_bones', qty:1} ],
-      common:   [ {id:'coins', qty:[60,100], chance:1.0}, {id:'mithril_ore', qty:[1,3], chance:0.45} ],
-      uncommon: [ {id:'mithril_bar', qty:[1,2], chance:0.2}, {id:'iron_bar', qty:[3,5], chance:0.2} ],
-      rare:     [ {id:'adamant_ore', qty:[1,2], chance:0.05} ],
-      veryRare: [],
-      unique:   [ {id:'loop_half', qty:1, chance:0.005}, {id:'tooth_half', qty:1, chance:0.005} ],
-    }
-  },
-  { id:'green_dragon', name:'Green Dragon', icon:'🐉', level:50, hp:120, maxhp:120, atk:40, def:35, xp:250,
-    drops:{
-      always:   [ {id:'dragon_bones', qty:1}, {id:'green_hide', qty:1} ],
-      common:   [ {id:'coins', qty:[100,200], chance:1.0} ],
-      uncommon: [ {id:'mithril_bar', qty:[1,3], chance:0.3}, {id:'adamant_ore', qty:[2,4], chance:0.25} ],
-      rare:     [ {id:'adamant_bar', qty:1, chance:0.06} ],
-      veryRare: [ {id:'mithril_bar', qty:[5,8], chance:0.02} ],
-      unique:   [ {id:'loop_half', qty:1, chance:0.008}, {id:'tooth_half', qty:1, chance:0.008} ],
-    }
-  },
-  { id:'lesser_demon', name:'Lesser Demon', icon:'😈', level:65, hp:160, maxhp:160, atk:55, def:48, xp:350,
-    drops:{
-      always:   [],
-      common:   [ {id:'coins', qty:[150,250], chance:1.0}, {id:'adamant_ore', qty:[2,5], chance:0.55} ],
-      uncommon: [ {id:'adamant_bar', qty:[1,2], chance:0.2}, {id:'mithril_bar', qty:[2,4], chance:0.2} ],
-      rare:     [ {id:'adamant_bar', qty:[3,5], chance:0.05} ],
-      veryRare: [ {id:'rune_essence', qty:[20,30], chance:0.015} ],
-      unique:   [ {id:'loop_half', qty:1, chance:0.012}, {id:'tooth_half', qty:1, chance:0.012} ],
-    }
-  },
-  { id:'black_dragon', name:'Black Dragon', icon:'🐲', level:100, hp:250, maxhp:250, atk:75, def:65, xp:600,
-    drops:{
-      always:   [ {id:'dragon_bones', qty:1}, {id:'black_hide', qty:1} ],
-      common:   [ {id:'coins', qty:[300,500], chance:1.0} ],
-      uncommon: [ {id:'adamant_bar', qty:[2,4], chance:0.35}, {id:'adamant_ore', qty:[5,10], chance:0.3} ],
-      rare:     [ {id:'adamant_bar', qty:[5,8], chance:0.06} ],
-      veryRare: [ {id:'rune_essence', qty:[30,50], chance:0.01} ],
-      unique:   [ {id:'loop_half', qty:1, chance:0.02}, {id:'tooth_half', qty:1, chance:0.02}, {id:'crystal_key', qty:1, chance:0.005} ],
-    }
-  },
+  // defLv = defence level used for player hit chance formula
+  // atk   = monster's max hit (raw damage before player DR)
+  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:2,  defLv:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
+  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:8,   maxhp:8,   atk:3,  defLv:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
+  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:12,  maxhp:12,  atk:4,  defLv:3,  xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
+  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:14, defLv:14, xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
+  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:20, defLv:24, xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:30, defLv:36, xp:250, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
+  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:55, defLv:45, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
 ];
 
 // Tool speed tiers — equipped tool reduces gather interval by 1 min per tier
@@ -1285,31 +1040,26 @@ const ACTIVITIES = {
     {id:'adamant_ore', name:'Adamant Ore', icon:'🟢',req:30,xp:95, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
   ],
   woodcutting: [
-    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',        name:'Logs',        icon:'🪵',qty:1}},
-    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',    name:'Oak Logs',    icon:'🪵',qty:1}},
-    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs', name:'Willow Logs', icon:'🪵',qty:1}},
-    {id:'maple_logs',  name:'Maple Tree',  icon:'🍁',req:45,xp:100,gives:{item:'maple_logs',  name:'Maple Logs',  icon:'🍁',qty:1}},
-    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:60,xp:175,gives:{item:'yew_logs',    name:'Yew Logs',    icon:'🪵',qty:1}},
+    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',name:'Logs',icon:'🪵',qty:1}},
+    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:1}},
+    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
+    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:30,xp:88, gives:{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:1}},
   ],
   fishing: [
-    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10,  gives:{item:'raw_shrimp',   name:'Raw Shrimp',   icon:'🦐',qty:1}},
-    {id:'sardine',   name:'Sardine',   icon:'🐟',req:5, xp:20,  gives:{item:'raw_sardine',  name:'Raw Sardine',  icon:'🐟',qty:1}},
-    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50,  gives:{item:'raw_trout',    name:'Raw Trout',    icon:'🐟',qty:1}},
-    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70,  gives:{item:'raw_salmon',   name:'Raw Salmon',   icon:'🐠',qty:1}},
-    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90,  gives:{item:'raw_lobster',  name:'Raw Lobster',  icon:'🦞',qty:1}},
-    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100, gives:{item:'raw_swordfish', name:'Raw Swordfish',icon:'🐡',qty:1}},
-    {id:'shark',     name:'Shark',     icon:'🦈',req:76,xp:110, gives:{item:'raw_shark',    name:'Raw Shark',    icon:'🦈',qty:1}},
+    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10, gives:{item:'raw_shrimp',name:'Raw Shrimp',icon:'🦐',qty:1}},
+    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50, gives:{item:'raw_trout',name:'Raw Trout',icon:'🐟',qty:1}},
+    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70, gives:{item:'raw_salmon',name:'Raw Salmon',icon:'🐠',qty:1}},
+    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90, gives:{item:'raw_lobster',name:'Raw Lobster',icon:'🦞',qty:1}},
+    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100,gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐡',qty:1}},
   ],
   cooking: [
     {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
     {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',  name:'Raw Shrimp'},  gives:{item:'shrimp',   name:'Shrimp',   icon:'🦐',qty:1,heals:3}},
-    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:1, xp:40, interval:4000, needs:{item:'raw_sardine', name:'Raw Sardine'}, gives:{item:'sardine',  name:'Sardine',  icon:'🐟',qty:1,heals:4}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',  name:'Raw Trout'},   gives:{item:'trout',    name:'Trout',    icon:'🐟',qty:1,heals:7}},
-    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon', name:'Raw Salmon'},  gives:{item:'salmon',   name:'Salmon',   icon:'🐠',qty:1,heals:9}},
-    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'}, gives:{item:'lobster',  name:'Lobster',  icon:'🦞',qty:1,heals:12}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',name:'Raw Shrimp'},gives:{item:'shrimp',name:'Shrimp',icon:'🦐',qty:1,heals:3}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',name:'Raw Trout'},gives:{item:'trout',name:'Trout',icon:'🐟',qty:1,heals:7}},
+    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
+    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
     {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
-    {id:'cook_shark',     name:'Shark',     icon:'🦈',req:80,xp:210,interval:9000, needs:{item:'raw_shark',  name:'Raw Shark'},   gives:{item:'shark',    name:'Shark',    icon:'🦈',qty:1,heals:20}},
   ],
   smithing_smelt: [
     {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:5000, needs:{item:'iron_ore',   qty:2,name:'2x Iron Ore'},   gives:{item:'iron_bar',   name:'Iron Bar',   icon:'🔩',qty:1}},
@@ -1319,85 +1069,82 @@ const ACTIVITIES = {
   ],
   smithing_smith: [
     // Iron
-    {id:'iron_helm',     name:'Iron Full Helm',   icon:'🪖',req:1, xp:37, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_helm',name:'Iron Full Helm',icon:'🪖',qty:1,slot:'head',def:9}},
-    {id:'iron_body',     name:'Iron Platebody',   icon:'🛡️',req:1, xp:75, interval:6000, needs:{item:'iron_bar',qty:5,name:'5x Iron Bar'},   gives:{item:'iron_body',name:'Iron Platebody',icon:'🛡️',qty:1,slot:'body',def:18}},
-    {id:'iron_legs',     name:'Iron Platelegs',   icon:'👖',req:1, xp:62, interval:5500, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_legs',name:'Iron Platelegs',icon:'👖',qty:1,slot:'legs',def:14}},
-    {id:'iron_shield',   name:'Iron Kiteshield',  icon:'🛡️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_kite',name:'Iron Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:10}},
-    {id:'iron_long',     name:'Iron Longsword',   icon:'⚔️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_long',name:'Iron Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:10,str:8}},
-    {id:'iron_scim',     name:'Iron Scimitar',    icon:'⚔️',req:5, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},   gives:{item:'iron_scim',name:'Iron Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:10,str:9}},
-    {id:'iron_2h',       name:'Iron 2H Sword',    icon:'⚔️',req:6, xp:75, interval:6000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'},   gives:{item:'iron_2h',name:'Iron 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:15,str:14}},
-    {id:'iron_axe',      name:'Iron Axe',         icon:'🪓',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},   gives:{item:'iron_axe',name:'Iron Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:1}},
-    {id:'iron_pick',     name:'Iron Pickaxe',     icon:'⛏️',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},   gives:{item:'iron_pickaxe',name:'Iron Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:1}},
+    // Iron — armorStyle:'melee' gives +5% DR vs ranged when using melee weapon
+    {id:'iron_helm', name:'Iron Full Helm', icon:'🪖',req:1, xp:37, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_helm',name:'Iron Full Helm',icon:'🪖',qty:1,slot:'head',def:9,dr:1,armorStyle:'melee'}},
+    {id:'iron_body', name:'Iron Platebody', icon:'🛡️',req:1, xp:75, interval:6000, needs:{item:'iron_bar',qty:5,name:'5x Iron Bar'}, gives:{item:'iron_body',name:'Iron Platebody',icon:'🛡️',qty:1,slot:'body',def:18,dr:3,armorStyle:'melee'}},
+    {id:'iron_legs', name:'Iron Platelegs', icon:'👖',req:1, xp:62, interval:5500, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_legs',name:'Iron Platelegs',icon:'👖',qty:1,slot:'legs',def:14,dr:2,armorStyle:'melee'}},
+    {id:'iron_shield',name:'Iron Kiteshield',icon:'🛡️',req:1,xp:50, interval:5000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_kite',name:'Iron Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:10,dr:2}},
+    {id:'iron_long', name:'Iron Longsword', icon:'⚔️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_long',name:'Iron Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:12,str:12,weaponStyle:'melee'}},
+    {id:'iron_axe',  name:'Iron Axe',       icon:'🪓',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_axe',name:'Iron Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:1}},
+    {id:'iron_pick', name:'Iron Pickaxe',   icon:'⛏️',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_pickaxe',name:'Iron Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:1}},
     // Steel
-    {id:'steel_helm',    name:'Steel Full Helm',  icon:'🪖',req:5, xp:75, interval:6000, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_helm',name:'Steel Full Helm',icon:'🪖',qty:1,slot:'head',def:14}},
-    {id:'steel_body',    name:'Steel Platebody',  icon:'🛡️',req:5, xp:150,interval:8000, needs:{item:'steel_bar',qty:5,name:'5x Steel Bar'},  gives:{item:'steel_body',name:'Steel Platebody',icon:'🛡️',qty:1,slot:'body',def:28}},
-    {id:'steel_legs',    name:'Steel Platelegs',  icon:'👖',req:5, xp:125,interval:7000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_legs',name:'Steel Platelegs',icon:'👖',qty:1,slot:'legs',def:22}},
-    {id:'steel_shield',  name:'Steel Kiteshield', icon:'🛡️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_kite',name:'Steel Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:16}},
-    {id:'steel_long',    name:'Steel Longsword',  icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_long',name:'Steel Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:13}},
-    {id:'steel_scim',    name:'Steel Scimitar',   icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},  gives:{item:'steel_scim',name:'Steel Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:14}},
-    {id:'steel_2h',      name:'Steel 2H Sword',   icon:'⚔️',req:6, xp:150,interval:8000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'},  gives:{item:'steel_2h',name:'Steel 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:24,str:22}},
-    {id:'steel_axe',     name:'Steel Axe',        icon:'🪓',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},  gives:{item:'steel_axe',name:'Steel Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:2}},
-    {id:'steel_pick',    name:'Steel Pickaxe',    icon:'⛏️',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},  gives:{item:'steel_pickaxe',name:'Steel Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:2}},
+    {id:'steel_helm', name:'Steel Full Helm', icon:'🪖',req:5, xp:75, interval:6000, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_helm',name:'Steel Full Helm',icon:'🪖',qty:1,slot:'head',def:14,dr:2,armorStyle:'melee'}},
+    {id:'steel_body', name:'Steel Platebody', icon:'🛡️',req:5, xp:150,interval:8000, needs:{item:'steel_bar',qty:5,name:'5x Steel Bar'}, gives:{item:'steel_body',name:'Steel Platebody',icon:'🛡️',qty:1,slot:'body',def:28,dr:4,armorStyle:'melee'}},
+    {id:'steel_legs', name:'Steel Platelegs', icon:'👖',req:5, xp:125,interval:7000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_legs',name:'Steel Platelegs',icon:'👖',qty:1,slot:'legs',def:22,dr:3,armorStyle:'melee'}},
+    {id:'steel_shield',name:'Steel Kiteshield',icon:'🛡️',req:5,xp:100,interval:6500, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_kite',name:'Steel Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:16,dr:3}},
+    {id:'steel_long', name:'Steel Longsword', icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_long',name:'Steel Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:14,str:14,weaponStyle:'melee'}},
+    {id:'steel_axe',  name:'Steel Axe',       icon:'🪓',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_axe',name:'Steel Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:2}},
+    {id:'steel_pick', name:'Steel Pickaxe',   icon:'⛏️',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_pickaxe',name:'Steel Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:2}},
     // Mithril
-    {id:'mith_helm',     name:'Mithril Full Helm',icon:'🪖',req:20,xp:137,interval:7000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_helm',name:'Mithril Full Helm',icon:'🪖',qty:1,slot:'head',def:21}},
-    {id:'mith_body',     name:'Mithril Platebody',icon:'🛡️',req:20,xp:275,interval:9000, needs:{item:'mithril_bar',qty:5,name:'5x Mithril Bar'},gives:{item:'mith_body',name:'Mithril Platebody',icon:'🛡️',qty:1,slot:'body',def:42}},
-    {id:'mith_legs',     name:'Mithril Platelegs',icon:'👖',req:20,xp:225,interval:8000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_legs',name:'Mithril Platelegs',icon:'👖',qty:1,slot:'legs',def:34}},
-    {id:'mith_shield',   name:'Mithril Kiteshield',icon:'🛡️',req:20,xp:175,interval:7500,needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_kite',name:'Mithril Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:24}},
-    {id:'mith_long',     name:'Mithril Longsword',icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_long',name:'Mithril Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:26,str:22}},
-    {id:'mith_scim',     name:'Mithril Scimitar', icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'},gives:{item:'mith_scim',name:'Mithril Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:26,str:23}},
-    {id:'mith_2h',       name:'Mithril 2H Sword', icon:'⚔️',req:21,xp:275,interval:9000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'},gives:{item:'mith_2h',name:'Mithril 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:38,str:36}},
-    {id:'mith_axe',      name:'Mithril Axe',      icon:'🪓',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'},gives:{item:'mithril_axe',name:'Mithril Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:3}},
-    {id:'mith_pick',     name:'Mithril Pickaxe',  icon:'⛏️',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'},gives:{item:'mithril_pickaxe',name:'Mithril Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:3}},
+    {id:'mith_helm', name:'Mithril Full Helm', icon:'🪖',req:20,xp:137,interval:7000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_helm',name:'Mithril Full Helm',icon:'🪖',qty:1,slot:'head',def:21,dr:3,armorStyle:'melee'}},
+    {id:'mith_body', name:'Mithril Platebody', icon:'🛡️',req:20,xp:275,interval:9000, needs:{item:'mithril_bar',qty:5,name:'5x Mithril Bar'}, gives:{item:'mith_body',name:'Mithril Platebody',icon:'🛡️',qty:1,slot:'body',def:42,dr:6,armorStyle:'melee'}},
+    {id:'mith_legs', name:'Mithril Platelegs', icon:'👖',req:20,xp:225,interval:8000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_legs',name:'Mithril Platelegs',icon:'👖',qty:1,slot:'legs',def:34,dr:4,armorStyle:'melee'}},
+    {id:'mith_shield',name:'Mithril Kiteshield',icon:'🛡️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_kite',name:'Mithril Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:24,dr:4}},
+    {id:'mith_long', name:'Mithril Longsword', icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_long',name:'Mithril Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:16,weaponStyle:'melee'}},
+    {id:'mith_axe',  name:'Mithril Axe',       icon:'🪓',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_axe',name:'Mithril Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:3}},
+    {id:'mith_pick', name:'Mithril Pickaxe',   icon:'⛏️',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_pickaxe',name:'Mithril Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:3}},
     // Adamant
-    {id:'adam_helm',     name:'Adamant Full Helm',icon:'🪖',req:30,xp:200,interval:8000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_helm',name:'Adamant Full Helm',icon:'🪖',qty:1,slot:'head',def:28}},
-    {id:'adam_body',     name:'Adamant Platebody',icon:'🛡️',req:30,xp:400,interval:11000,needs:{item:'adamant_bar',qty:5,name:'5x Adamant Bar'},gives:{item:'adam_body',name:'Adamant Platebody',icon:'🛡️',qty:1,slot:'body',def:56}},
-    {id:'adam_legs',     name:'Adamant Platelegs',icon:'👖',req:30,xp:325,interval:9500, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_legs',name:'Adamant Platelegs',icon:'👖',qty:1,slot:'legs',def:46}},
-    {id:'adam_shield',   name:'Adamant Kiteshield',icon:'🛡️',req:30,xp:250,interval:9000,needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_kite',name:'Adamant Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:32}},
-    {id:'adam_long',     name:'Adamant Longsword',icon:'⚔️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_long',name:'Adamant Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:40,str:34}},
-    {id:'adam_scim',     name:'Adamant Scimitar', icon:'⚔️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'},gives:{item:'adam_scim',name:'Adamant Scimitar',icon:'⚔️',qty:1,slot:'weapon',atk:40,str:35}},
-    {id:'adam_2h',       name:'Adamant 2H Sword', icon:'⚔️',req:31,xp:400,interval:11000,needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'},gives:{item:'adam_2h',name:'Adamant 2H Sword',icon:'⚔️',qty:1,slot:'weapon',atk:58,str:55}},
-    {id:'adam_axe',      name:'Adamant Axe',      icon:'🪓',req:30,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'},gives:{item:'adamant_axe',name:'Adamant Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:4}},
-    {id:'adam_pick',     name:'Adamant Pickaxe',  icon:'⛏️',req:30,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'},gives:{item:'adamant_pickaxe',name:'Adamant Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:4}},
+    {id:'adam_helm', name:'Adamant Full Helm', icon:'🪖',req:30,xp:200,interval:8000,  needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_helm',name:'Adamant Full Helm',icon:'🪖',qty:1,slot:'head',def:28,dr:4,armorStyle:'melee'}},
+    {id:'adam_body', name:'Adamant Platebody', icon:'🛡️',req:30,xp:400,interval:11000, needs:{item:'adamant_bar',qty:5,name:'5x Adamant Bar'}, gives:{item:'adam_body',name:'Adamant Platebody',icon:'🛡️',qty:1,slot:'body',def:56,dr:8,armorStyle:'melee'}},
+    {id:'adam_legs', name:'Adamant Platelegs', icon:'👖',req:30,xp:325,interval:9500,  needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_legs',name:'Adamant Platelegs',icon:'👖',qty:1,slot:'legs',def:46,dr:6,armorStyle:'melee'}},
+    {id:'adam_shield',name:'Adamant Kiteshield',icon:'🛡️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_kite',name:'Adamant Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:32,dr:5}},
+    {id:'adam_long', name:'Adamant Longsword', icon:'⚔️',req:30,xp:250,interval:9000,  needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_long',name:'Adamant Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:18,str:18,weaponStyle:'melee'}},
+    {id:'adam_axe',  name:'Adamant Axe',       icon:'🪓',req:30,xp:125,interval:7000,  needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_axe',name:'Adamant Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:4}},
+    {id:'adam_pick', name:'Adamant Pickaxe',   icon:'⛏️',req:30,xp:125,interval:7000,  needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_pickaxe',name:'Adamant Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:4}},
   ],
   fletching: [
-    {id:'iron_bow',    name:'Iron Bow',    icon:'🏹',req:1, xp:20, interval:8000,  needs:{item:'logs',qty:2,name:'2x Logs'},              gives:{item:'iron_bow',    name:'Iron Bow',    icon:'🏹',qty:1,slot:'weapon',rng:9}},
-    {id:'steel_bow',   name:'Steel Bow',   icon:'🏹',req:5, xp:35, interval:10000, needs:{item:'oak_logs',qty:2,name:'2x Oak Logs'},       gives:{item:'steel_bow',   name:'Steel Bow',   icon:'🏹',qty:1,slot:'weapon',rng:18}},
-    {id:'mithril_bow', name:'Mithril Bow', icon:'🏹',req:20,xp:60, interval:13000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'mithril_bow', name:'Mithril Bow', icon:'🏹',qty:1,slot:'weapon',rng:32}},
-    {id:'adamant_bow', name:'Adamant Bow', icon:'🏹',req:30,xp:90, interval:16000, needs:{item:'yew_logs',qty:2,name:'2x Yew Logs'},       gives:{item:'adamant_bow', name:'Adamant Bow', icon:'🏹',qty:1,slot:'weapon',rng:50}},
+    // Ranged — precise (higher atk than str), armorStyle:'ranged' gets +5% DR vs magic
+    {id:'iron_bow',    name:'Iron Bow',    icon:'🏹',req:1, xp:20, interval:8000,  needs:{item:'logs',qty:2,name:'2x Logs'},              gives:{item:'iron_bow',    name:'Iron Bow',    icon:'🏹',qty:1,slot:'weapon',atk:14,str:10,weaponStyle:'ranged'}},
+    {id:'steel_bow',   name:'Steel Bow',   icon:'🏹',req:5, xp:35, interval:10000, needs:{item:'oak_logs',qty:2,name:'2x Oak Logs'},       gives:{item:'steel_bow',   name:'Steel Bow',   icon:'🏹',qty:1,slot:'weapon',atk:16,str:12,weaponStyle:'ranged'}},
+    {id:'mithril_bow', name:'Mithril Bow', icon:'🏹',req:20,xp:60, interval:13000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'mithril_bow', name:'Mithril Bow', icon:'🏹',qty:1,slot:'weapon',atk:18,str:14,weaponStyle:'ranged'}},
+    {id:'adamant_bow', name:'Adamant Bow', icon:'🏹',req:30,xp:90, interval:16000, needs:{item:'yew_logs',qty:2,name:'2x Yew Logs'},       gives:{item:'adamant_bow', name:'Adamant Bow', icon:'🏹',qty:1,slot:'weapon',atk:21,str:16,weaponStyle:'ranged'}},
   ],
   magecrafting: [
     // Staves
-    {id:'iron_staff',    name:'Iron Staff',    icon:'🪄',req:1, xp:30, interval:6000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_staff',   name:'Iron Staff',    icon:'🪄',qty:1,slot:'weapon',mag:8}},
-    {id:'steel_staff',   name:'Steel Staff',   icon:'🪄',req:5, xp:55, interval:8000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_staff',  name:'Steel Staff',   icon:'🪄',qty:1,slot:'weapon',mag:16}},
-    {id:'mithril_staff', name:'Mithril Staff', icon:'🪄',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_staff',name:'Mithril Staff', icon:'🪄',qty:1,slot:'weapon',mag:28}},
-    {id:'adamant_staff', name:'Adamant Staff', icon:'🪄',req:30,xp:130,interval:13000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_staff',name:'Adamant Staff', icon:'🪄',qty:1,slot:'weapon',mag:44}},
+    // Staves — magic (swingy: lower atk, higher str). armorStyle:'magic' gets +5% DR vs melee
+    {id:'iron_staff',    name:'Iron Staff',    icon:'🪄',req:1, xp:30, interval:6000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_staff',   name:'Iron Staff',    icon:'🪄',qty:1,slot:'weapon',atk:8, str:12,weaponStyle:'magic'}},
+    {id:'steel_staff',   name:'Steel Staff',   icon:'🪄',req:5, xp:55, interval:8000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_staff',  name:'Steel Staff',   icon:'🪄',qty:1,slot:'weapon',atk:10,str:14,weaponStyle:'magic'}},
+    {id:'mithril_staff', name:'Mithril Staff', icon:'🪄',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_staff',name:'Mithril Staff', icon:'🪄',qty:1,slot:'weapon',atk:12,str:16,weaponStyle:'magic'}},
+    {id:'adamant_staff', name:'Adamant Staff', icon:'🪄',req:30,xp:130,interval:13000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_staff',name:'Adamant Staff', icon:'🪄',qty:1,slot:'weapon',atk:14,str:18,weaponStyle:'magic'}},
     // Magic armour
-    {id:'iron_robe_top',    name:'Iron Robe Top',    icon:'👘',req:1, xp:25, interval:5000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_robe_top',   name:'Iron Robe Top',   icon:'👘',qty:1,slot:'body',mag:5,def:4}},
-    {id:'iron_robe_legs',   name:'Iron Robe Legs',   icon:'👖',req:1, xp:20, interval:5000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_robe_legs',  name:'Iron Robe Legs',  icon:'👖',qty:1,slot:'legs',mag:4,def:3}},
-    {id:'iron_hat',         name:'Iron Wizard Hat',  icon:'🎩',req:1, xp:15, interval:4000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_hat',        name:'Iron Wizard Hat', icon:'🎩',qty:1,slot:'head',mag:3,def:2}},
-    {id:'steel_robe_top',   name:'Steel Robe Top',   icon:'👘',req:5, xp:50, interval:7000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_robe_top',  name:'Steel Robe Top',  icon:'👘',qty:1,slot:'body',mag:9,def:7}},
-    {id:'steel_robe_legs',  name:'Steel Robe Legs',  icon:'👖',req:5, xp:40, interval:6000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_robe_legs', name:'Steel Robe Legs', icon:'👖',qty:1,slot:'legs',mag:7,def:5}},
-    {id:'steel_hat',        name:'Steel Wizard Hat', icon:'🎩',req:5, xp:30, interval:5000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_hat',       name:'Steel Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:5,def:4}},
-    {id:'mithril_robe_top', name:'Mithril Robe Top', icon:'👘',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_robe_top',name:'Mithril Robe Top',icon:'👘',qty:1,slot:'body',mag:16,def:12}},
-    {id:'mithril_robe_legs',name:'Mithril Robe Legs',icon:'👖',req:20,xp:75, interval:9000,  needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_robe_legs',name:'Mithril Robe Legs',icon:'👖',qty:1,slot:'legs',mag:12,def:9}},
-    {id:'mithril_hat',      name:'Mithril Wizard Hat',icon:'🎩',req:20,xp:55, interval:7000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_hat',     name:'Mithril Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:9,def:7}},
-    {id:'adamant_robe_top', name:'Adamant Robe Top', icon:'👘',req:30,xp:140,interval:14000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_robe_top',name:'Adamant Robe Top',icon:'👘',qty:1,slot:'body',mag:24,def:18}},
-    {id:'adamant_robe_legs',name:'Adamant Robe Legs',icon:'👖',req:30,xp:115,interval:12000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_robe_legs',name:'Adamant Robe Legs',icon:'👖',qty:1,slot:'legs',mag:18,def:14}},
-    {id:'adamant_hat',      name:'Adamant Wizard Hat',icon:'🎩',req:30,xp:85, interval:10000,needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_hat',     name:'Adamant Wizard Hat',icon:'🎩',qty:1,slot:'head',mag:13,def:10}},
+    // Magic robes — low def/dr (squishy) but armorStyle:'magic' gives +5% DR vs melee attacks
+    {id:'iron_robe_top',    name:'Iron Robe Top',      icon:'👘',req:1, xp:25, interval:5000,  needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'},       gives:{item:'iron_robe_top',   name:'Iron Robe Top',      icon:'👘',qty:1,slot:'body',def:5, dr:1,armorStyle:'magic'}},
+    {id:'iron_robe_legs',   name:'Iron Robe Legs',     icon:'👖',req:1, xp:20, interval:5000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_robe_legs',  name:'Iron Robe Legs',     icon:'👖',qty:1,slot:'legs',def:3, dr:1,armorStyle:'magic'}},
+    {id:'iron_hat',         name:'Iron Wizard Hat',    icon:'🎩',req:1, xp:15, interval:4000,  needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'},       gives:{item:'iron_hat',        name:'Iron Wizard Hat',    icon:'🎩',qty:1,slot:'head',def:2, dr:0,armorStyle:'magic'}},
+    {id:'steel_robe_top',   name:'Steel Robe Top',     icon:'👘',req:5, xp:50, interval:7000,  needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'},     gives:{item:'steel_robe_top',  name:'Steel Robe Top',     icon:'👘',qty:1,slot:'body',def:8, dr:2,armorStyle:'magic'}},
+    {id:'steel_robe_legs',  name:'Steel Robe Legs',    icon:'👖',req:5, xp:40, interval:6000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_robe_legs', name:'Steel Robe Legs',    icon:'👖',qty:1,slot:'legs',def:5, dr:1,armorStyle:'magic'}},
+    {id:'steel_hat',        name:'Steel Wizard Hat',   icon:'🎩',req:5, xp:30, interval:5000,  needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'},     gives:{item:'steel_hat',       name:'Steel Wizard Hat',   icon:'🎩',qty:1,slot:'head',def:4, dr:1,armorStyle:'magic'}},
+    {id:'mithril_robe_top', name:'Mithril Robe Top',   icon:'👘',req:20,xp:90, interval:10000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mithril_robe_top',name:'Mithril Robe Top',   icon:'👘',qty:1,slot:'body',def:13,dr:3,armorStyle:'magic'}},
+    {id:'mithril_robe_legs',name:'Mithril Robe Legs',  icon:'👖',req:20,xp:75, interval:9000,  needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_robe_legs',name:'Mithril Robe Legs', icon:'👖',qty:1,slot:'legs',def:9, dr:2,armorStyle:'magic'}},
+    {id:'mithril_hat',      name:'Mithril Wizard Hat', icon:'🎩',req:20,xp:55, interval:7000,  needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_hat',     name:'Mithril Wizard Hat', icon:'🎩',qty:1,slot:'head',def:7, dr:1,armorStyle:'magic'}},
+    {id:'adamant_robe_top', name:'Adamant Robe Top',   icon:'👘',req:30,xp:140,interval:14000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adamant_robe_top',name:'Adamant Robe Top',   icon:'👘',qty:1,slot:'body',def:18,dr:4,armorStyle:'magic'}},
+    {id:'adamant_robe_legs',name:'Adamant Robe Legs',  icon:'👖',req:30,xp:115,interval:12000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_robe_legs',name:'Adamant Robe Legs', icon:'👖',qty:1,slot:'legs',def:12,dr:3,armorStyle:'magic'}},
+    {id:'adamant_hat',      name:'Adamant Wizard Hat', icon:'🎩',req:30,xp:85, interval:10000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_hat',     name:'Adamant Wizard Hat', icon:'🎩',qty:1,slot:'head',def:8, dr:2,armorStyle:'magic'}},
   ],
   leatherworking: [
     // Leather (no bar needed — raw material)
-    {id:'leather_coif',     name:'Leather Coif',      icon:'🧢',req:1, xp:13, interval:4000, needs:{item:'leather',qty:1,name:'1x Leather'},             gives:{item:'leather_coif',    name:'Leather Coif',      icon:'🧢',qty:1,slot:'head',def:3,rng:2}},
-    {id:'leather_body',     name:'Leather Body',      icon:'🥋',req:1, xp:25, interval:5000, needs:{item:'leather',qty:3,name:'3x Leather'},             gives:{item:'leather_body',    name:'Leather Body',      icon:'🥋',qty:1,slot:'body',def:6,rng:4}},
-    {id:'leather_chaps',    name:'Leather Chaps',     icon:'👖',req:1, xp:18, interval:4000, needs:{item:'leather',qty:2,name:'2x Leather'},             gives:{item:'leather_chaps',   name:'Leather Chaps',     icon:'👖',qty:1,slot:'legs',def:4,rng:3}},
+    // Leather — ranged armor: armorStyle:'ranged' gives +5% DR vs magic attacks
+    {id:'leather_coif',     name:'Leather Coif',      icon:'🧢',req:1, xp:13, interval:4000, needs:{item:'leather',qty:1,name:'1x Leather'},             gives:{item:'leather_coif',    name:'Leather Coif',      icon:'🧢',qty:1,slot:'head',def:4, dr:1,armorStyle:'ranged'}},
+    {id:'leather_body',     name:'Leather Body',      icon:'🥋',req:1, xp:25, interval:5000, needs:{item:'leather',qty:3,name:'3x Leather'},             gives:{item:'leather_body',    name:'Leather Body',      icon:'🥋',qty:1,slot:'body',def:8, dr:2,armorStyle:'ranged'}},
+    {id:'leather_chaps',    name:'Leather Chaps',     icon:'👖',req:1, xp:18, interval:4000, needs:{item:'leather',qty:2,name:'2x Leather'},             gives:{item:'leather_chaps',   name:'Leather Chaps',     icon:'👖',qty:1,slot:'legs',def:6, dr:1,armorStyle:'ranged'}},
     // Hard Leather
-    {id:'hardleather_coif', name:'Hard Leather Coif', icon:'🧢',req:3, xp:22, interval:5000, needs:{item:'hard_leather',qty:1,name:'1x Hard Leather'},   gives:{item:'hardleather_coif',name:'Hard Leather Coif', icon:'🧢',qty:1,slot:'head',def:6,rng:4}},
-    {id:'hardleather_body', name:'Hard Leather Body', icon:'🥋',req:3, xp:43, interval:6000, needs:{item:'hard_leather',qty:3,name:'3x Hard Leather'},   gives:{item:'hardleather_body',name:'Hard Leather Body', icon:'🥋',qty:1,slot:'body',def:12,rng:8}},
-    {id:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',req:3, xp:30, interval:5000, needs:{item:'hard_leather',qty:2,name:'2x Hard Leather'},   gives:{item:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',qty:1,slot:'legs',def:8,rng:6}},
-    // Studded (Hard Leather + bar)
-    {id:'studded_chaps',    name:'Studded Chaps',     icon:'👖',req:10,xp:56, interval:7000, needs:{item:'hardleather_chaps',qty:1,item2:'iron_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Iron Bar'},   gives:{item:'studded_chaps',   name:'Studded Chaps',        icon:'👖',qty:1,slot:'legs',def:12,rng:10}},
-    {id:'mith_studded_chaps',name:'Mithril Studded Chaps',icon:'👖',req:20,xp:95,interval:9000,needs:{item:'hardleather_chaps',qty:1,item2:'mithril_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Mithril Bar'},gives:{item:'mith_studded_chaps',name:'Mithril Studded Chaps',icon:'👖',qty:1,slot:'legs',def:18,rng:16}},
-    {id:'adam_studded_chaps',name:'Adamant Studded Chaps',icon:'👖',req:30,xp:140,interval:11000,needs:{item:'hardleather_chaps',qty:1,item2:'adamant_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Adamant Bar'},gives:{item:'adam_studded_chaps',name:'Adamant Studded Chaps',icon:'👖',qty:1,slot:'legs',def:25,rng:22}},
+    {id:'hardleather_coif', name:'Hard Leather Coif', icon:'🧢',req:3, xp:22, interval:5000, needs:{item:'hard_leather',qty:1,name:'1x Hard Leather'},   gives:{item:'hardleather_coif',name:'Hard Leather Coif', icon:'🧢',qty:1,slot:'head',def:7, dr:2,armorStyle:'ranged'}},
+    {id:'hardleather_body', name:'Hard Leather Body', icon:'🥋',req:3, xp:43, interval:6000, needs:{item:'hard_leather',qty:3,name:'3x Hard Leather'},   gives:{item:'hardleather_body',name:'Hard Leather Body', icon:'🥋',qty:1,slot:'body',def:14,dr:3,armorStyle:'ranged'}},
+    {id:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',req:3, xp:30, interval:5000, needs:{item:'hard_leather',qty:2,name:'2x Hard Leather'},   gives:{item:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',qty:1,slot:'legs',def:10,dr:2,armorStyle:'ranged'}},
+    // Studded
+    {id:'studded_chaps',     name:'Studded Chaps',         icon:'👖',req:10,xp:56, interval:7000,  needs:{item:'hardleather_chaps',qty:1,item2:'iron_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Iron Bar'},    gives:{item:'studded_chaps',    name:'Studded Chaps',         icon:'👖',qty:1,slot:'legs',def:14,dr:3,armorStyle:'ranged'}},
+    {id:'mith_studded_chaps',name:'Mithril Studded Chaps', icon:'👖',req:20,xp:95, interval:9000,  needs:{item:'hardleather_chaps',qty:1,item2:'mithril_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Mithril Bar'},gives:{item:'mith_studded_chaps',name:'Mithril Studded Chaps', icon:'👖',qty:1,slot:'legs',def:20,dr:4,armorStyle:'ranged'}},
+    {id:'adam_studded_chaps',name:'Adamant Studded Chaps', icon:'👖',req:30,xp:140,interval:11000, needs:{item:'hardleather_chaps',qty:1,item2:'adamant_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Adamant Bar'},gives:{item:'adam_studded_chaps',name:'Adamant Studded Chaps', icon:'👖',qty:1,slot:'legs',def:28,dr:5,armorStyle:'ranged'}},
   ],
 };
 
@@ -1410,16 +1157,15 @@ function defaultState(){
   const skills={};
   SKILL_KEYS.forEach(k=>skills[k]={xp: k==='hitpoints'?xpForLevel(10):0});
   const startingBank = {
-    bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:4, str:3},
+    bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee'},
     bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'axe',     toolType:'axe',     tier:0},
     bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'pickaxe', toolType:'pickaxe', tier:0},
     bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'net',     toolType:'net',     tier:0},
-    shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon',  rng:5},
-    iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  mag:8},
-    shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5,  heals:3},
+    shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon',  atk:12, str:8, weaponStyle:'ranged'},
+    iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  atk:8, str:12, weaponStyle:'magic'},
+    shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
     leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
     hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
-    coins:          {id:'coins',          name:'Coins',          icon:'🪙', qty:100},
   };
   return {
     onboarded:false, name:'', avatar:'🧙', title:'Apprentice of Life',
@@ -1438,7 +1184,19 @@ function defaultState(){
 }
 
 function loadState(){
-  try{ const r=localStorage.getItem('habitscape_v1'); if(r) return JSON.parse(r); }catch(e){}
+  try{
+    const r=localStorage.getItem('habitscape_v1');
+    if(r){
+      const s=JSON.parse(r);
+      // Migration: transfer strength XP to attack and remove strength skill
+      if(s.skills?.strength){
+        if(!s.skills.attack) s.skills.attack={xp:0};
+        s.skills.attack.xp=(s.skills.attack.xp||0)+(s.skills.strength.xp||0);
+        delete s.skills.strength;
+      }
+      return s;
+    }
+  }catch(e){}
   return defaultState();
 }
 function saveState(){ localStorage.setItem('habitscape_v1',JSON.stringify(S)); }
@@ -1514,12 +1272,12 @@ window.addEventListener('DOMContentLoaded',()=>{
   // seed starter items for existing saves that have an empty bank
   if(S.onboarded && Object.keys(S.bank.items||{}).length===0){
     S.bank.items = {
-      bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:4, str:3},
+      bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee'},
       bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'axe',     toolType:'axe',     tier:0},
       bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'pickaxe', toolType:'pickaxe', tier:0},
       bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'net',     toolType:'net',     tier:0},
       shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon', rng:5},
-      iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  mag:8},
+      iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  atk:8, str:12, weaponStyle:'magic'},
       shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
       leather:        {id:'leather',        name:'Leather',        icon:'🟫', qty:20},
       hard_leather:   {id:'hard_leather',   name:'Hard Leather',   icon:'🟤', qty:10},
@@ -1579,7 +1337,6 @@ function showPane(id, btn){
   if(id==='quests') renderQuestsPane();
   if(id==='settings') renderSettingsPane();
   if(id==='store') renderStore();
-  if(id==='help') renderHelpPane();
   if(id==='leatherworking'){ buildActivityPane('leatherworking',ACTIVITIES.leatherworking); renderTanner(); }
 }
 
@@ -1593,17 +1350,11 @@ function renderAll(){
   renderEquipPane();
   updateActivityLevels();
   updateDayBadge();
-  renderBoostBadge();
 }
 
 function updateDayBadge(){
   const diff=Math.max(1,Math.round((new Date(todayStr()+'T12:00:00')-new Date(S.startDate+'T12:00:00'))/86400000)+1);
   document.getElementById('day-badge').textContent='DAY '+diff;
-}
-
-function renderBoostBadge(){
-  const el=document.getElementById('boost-badge');
-  if(el) el.style.display=hasActivityBoost()?'':'none';
 }
 
 // ═══════════════════════════════════════
@@ -1659,7 +1410,7 @@ function renderSkillDetail(k){
 }
 
 function updateActivityLevels(){
-  ['mining','woodcutting','fishing','cooking','smithing','fletching','magecrafting','leatherworking'].forEach(k=>{
+  ['mining','woodcutting','fishing','cooking','smithing','fletching','runecrafting','crafting'].forEach(k=>{
     const el=document.getElementById(k+'-lv');
     if(el) el.textContent=getLvForXP(S.skills[k]?.xp||0);
   });
@@ -1803,7 +1554,7 @@ function doHabit(e,id){
     const xp=50;
     if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
     addLog(h.skill==='activity'?'activity':h.skill,`<strong>${h.name}</strong> (×${h.timesToday})`,xp);
-    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderHabitsPane(); renderBoostBadge();
+    saveState(); xpPop(e.clientX,e.clientY,xp,false); renderHabitsPane();
   } else if(type==='daily'){
     if(h.doneToday) return;
     h.doneToday=true; h.streak=(h.streak||0)+1;
@@ -2124,18 +1875,18 @@ function renderEquipPane(){
     el.textContent=item?item.name:'';
     el.closest('.eq-slot').classList.toggle('filled',!!item);
   });
-  let atk=0,def=0,rng=0,mag=0,str=0;
+  let atk=0,def=0,str=0,dr=0;
   Object.values(S.equipped).forEach(item=>{
     if(!item) return;
-    if(item.atk) atk+=item.atk; if(item.def) def+=item.def;
-    if(item.rng) rng+=item.rng; if(item.mag) mag+=item.mag;
+    if(item.atk) atk+=item.atk;
     if(item.str) str+=item.str;
+    if(item.def) def+=item.def;
+    if(item.dr)  dr +=item.dr;
   });
   document.getElementById('eq-atk').textContent=atk;
-  document.getElementById('eq-def').textContent=def;
-  document.getElementById('eq-rng').textContent=rng;
-  document.getElementById('eq-mag').textContent=mag;
   document.getElementById('eq-str').textContent=str;
+  document.getElementById('eq-def').textContent=def;
+  document.getElementById('eq-dr').textContent=dr+'%';
 }
 
 function openEquipSlot(slot){
@@ -2354,7 +2105,7 @@ function buildActivityPane(skill, items, smithMode){
         <div class="ai-req">Level ${item.req}${locked?' — Locked':''}</div>
       </div>
       <div class="ai-right">
-        <div class="ai-xp">+${item.xp||1} XP</div>
+        <div class="ai-xp">+1 XP</div>
         <div class="ai-interval">${isGather?(interval/60000).toFixed(0)+'m':(interval/1000).toFixed(0)+'s'}</div>
       </div>
     `;
@@ -2399,35 +2150,12 @@ function setSmithMode(mode,btn){
 }
 
 function startActivity(skill,itemId,smithMode,focusMode){
-  // Warn if in combat
-  if(S.combat){
-    const monster=MONSTERS.find(m=>m.id===S.combat.monsterId);
-    const name=monster?monster.name:'the current monster';
-    openModal('Leave Combat?',`
-      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
-        You are fighting <strong style="color:var(--text)">${name}</strong>. Starting an activity will stop combat and any progress toward this kill will be lost.
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-gold" onclick="closeModal();doStartActivity('${skill}','${itemId}','${smithMode||''}',${!!focusMode})">Start Activity</button>
-      </div>
-    `);
-    return;
-  }
-  doStartActivity(skill,itemId,smithMode,focusMode);
-}
-
-function doStartActivity(skill,itemId,smithMode,focusMode){
-  stopCombat(true);
   stopActivity(null,true);
   S.activeActivity={skill,itemId,smithMode:smithMode||null,focusMode:!!focusMode};
   idleProgress=0;
   const isGather=['mining','woodcutting','fishing'].includes(skill);
   idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
-  // Apply habit boost to gathering
-  if(isGather && hasActivityBoost()) idleInterval=Math.floor(idleInterval*0.9);
   saveState(); buildActivityPanes(); showActivityBar(skill,itemId,smithMode,focusMode);
-  renderBoostBadge();
 }
 
 function getActivityItem(skill,itemId,smithMode){
@@ -2476,13 +2204,10 @@ function startIdleTick(){
 
 function idleTick(){
   if(!S.activeActivity) return;
-  // Recalculate interval in case tool changed or boost status changed
+  // Recalculate interval in case tool changed
   const {skill,itemId,smithMode,focusMode}=S.activeActivity;
   const isGather=['mining','woodcutting','fishing'].includes(skill);
-  let base = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
-  // Apply 10% speed boost if player has done at least one habit today
-  if(isGather && hasActivityBoost()) base = Math.floor(base * 0.9);
-  idleInterval = base;
+  idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
 
   idleProgress+=100;
   const pct=Math.min((idleProgress/idleInterval)*100,100);
@@ -2534,13 +2259,13 @@ function completeActivityCycle(){
     }
   }
 
-  // Award XP based on activity definition
-  awardXP(skill, item.xp || 1, false);
+  // Award 1 passive XP always
+  awardXP(skill,1,false);
 
   // Give item
   if(item.gives){
     const g=item.gives;
-    addToBank(g.item,{...g,id:g.item,icon:g.icon,name:g.name,slot:g.slot,atk:g.atk,def:g.def,rng:g.rng,mag:g.mag,heals:g.heals,str:g.str,toolType:g.toolType,tier:g.tier,qty:g.qty||1});
+    addToBank(g.item,{...g,id:g.item,icon:g.icon,name:g.name,slot:g.slot,atk:g.atk,str:g.str,def:g.def,dr:g.dr,armorStyle:g.armorStyle,weaponStyle:g.weaponStyle,heals:g.heals,toolType:g.toolType,tier:g.tier,qty:g.qty||1});
     showLootToast(g.icon,g.name,g.qty||1);
   }
 
@@ -2555,38 +2280,23 @@ let combatTimer=null;
 let combatStyle='attack'; // attack, defence, ranged, magic
 let combatBarTimer=null;
 let combatBarProgress=0;
-const BASE_COMBAT_INTERVAL = 3000;
-
-// Returns true if player has completed at least one habit today
-function hasActivityBoost(){
-  return (S.habits||[]).some(h=>
-    (h.type==='habit' && (h.timesToday||0)>0) ||
-    (h.type==='daily' && h.doneToday) ||
-    (h.type==='milestone' && h.doneToday)
-  );
-}
-
-// Get current combat interval accounting for habit boost
-function getCombatInterval(){
-  return hasActivityBoost() ? Math.floor(BASE_COMBAT_INTERVAL * 0.9) : BASE_COMBAT_INTERVAL;
-}
+const COMBAT_INTERVAL=3000;
 
 function startCombatBar(){
   if(combatBarTimer) clearInterval(combatBarTimer);
   combatBarProgress=0;
   combatBarTimer=setInterval(()=>{
     if(!S.combat){ clearInterval(combatBarTimer); combatBarTimer=null; return; }
-    const ci=getCombatInterval();
-    combatBarProgress=Math.min(combatBarProgress+100, ci);
-    const pct=(combatBarProgress/ci)*100;
+    combatBarProgress=Math.min(combatBarProgress+100, COMBAT_INTERVAL);
+    const pct=(combatBarProgress/COMBAT_INTERVAL)*100;
     const fill=document.getElementById('idle-combat-fill');
     const timer=document.getElementById('idle-combat-timer');
     if(fill) fill.style.width=pct+'%';
     if(timer){
-      const secsLeft=Math.max(0,Math.ceil((ci-combatBarProgress)/1000));
+      const secsLeft=Math.max(0,Math.ceil((COMBAT_INTERVAL-combatBarProgress)/1000));
       timer.textContent=secsLeft>0?secsLeft+'s':'';
     }
-    if(combatBarProgress>=ci) combatBarProgress=0;
+    if(combatBarProgress>=COMBAT_INTERVAL) combatBarProgress=0;
   },100);
 }
 
@@ -2596,17 +2306,22 @@ function buildMonsterList(){
   MONSTERS.forEach(m=>{
     const div=document.createElement('div');
     div.className='monster-card'+(S.combat?.monsterId===m.id?' active-monster':'');
+    // Calculate live hit chance and max hit for this monster
+    const style = combatStyle==='defence'?'attack':combatStyle;
+    const skillLv = getLvForXP(S.skills[style]?.xp||0);
+    const {gearAtk,gearStr} = getGearStats();
+    const hitPct = Math.round(calcHitChance(skillLv, gearAtk, m.defLv) * 100);
+    const maxHit = calcMaxHit(skillLv, gearStr);
+    const hitColor = hitPct>=80?'#6dbf5a':hitPct>=60?'#c9a84c':'#c05040';
     div.innerHTML=`
       <div class="mc-icon">${m.icon}</div>
       <div class="mc-info">
         <div class="mc-name">${m.name}</div>
         <div class="mc-level">Combat Level ${m.level}</div>
-        <div class="mc-drops">Drops: ${[
-          ...(m.drops.always||[]),
-          ...(m.drops.common||[]),
-          ...(m.drops.uncommon||[]),
-          ...(m.drops.rare||[]),
-        ].map(d=>resolveItem(d.id).name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(', ')}${(m.drops.unique||[]).length?' + ✨rare':''}
+        <div class="mc-drops" style="font-size:11px;color:var(--text-d)">
+          <span style="color:${hitColor}">Hit: ${hitPct}%</span>
+          &nbsp;·&nbsp;Max: ${maxHit}
+          &nbsp;·&nbsp;Def: ${m.defLv}
         </div>
       </div>
       <div class="mc-combat-lv">${m.level}</div>
@@ -2621,9 +2336,9 @@ function updateCombatStyles(){
   const bar=document.getElementById('combat-style-bar'); if(!bar) return;
   // Determine available styles based on weapon
   let styles=[];
-  if(!weapon||weapon.atk){ styles=['attack','defence']; }
-  if(weapon?.rng){ styles=['ranged']; }
-  if(weapon?.mag){ styles=['magic']; }
+  if(!weapon || weapon.weaponStyle==='melee' || (!weapon.weaponStyle && weapon.atk)){ styles=['attack','defence']; }
+  if(weapon?.weaponStyle==='ranged'){ styles=['ranged']; }
+  if(weapon?.weaponStyle==='magic'){  styles=['magic']; }
   bar.innerHTML=styles.map(s=>`<button class="cs-btn ${combatStyle===s?'active-cs':''}" onclick="setCombatStyle('${s}')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('');
 }
 
@@ -2633,31 +2348,9 @@ function setCombatStyle(style){
 }
 
 function startCombat(monsterId){
-  const monster=MONSTERS.find(m=>m.id===monsterId);
-  if(!monster) return;
-
-  // Warn if an activity is currently running
-  if(S.activeActivity){
-    const actName = S.activeActivity.skill.charAt(0).toUpperCase()+S.activeActivity.skill.slice(1);
-    openModal('Start Combat?',`
-      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
-        You are currently <strong style="color:var(--text)">${actName}</strong>. Starting combat will stop this activity.
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-gold" onclick="closeModal();doStartCombat('${monsterId}')">Fight</button>
-      </div>
-    `);
-    return;
-  }
-  doStartCombat(monsterId);
-}
-
-function doStartCombat(monsterId){
-  const monster=MONSTERS.find(m=>m.id===monsterId);
-  if(!monster) return;
-  stopActivity(null,true);
   stopCombat(true);
+  const monster=MONSTERS.find(m=>m.id===monsterId);
+  if(!monster) return;
   S.combat={monsterId, monsterHp:monster.maxhp, style:combatStyle};
   buildMonsterList();
   updateCombatStyles();
@@ -2671,28 +2364,13 @@ function doStartCombat(monsterId){
   clearCombatLog();
   addCombatLog(`You attack the ${monster.name}!`,'info');
   saveState();
-  combatTimer=setInterval(()=>combatTick(monster),getCombatInterval());
+  combatTimer=setInterval(()=>combatTick(monster),3000);
   startCombatBar();
   updateAutoEatStatus();
-  renderBoostBadge();
-}
-
-function fleeCombat(){
-  if(!S.combat) return;
-  const monster=MONSTERS.find(m=>m.id===S.combat.monsterId);
-  const name=monster?monster.name:'the monster';
-  openModal('Flee Combat?',`
-    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px">
-      Stop fighting <strong style="color:var(--text)">${name}</strong>? Any progress toward this kill will be lost.
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-dim" onclick="closeModal()">Keep Fighting</button>
-      <button class="btn btn-red" onclick="closeModal();stopCombat()">Flee</button>
-    </div>
-  `);
 }
 
 function stopCombat(silent){
+  if(combatTimer){ clearInterval(combatTimer); combatTimer=null; }
   if(combatBarTimer){ clearInterval(combatBarTimer); combatBarTimer=null; }
   const fill=document.getElementById('idle-combat-fill');
   const timer=document.getElementById('idle-combat-timer');
@@ -2705,19 +2383,72 @@ function stopCombat(silent){
   if(!silent) showToast('Fled!','You escaped combat.',true);
 }
 
+function getGearStats(){
+  // Sum atk, str, def, dr from all equipped items
+  let gearAtk=0, gearStr=0, gearDef=0, gearDR=0, weaponStyle='melee';
+  Object.values(S.equipped).forEach(item=>{
+    if(!item) return;
+    if(item.atk) gearAtk+=item.atk;
+    if(item.str) gearStr+=item.str;
+    if(item.def) gearDef+=item.def;
+    if(item.dr)  gearDR +=item.dr;
+    if(item.weaponStyle) weaponStyle=item.weaponStyle;
+  });
+  return {gearAtk,gearStr,gearDef,gearDR,weaponStyle};
+}
+
+function calcHitChance(skillLv, gearAtk, monsterDefLv){
+  // hitChance = clamp(playerRating / (playerRating + monsterRating), 0.40, 0.99)
+  const playerRating = skillLv + gearAtk;
+  const monsterRating = monsterDefLv || 1;
+  const ratio = playerRating / (playerRating + monsterRating);
+  return Math.min(0.99, Math.max(0.40, ratio));
+}
+
+function calcMaxHit(skillLv, gearStr){
+  return Math.floor((skillLv + gearStr) / 7) + 1;
+}
+
+function getStyleDRBonus(weaponStyle, monsterStyle){
+  // Weapon style determines DR bonus vs certain incoming attack types
+  // melee weapon → +5% DR vs ranged attacks
+  // ranged weapon → +5% DR vs magic attacks
+  // magic weapon  → +5% DR vs melee attacks
+  const counters = { melee:'ranged', ranged:'magic', magic:'melee' };
+  return (counters[weaponStyle] === monsterStyle) ? 5 : 0;
+}
+
 function combatTick(monster){
   if(!S.combat) return;
-  const plLv=getLvForXP(S.skills[combatStyle==='defence'?'attack':combatStyle]?.xp||0);
-  const defLv=getLvForXP(S.skills.defence?.xp||0);
-  // Player attacks
-  const playerDmg=Math.max(0,Math.floor(Math.random()*(plLv+5))-Math.floor(Math.random()*(monster.def/2)));
-  S.combat.monsterHp=Math.max(0,S.combat.monsterHp-playerDmg);
+  const style = combatStyle==='defence' ? 'attack' : combatStyle;
+  const skillLv = getLvForXP(S.skills[style]?.xp||0);
+  const defLv   = getLvForXP(S.skills.defence?.xp||0);
+  const {gearAtk,gearStr,gearDef,gearDR,weaponStyle} = getGearStats();
+
+  // ── Player attacks monster ──────────────────────────────────────────────
+  const hitChance = calcHitChance(skillLv, gearAtk, monster.defLv);
+  let playerDmg = 0;
+  if(Math.random() < hitChance){
+    const maxHit = calcMaxHit(skillLv, gearStr);
+    playerDmg = Math.floor(Math.random() * maxHit) + 1;
+  }
+  S.combat.monsterHp = Math.max(0, S.combat.monsterHp - playerDmg);
   if(playerDmg>0) addCombatLog(`You hit ${monster.name} for ${playerDmg} damage.`,'hit-monster');
   else addCombatLog(`You miss the ${monster.name}.`,'info');
 
-  // Monster attacks
-  const monsterDmg=Math.max(0,Math.floor(Math.random()*(monster.atk+3))-Math.floor(Math.random()*(defLv+2)));
-  S.hp.current=Math.max(0,S.hp.current-monsterDmg);
+  // ── Monster attacks player ──────────────────────────────────────────────
+  // Monster hit chance: simple roll vs player defence
+  const monsterStyle = monster.style || 'melee';
+  const playerDefRating = defLv + gearDef;
+  const monsterHitChance = calcHitChance(monster.defLv, 0, playerDefRating);
+  let monsterDmg = 0;
+  if(Math.random() < monsterHitChance){
+    const rawDmg = Math.floor(Math.random() * monster.atk) + 1;
+    // Apply DR + style bonus DR
+    const totalDR = Math.min(75, gearDR + getStyleDRBonus(weaponStyle, monsterStyle));
+    monsterDmg = Math.max(0, Math.floor(rawDmg * (1 - totalDR / 100)));
+  }
+  S.hp.current = Math.max(0, S.hp.current - monsterDmg);
   if(monsterDmg>0) addCombatLog(`${monster.name} hits you for ${monsterDmg} damage.`,'hit-player');
   else addCombatLog(`${monster.name} misses.`,'info');
 
@@ -2742,21 +2473,17 @@ function combatTick(monster){
   if(S.combat.monsterHp<=0){
     addCombatLog(`You defeated the ${monster.name}!`,'hit-monster');
     S.monstersKilled=(S.monstersKilled||0)+1;
+    // XP — only if relevant habit done today
     const style=S.combat.style||combatStyle;
-    awardCombatXP(style,monster.xp);
-    // Loot — use tiered drop table system
-    const drops = rollDrops(monster);
-    drops.forEach(drop => {
-      addToBank(drop.id, {id:drop.id, name:drop.name, icon:drop.icon, qty:drop.qty});
-      if(drop.tier==='unique'){
-        addCombatLog(`🌟 RARE DROP: ${drop.qty}x ${drop.name}!`,'loot');
-        showLootToast(drop.icon, drop.name, drop.qty, true);
-      } else if(drop.tier==='veryRare'){
-        addCombatLog(`✨ ${drop.qty}x ${drop.name}!`,'loot');
-        showLootToast(drop.icon, drop.name, drop.qty, false);
-      } else if(drop.tier!=='always' || drop.id!=='bones' && drop.id!=='big_bones' && drop.id!=='dragon_bones'){
-        addCombatLog(`Loot: ${drop.qty}x ${drop.name}`,'loot');
-        showLootToast(drop.icon, drop.name, drop.qty, false);
+    const hasHabit=(S.habits||[]).some(h=>(h.skill===style||h.skill==='attack')&&h.doneToday);
+    if(hasHabit) awardCombatXP(style,monster.xp);
+    // Loot
+    monster.drops.forEach(drop=>{
+      if(Math.random()<drop.chance){
+        const qty=drop.qty||1;
+        addToBank(drop.item,{...drop,id:drop.item,qty});
+        addCombatLog(`Loot: ${qty}x ${drop.name}`,'loot');
+        showLootToast(drop.icon,drop.name,qty);
       }
     });
     clearInterval(combatTimer);
@@ -2764,7 +2491,7 @@ function combatTick(monster){
     combatTimer=null;
     S.combat.monsterHp=monster.maxhp;
     updateCombatHP(monster);
-    setTimeout(()=>{ if(S.combat){ combatTimer=setInterval(()=>combatTick(monster),getCombatInterval()); startCombatBar(); } },1000);
+    setTimeout(()=>{ if(S.combat){ combatTimer=setInterval(()=>combatTick(monster),3000); startCombatBar(); } },1000);
     return;
   }
 
@@ -2874,21 +2601,12 @@ function showToast(title,sub,ok){
 }
 
 let lootT=null;
-function showLootToast(icon,name,qty,isUnique){
+function showLootToast(icon,name,qty){
   const t=document.getElementById('loot-toast');
-  const item=document.getElementById('loot-item');
-  if(isUnique){
-    t.style.border='1px solid var(--gold)';
-    t.style.background='rgba(201,168,76,0.15)';
-    item.innerHTML=`<span style="color:var(--gold);font-weight:bold">🌟 RARE! </span>${icon||'📦'} ${qty}x ${name}`;
-  } else {
-    t.style.border='';
-    t.style.background='';
-    item.textContent=(icon||'📦')+' '+qty+'x '+name;
-  }
+  document.getElementById('loot-item').textContent=(icon||'📦')+' '+qty+'x '+name;
   t.classList.add('show');
   if(lootT) clearTimeout(lootT);
-  lootT=setTimeout(()=>t.classList.remove('show'), isUnique ? 4000 : 2500);
+  lootT=setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 // ═══════════════════════════════════════
@@ -2962,8 +2680,8 @@ function tanHide(recipeId, qty){
 const ITEM_VALUES = {
   // Raw materials
   iron_ore:4, steel_ore:8, mithril_ore:10, adamant_ore:18,
-  logs:2, oak_logs:5, willow_logs:12, maple_logs:20, yew_logs:25,
-  raw_shrimp:2, raw_sardine:4, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30, raw_shark:60,
+  logs:2, oak_logs:5, willow_logs:12, yew_logs:25,
+  raw_shrimp:2, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30,
   raw_chicken:1, raw_beef:2, cowhide:4,
   rune_essence:3, leather:3, hard_leather:8,
   green_hide:30, black_hide:80, green_leather:50, black_leather:120,
@@ -2971,7 +2689,7 @@ const ITEM_VALUES = {
   // Bars
   iron_bar:10, steel_bar:25, mithril_bar:50, adamant_bar:90,
   // Cooked food
-  shrimp:3, sardine:5, beef:4, chicken:3, trout:12, salmon:18, lobster:30, swordfish:40, shark:100,
+  shrimp:3, beef:4, chicken:3, trout:12, salmon:18, lobster:30, swordfish:40,
   // Weapons / armour — sell value lower than craft cost
   iron_long:30, iron_scim:32, iron_2h:45, iron_helm:20, iron_body:55, iron_legs:40, iron_kite:30,
   steel_long:60, steel_scim:62, steel_2h:90, steel_helm:40, steel_body:110, steel_legs:80, steel_kite:60,
@@ -3118,75 +2836,6 @@ function sellItem(itemId, qty){
   renderStore();
 }
 // ═══════════════════════════════════════
-function renderHelpPane(){
-  const el=document.getElementById('help-content'); if(!el) return;
-  const sections=[
-    {
-      icon:'🌟', title:'Getting Started',
-      body:`LifeSkills is a habit tracker where your real-world actions train a fantasy RPG character. Every habit you complete awards XP to a skill of your choice. Level up your skills by doing real things — working out trains Attack, meditating trains Magic, cooking real food trains Cooking. The game world grows as you do.`
-    },
-    {
-      icon:'📊', title:'Your Skills',
-      body:`Open the <strong>Skills</strong> tab to see your skill grid. Each skill has a level from 1–99 based on XP earned. Your <strong>Total Level</strong> is the sum of all skill levels — the main measure of your overall progress. Hitpoints is a special skill trained passively through combat. Click any skill tile to see your XP progress and what you can unlock next.`
-    },
-    {
-      icon:'📋', title:'Habits, Dailies & Milestones',
-      body:`There are three types of habits:<br><br>
-      <strong style="color:var(--green-m)">Habits</strong> — Repeatable, unlimited per day. Award <strong>50 XP</strong> per tap. Great for things you do multiple times (drinking water, short walks).<br><br>
-      <strong style="color:var(--gold)">Dailies</strong> — Once per day. Award <strong>500 XP</strong> and build a streak. Missing a day resets your streak. Best for consistent daily goals like workouts or journaling.<br><br>
-      <strong style="color:var(--fire)">Milestones</strong> — One-time achievements. Award <strong>10,000 XP</strong>. Use these for big life goals like running your first 5K or quitting something for 30 days.`
-    },
-    {
-      icon:'🔥', title:'Resistances',
-      body:`Resistances (Vices) track things you are trying to stop doing — smoking, alcohol, junk food, etc. Tap the row each day you successfully resisted. Your streak grows and so does the XP reward: <strong>Day 1 = 100 XP, Day 2 = 150 XP</strong>, adding 50 per day up to a max of 2,000 XP. Missing a day resets your streak to zero. Use the <em>relapsed</em> button honestly — the point is progress, not perfection.`
-    },
-    {
-      icon:'⚡', title:'Activity Speed Boost',
-      body:`Complete at least one habit today and you will earn a <strong style="color:var(--green-m)">+10% Speed Boost</strong> on all gathering skills and combat. You will see the boost indicator in the top bar when it is active. This is the direct link between your real-world effort and your in-game performance — do something, move faster.`
-    },
-    {
-      icon:'⚔️', title:'Combat',
-      body:`Go to the <strong>Combat</strong> tab to fight monsters. Choose a combat style — <strong>Attack</strong> or <strong>Defence</strong> for melee, <strong>Ranged</strong> for bows, <strong>Magic</strong> for staves. The style you use determines which skill gains XP. Hitpoints trains passively alongside any combat skill. Enable <strong>Auto-Eat</strong> to automatically consume food when your HP drops below 50%. If you die you respawn at 30% HP. Starting combat will stop any active gathering activity.`
-    },
-    {
-      icon:'⛏️', title:'Gathering Skills',
-      body:`<strong>Mining</strong>, <strong>Woodcutting</strong>, and <strong>Fishing</strong> are idle skills — equip the right tool from your Inventory first (axe for woodcutting, pickaxe for mining, net for fishing), then pick a resource and it runs automatically. Better tools speed up gathering. Higher level resources give more XP per action. Starting a gathering skill will stop any active combat.`
-    },
-    {
-      icon:'🍳', title:'Crafting Skills',
-      body:`<strong>Cooking</strong>, <strong>Smithing</strong>, <strong>Fletching</strong>, <strong>Magecrafting</strong>, and <strong>Leatherworking</strong> convert materials into useful items. Each recipe requires ingredients in your inventory and takes a few seconds per item. Cooked food heals HP in combat. Smithed gear improves your combat stats. The <strong>Leatherworking</strong> tab also has a Tanner to convert hides into leather.`
-    },
-    {
-      icon:'🎒', title:'Inventory & Equipment',
-      body:`Your <strong>Inventory</strong> (bank) holds up to 50 item stacks. Open any item to equip it, eat it, or destroy it. The <strong>Equip</strong> tab shows your current gear and total combat stats. Tools (axe, pickaxe, net) have their own equipment slots separate from combat gear — you can carry a weapon and tools simultaneously.`
-    },
-    {
-      icon:'🏪', title:'The Store',
-      body:`Sell unwanted items for <strong>Coins</strong> at the Store. Prices start at 70% of base value and drop to 50% as you sell more of the same item. Prices reset hourly. Use coins to pay the Tanner in the Leatherworking tab to convert dragonhide into leather.`
-    },
-    {
-      icon:'📜', title:'Quests',
-      body:`Quests track your achievements automatically. When you complete a quest's condition it will appear in the <strong>Quests</strong> tab ready to claim. You choose which skill receives the XP reward — use this to boost the skill you care about most.`
-    },
-  ];
-
-  el.innerHTML=`
-    <div class="activity-header" style="margin-bottom:4px">
-      <div class="act-icon">📖</div>
-      <div><div class="act-title">Help & Guide</div><div class="act-sub">Everything you need to know</div></div>
-    </div>
-    ${sections.map(s=>`
-      <div class="card" style="margin-bottom:8px;padding:12px 14px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:18px">${s.icon}</span>
-          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;color:var(--gold)">${s.title}</div>
-        </div>
-        <div style="font-size:12px;color:var(--text-m);line-height:1.7">${s.body}</div>
-      </div>
-    `).join('')}
-  `;
-}
-
 function renderSettingsPane(){
   const el=document.getElementById('settings-name');
   if(el) el.textContent=S.name||'—';
