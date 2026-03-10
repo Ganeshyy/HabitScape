@@ -430,12 +430,37 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .xp-pop.combat-xp{color:var(--red);text-shadow:0 0 10px rgba(192,80,64,.7)}
 @keyframes xpFloat{0%{opacity:0;transform:translateY(0) scale(.8)}20%{opacity:1;transform:translateY(-8px) scale(1.05)}80%{opacity:1;transform:translateY(-34px)}100%{opacity:0;transform:translateY(-50px) scale(.9)}}
 
-.levelup-overlay{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);border:2px solid var(--gold);padding:20px 40px;text-align:center;z-index:9998;box-shadow:0 0 50px rgba(201,168,76,.3);animation:lvlFlash 2.5s ease forwards}
-.levelup-overlay.show{display:block}
-@keyframes lvlFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.02)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.95)}}
-.lu-pre{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-d);text-transform:uppercase}
-.lu-skill{font-family:'Cinzel',serif;font-size:24px;color:var(--gold-l);font-weight:700;margin:3px 0}
-.lu-sub{font-size:13px;font-style:italic;color:var(--text-m)}
+/* ── Level Up Modal ── */
+.lu-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9997;backdrop-filter:blur(2px)}
+.lu-backdrop.show{display:block}
+.lu-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;max-width:360px;background:#0a0a0f;border:2px solid var(--gold);border-radius:4px;padding:32px 28px;text-align:center;z-index:9998;box-shadow:0 0 60px rgba(201,168,76,0.25)}
+.lu-box.show{display:block;animation:luPop .35s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes luPop{from{opacity:0;transform:translate(-50%,-50%) scale(0.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.lu-corner{position:absolute;width:14px;height:14px;border-color:var(--gold);border-style:solid}
+.lu-corner.tl{top:7px;left:7px;border-width:2px 0 0 2px}
+.lu-corner.tr{top:7px;right:7px;border-width:2px 2px 0 0}
+.lu-corner.bl{bottom:7px;left:7px;border-width:0 0 2px 2px}
+.lu-corner.br{bottom:7px;right:7px;border-width:0 2px 2px 0}
+.lu-icon{font-size:44px;display:block;margin-bottom:6px;animation:luBounce .5s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes luBounce{from{transform:scale(0)}60%{transform:scale(1.2)}to{transform:scale(1)}}
+.lu-pre{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-d);text-transform:uppercase;margin-bottom:2px}
+.lu-number{font-family:'Cinzel',serif;font-size:72px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 30px rgba(201,168,76,0.7);animation:luGlow 1.5s ease-in-out infinite}
+@keyframes luGlow{0%,100%{text-shadow:0 0 20px rgba(201,168,76,0.5)}50%{text-shadow:0 0 50px rgba(201,168,76,1),0 0 80px rgba(201,168,76,0.4)}}
+.lu-skill-name{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);margin:4px 0 14px;letter-spacing:1px}
+.lu-flavor{font-style:italic;color:#666;font-size:13px;margin-bottom:22px;line-height:1.5}
+.lu-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:10px 28px;cursor:pointer;transition:all .2s;width:100%}
+.lu-btn:hover{background:var(--gold);color:#000}
+.lu-canvas{position:absolute;inset:0;pointer-events:none;border-radius:4px}
+/* Unlocks box */
+.lu-unlocks-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.lu-cat-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:#555;text-transform:uppercase;border-bottom:1px solid #1a1a1a;padding-bottom:4px;margin-bottom:8px;margin-top:14px}
+.lu-unlock-item{display:flex;align-items:center;gap:10px;padding:5px 0;color:#bbb;font-size:13px;text-align:left}
+.lu-unlock-item .lu-ui{font-size:18px;min-width:24px}
+.lu-unlock-item .lu-un{flex:1}
+.lu-unlock-item .lu-ulv{font-family:'Cinzel',serif;font-size:9px;color:#555;letter-spacing:1px}
+.lu-unlock-item.lu-new .lu-un{color:var(--gold)}
+.lu-unlock-item.lu-new .lu-ulv{color:var(--gold-d)}
+.lu-unlocks-scroll{max-height:260px;overflow-y:auto;margin-bottom:16px}
 
 .toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg);border:1px solid var(--red-d);padding:9px 18px;text-align:center;z-index:9997;animation:toastUp 2.8s ease forwards;width:88%;max-width:360px}
 .toast.show{display:block}
@@ -462,11 +487,25 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
   <button class="btn btn-gold" onclick="completeOnboarding()">Begin Your Journey</button>
 </div>
 
-<!-- Level up -->
-<div class="levelup-overlay" id="lu">
+<!-- Level Up System -->
+<div class="lu-backdrop" id="lu-backdrop" onclick="luContinue()"></div>
+<div class="lu-box" id="lu-box1">
+  <div class="lu-corner tl"></div><div class="lu-corner tr"></div>
+  <div class="lu-corner bl"></div><div class="lu-corner br"></div>
+  <canvas class="lu-canvas" id="lu-canvas"></canvas>
+  <span class="lu-icon" id="lu-icon">⚔️</span>
   <div class="lu-pre">✦ Level Up ✦</div>
-  <div class="lu-skill" id="lu-skill"></div>
-  <div class="lu-sub"   id="lu-sub"></div>
+  <div class="lu-number" id="lu-number">1</div>
+  <div class="lu-skill-name" id="lu-skill-name">Attack</div>
+  <div class="lu-flavor" id="lu-flavor">Your dedication is paying off.</div>
+  <button class="lu-btn" onclick="luContinue()">Click to Continue</button>
+</div>
+<div class="lu-box" id="lu-box2">
+  <div class="lu-corner tl"></div><div class="lu-corner tr"></div>
+  <div class="lu-corner bl"></div><div class="lu-corner br"></div>
+  <div class="lu-unlocks-title" id="lu-unlocks-title">Unlocks</div>
+  <div class="lu-unlocks-scroll" id="lu-unlocks-list"></div>
+  <button class="lu-btn" onclick="luDone()">Done</button>
 </div>
 
 <!-- Toast -->
@@ -1615,7 +1654,7 @@ function awardXP(skillKey,amount,isVice){
   S.totalXP=(S.totalXP||0)+amount;
   const newLv=getLvForXP(S.skills[skillKey].xp);
   if(newLv>oldLv){
-    setTimeout(()=>showLevelUp(SKILLS[skillKey].name,newLv),350);
+    setTimeout(()=>showLevelUp(skillKey, newLv, oldLv),350);
     updateActivityLevels();
     buildActivityPanes();
   }
@@ -1630,7 +1669,7 @@ function awardXP(skillKey,amount,isVice){
       S.hp.max=newHpLv;
       if(S.hp.current>S.hp.max) S.hp.current=S.hp.max;
       updateHPBar();
-      setTimeout(()=>showLevelUp('Hitpoints',newHpLv),700);
+      setTimeout(()=>showLevelUp('hitpoints', newHpLv, oldHpLv),700);
     }
   }
 }
@@ -2582,12 +2621,285 @@ function xpPop(x,y,amount,isVice){
   setTimeout(()=>el.remove(),1500);
 }
 
-function showLevelUp(skillName,lv){
-  const el=document.getElementById('lu');
-  document.getElementById('lu-skill').textContent=skillName;
-  document.getElementById('lu-sub').textContent='You have reached level '+lv;
-  el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2600);
+// ═══════════════════════════════════════
+// LEVEL UP SYSTEM
+// ═══════════════════════════════════════
+
+// Master unlock table — skill → [{req, name, icon, category}]
+const SKILL_UNLOCKS = {
+  attack: [
+    {req:1,  name:'Bronze Sword',     icon:'🗡️', cat:'Wield'},
+    {req:1,  name:'Iron Longsword',   icon:'⚔️', cat:'Wield'},
+    {req:5,  name:'Steel Longsword',  icon:'⚔️', cat:'Wield'},
+    {req:20, name:'Mithril Longsword',icon:'⚔️', cat:'Wield'},
+    {req:30, name:'Adamant Longsword',icon:'⚔️', cat:'Wield'},
+  ],
+  ranged: [
+    {req:1,  name:'Shortbow',         icon:'🏹', cat:'Wield'},
+    {req:1,  name:'Iron Bow',         icon:'🏹', cat:'Wield'},
+    {req:5,  name:'Steel Bow',        icon:'🏹', cat:'Wield'},
+    {req:20, name:'Mithril Bow',      icon:'🏹', cat:'Wield'},
+    {req:30, name:'Adamant Bow',      icon:'🏹', cat:'Wield'},
+  ],
+  magic: [
+    {req:1,  name:'Iron Staff',       icon:'🪄', cat:'Wield'},
+    {req:5,  name:'Steel Staff',      icon:'🪄', cat:'Wield'},
+    {req:20, name:'Mithril Staff',    icon:'🪄', cat:'Wield'},
+    {req:30, name:'Adamant Staff',    icon:'🪄', cat:'Wield'},
+  ],
+  defence: [
+    {req:1,  name:'Leather Coif',     icon:'🧢', cat:'Wear'},
+    {req:1,  name:'Leather Body',     icon:'🥋', cat:'Wear'},
+    {req:1,  name:'Leather Chaps',    icon:'👖', cat:'Wear'},
+    {req:3,  name:'Hard Leather Coif',icon:'🧢', cat:'Wear'},
+    {req:3,  name:'Hard Leather Body',icon:'🥋', cat:'Wear'},
+    {req:3,  name:'Hard Leather Chaps',icon:'👖',cat:'Wear'},
+    {req:1,  name:'Iron Full Helm',   icon:'🪖', cat:'Wear'},
+    {req:1,  name:'Iron Platebody',   icon:'🛡️', cat:'Wear'},
+    {req:1,  name:'Iron Platelegs',   icon:'👖', cat:'Wear'},
+    {req:1,  name:'Iron Kiteshield',  icon:'🛡️', cat:'Wear'},
+    {req:5,  name:'Steel Full Helm',  icon:'🪖', cat:'Wear'},
+    {req:5,  name:'Steel Platebody',  icon:'🛡️', cat:'Wear'},
+    {req:5,  name:'Steel Platelegs',  icon:'👖', cat:'Wear'},
+    {req:5,  name:'Steel Kiteshield', icon:'🛡️', cat:'Wear'},
+    {req:20, name:'Mithril Full Helm',icon:'🪖', cat:'Wear'},
+    {req:20, name:'Mithril Platebody',icon:'🛡️', cat:'Wear'},
+    {req:20, name:'Mithril Platelegs',icon:'👖', cat:'Wear'},
+    {req:20, name:'Mithril Kiteshield',icon:'🛡️',cat:'Wear'},
+    {req:30, name:'Adamant Full Helm',icon:'🪖', cat:'Wear'},
+    {req:30, name:'Adamant Platebody',icon:'🛡️', cat:'Wear'},
+    {req:30, name:'Adamant Platelegs',icon:'👖', cat:'Wear'},
+    {req:30, name:'Adamant Kiteshield',icon:'🛡️',cat:'Wear'},
+  ],
+  smithing: [
+    {req:1,  name:'Iron Full Helm',   icon:'🪖', cat:'Smith'},
+    {req:1,  name:'Iron Platebody',   icon:'🛡️', cat:'Smith'},
+    {req:1,  name:'Iron Platelegs',   icon:'👖', cat:'Smith'},
+    {req:1,  name:'Iron Kiteshield',  icon:'🛡️', cat:'Smith'},
+    {req:1,  name:'Iron Longsword',   icon:'⚔️', cat:'Smith'},
+    {req:5,  name:'Steel Full Helm',  icon:'🪖', cat:'Smith'},
+    {req:5,  name:'Steel Platebody',  icon:'🛡️', cat:'Smith'},
+    {req:5,  name:'Steel Platelegs',  icon:'👖', cat:'Smith'},
+    {req:5,  name:'Steel Kiteshield', icon:'🛡️', cat:'Smith'},
+    {req:5,  name:'Steel Longsword',  icon:'⚔️', cat:'Smith'},
+    {req:20, name:'Mithril Full Helm',icon:'🪖', cat:'Smith'},
+    {req:20, name:'Mithril Platebody',icon:'🛡️', cat:'Smith'},
+    {req:20, name:'Mithril Platelegs',icon:'👖', cat:'Smith'},
+    {req:20, name:'Mithril Kiteshield',icon:'🛡️',cat:'Smith'},
+    {req:20, name:'Mithril Longsword',icon:'⚔️', cat:'Smith'},
+    {req:30, name:'Adamant Full Helm',icon:'🪖', cat:'Smith'},
+    {req:30, name:'Adamant Platebody',icon:'🛡️', cat:'Smith'},
+    {req:30, name:'Adamant Platelegs',icon:'👖', cat:'Smith'},
+    {req:30, name:'Adamant Kiteshield',icon:'🛡️',cat:'Smith'},
+    {req:30, name:'Adamant Longsword',icon:'⚔️', cat:'Smith'},
+  ],
+  fletching: [
+    {req:1,  name:'Iron Bow',         icon:'🏹', cat:'Fletch'},
+    {req:5,  name:'Steel Bow',        icon:'🏹', cat:'Fletch'},
+    {req:20, name:'Mithril Bow',      icon:'🏹', cat:'Fletch'},
+    {req:30, name:'Adamant Bow',      icon:'🏹', cat:'Fletch'},
+  ],
+  magecrafting: [
+    {req:1,  name:'Iron Staff',       icon:'🪄', cat:'Craft'},
+    {req:5,  name:'Steel Staff',      icon:'🪄', cat:'Craft'},
+    {req:20, name:'Mithril Staff',    icon:'🪄', cat:'Craft'},
+    {req:30, name:'Adamant Staff',    icon:'🪄', cat:'Craft'},
+  ],
+  leatherworking: [
+    {req:1,  name:'Leather Coif',     icon:'🧢', cat:'Craft'},
+    {req:1,  name:'Leather Body',     icon:'🥋', cat:'Craft'},
+    {req:1,  name:'Leather Chaps',    icon:'👖', cat:'Craft'},
+    {req:3,  name:'Hard Leather Coif',icon:'🧢', cat:'Craft'},
+    {req:3,  name:'Hard Leather Body',icon:'🥋', cat:'Craft'},
+    {req:3,  name:'Hard Leather Chaps',icon:'👖',cat:'Craft'},
+    {req:10, name:'Studded Chaps',    icon:'👖', cat:'Craft'},
+    {req:20, name:'Mithril Studded Chaps',icon:'👖',cat:'Craft'},
+    {req:30, name:'Adamant Studded Chaps',icon:'👖',cat:'Craft'},
+  ],
+  mining: [
+    {req:1,  name:'Iron Ore',         icon:'🪨', cat:'Mine'},
+    {req:5,  name:'Steel Ore',        icon:'🩶', cat:'Mine'},
+    {req:20, name:'Mithril Ore',      icon:'🔵', cat:'Mine'},
+    {req:30, name:'Adamant Ore',      icon:'🟢', cat:'Mine'},
+  ],
+  woodcutting: [
+    {req:1,  name:'Normal Logs',      icon:'🌲', cat:'Chop'},
+    {req:5,  name:'Oak Logs',         icon:'🌳', cat:'Chop'},
+    {req:20, name:'Willow Logs',      icon:'🌿', cat:'Chop'},
+    {req:30, name:'Yew Logs',         icon:'🎄', cat:'Chop'},
+  ],
+  fishing: [
+    {req:1,  name:'Shrimp',           icon:'🦐', cat:'Fish'},
+    {req:20, name:'Trout',            icon:'🐟', cat:'Fish'},
+    {req:30, name:'Salmon',           icon:'🐠', cat:'Fish'},
+    {req:40, name:'Lobster',          icon:'🦞', cat:'Fish'},
+    {req:50, name:'Swordfish',        icon:'🐡', cat:'Fish'},
+  ],
+  cooking: [
+    {req:1,  name:'Chicken',          icon:'🍗', cat:'Cook'},
+    {req:1,  name:'Beef',             icon:'🥩', cat:'Cook'},
+    {req:1,  name:'Shrimp',           icon:'🦐', cat:'Cook'},
+    {req:15, name:'Trout',            icon:'🐟', cat:'Cook'},
+    {req:25, name:'Salmon',           icon:'🐠', cat:'Cook'},
+    {req:40, name:'Lobster',          icon:'🦞', cat:'Cook'},
+    {req:45, name:'Swordfish',        icon:'🐡', cat:'Cook'},
+  ],
+};
+
+const LEVEL_UP_FLAVORS = {
+  attack:       ["Your blade grows sharper.", "Each swing more precise.", "Warriors fear your name."],
+  defence:      ["Your guard stands firm.", "Blows glance off you.", "A fortress in human form."],
+  ranged:       ["Your aim grows true.", "Distance is your advantage.", "Arrows fly like instinct."],
+  magic:        ["The arcane bends to your will.", "Power crackles at your fingertips.", "Ancient forces stir."],
+  hitpoints:    ["Your body hardens.", "Vitality surges within.", "You grow harder to kill."],
+  mining:       ["The earth yields its secrets.", "Your pickaxe sings.", "Ore veins bow before you."],
+  smithing:     ["The forge obeys.", "Metal bends to your will.", "Your craft grows masterful."],
+  woodcutting:  ["The forest parts for you.", "Timber falls at your command.", "Axes sing in your hands."],
+  fletching:    ["Arrows fly true.", "Your bows grow deadly.", "The wood speaks to you."],
+  magecrafting: ["Staves hum with potential.", "Arcane craft perfected.", "Magic flows through your hands."],
+  leatherworking:["Hide and sinew yield.", "Your craft grows supple.", "Armor takes perfect form."],
+  fishing:      ["The waters reveal their bounty.", "Fish cannot hide from you.", "The deep respects your patience."],
+  cooking:      ["Flavors bloom under your hand.", "The hearth welcomes you.", "Even monsters smell the feast."],
+};
+
+// Queue so multi-level-ups don't stack
+const luQueue = [];
+let luActive = false;
+
+function showLevelUp(skillKey, newLv, oldLv) {
+  // Use skillKey if passed, fall back to name lookup
+  const key = skillKey;
+  luQueue.push({key, newLv, oldLv: oldLv || newLv - 1});
+  if (!luActive) luProcessNext();
+}
+
+function luProcessNext() {
+  if (luQueue.length === 0) { luActive = false; return; }
+  luActive = true;
+  const {key, newLv, oldLv} = luQueue.shift();
+  const skill = SKILLS[key] || {name: key, icon: '⭐'};
+  const flavors = LEVEL_UP_FLAVORS[key] || ["Your power grows."];
+  const flavor = flavors[Math.floor(Math.random() * flavors.length)];
+
+  document.getElementById('lu-icon').textContent = skill.icon || '⭐';
+  document.getElementById('lu-number').textContent = newLv;
+  document.getElementById('lu-skill-name').textContent = skill.name || key;
+  document.getElementById('lu-flavor').textContent = flavor;
+
+  document.getElementById('lu-backdrop').classList.add('show');
+  document.getElementById('lu-box1').classList.add('show');
+  document.getElementById('lu-box2').classList.remove('show');
+
+  luStartFireworks();
+
+  // Prepare unlocks for box 2
+  luPrepareUnlocks(key, oldLv, newLv);
+}
+
+function luContinue() {
+  // Hide box1, show box2 with unlocks
+  document.getElementById('lu-box1').classList.remove('show');
+  luStopFireworks();
+
+  const list = document.getElementById('lu-unlocks-list');
+  if (list.innerHTML.trim() === '') {
+    // No unlocks — skip box2
+    luDone();
+    return;
+  }
+  document.getElementById('lu-box2').classList.add('show');
+}
+
+function luDone() {
+  document.getElementById('lu-box1').classList.remove('show');
+  document.getElementById('lu-box2').classList.remove('show');
+  document.getElementById('lu-backdrop').classList.remove('show');
+  luStopFireworks();
+  setTimeout(luProcessNext, 200);
+}
+
+function luPrepareUnlocks(skillKey, oldLv, newLv) {
+  const unlocks = SKILL_UNLOCKS[skillKey] || [];
+  // Find everything unlocked between oldLv+1 and newLv
+  const gained = unlocks.filter(u => u.req > oldLv && u.req <= newLv);
+  // Also show things unlocked at lower levels for context
+  const prior  = unlocks.filter(u => u.req <= oldLv);
+
+  const list = document.getElementById('lu-unlocks-list');
+  const skill = SKILLS[skillKey] || {name: skillKey};
+  document.getElementById('lu-unlocks-title').textContent =
+    `${skill.icon || '⭐'} ${skill.name} — Level ${oldLv > 0 ? oldLv+1 : 1}–${newLv} Unlocks`;
+
+  if (gained.length === 0) { list.innerHTML = ''; return; }
+
+  // Group by category
+  const cats = {};
+  [...prior, ...gained].forEach(u => {
+    if (!cats[u.cat]) cats[u.cat] = [];
+    cats[u.cat].push({...u, isNew: gained.includes(u)});
+  });
+
+  let html = '';
+  for (const [cat, items] of Object.entries(cats)) {
+    html += `<div class="lu-cat-label">${cat}</div>`;
+    items.forEach(u => {
+      const newBadge = u.isNew ? ' ✦ NEW' : '';
+      html += `<div class="lu-unlock-item ${u.isNew ? 'lu-new' : ''}">
+        <span class="lu-ui">${u.icon}</span>
+        <span class="lu-un">${u.name}</span>
+        <span class="lu-ulv">Lv ${u.req}${newBadge}</span>
+      </div>`;
+    });
+  }
+  list.innerHTML = html;
+}
+
+// Fireworks
+let luFwTimer = null, luFwParticles = [], luFwRaf = null;
+
+function luStartFireworks() {
+  const canvas = document.getElementById('lu-canvas');
+  canvas.width = canvas.offsetWidth || 320;
+  canvas.height = canvas.offsetHeight || 300;
+  luFwParticles = [];
+  luFwTimer = setInterval(() => luSpawnFirework(canvas), 500);
+  luAnimateFireworks(canvas);
+}
+
+function luStopFireworks() {
+  clearInterval(luFwTimer);
+  if (luFwRaf) cancelAnimationFrame(luFwRaf);
+  luFwParticles = [];
+  const canvas = document.getElementById('lu-canvas');
+  if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function luSpawnFirework(canvas) {
+  const x = 30 + Math.random() * (canvas.width - 60);
+  const y = 20 + Math.random() * (canvas.height * 0.5);
+  const colors = ['#c9a84c','#fff8e1','#ff6b35','#4a9eff','#ff4488','#88ff44'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  for (let i = 0; i < 22; i++) {
+    const angle = (Math.PI * 2 / 22) * i;
+    const speed = 1.2 + Math.random() * 2.2;
+    luFwParticles.push({x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, alpha: 1, color, size: 1.5 + Math.random()*2});
+  }
+}
+
+function luAnimateFireworks(canvas) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  luFwParticles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.alpha -= 0.018;
+    ctx.globalAlpha = Math.max(0, p.alpha);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  luFwParticles = luFwParticles.filter(p => p.alpha > 0);
+  ctx.globalAlpha = 1;
+  luFwRaf = requestAnimationFrame(() => luAnimateFireworks(canvas));
 }
 
 let toastT=null;
