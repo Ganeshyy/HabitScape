@@ -470,6 +470,19 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .toast.ok .toast-title{color:var(--green-m)}
 .toast-sub{font-size:11px;font-style:italic;color:var(--text-d);margin-top:2px}
 
+.shop-tab-btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text-d);font-size:10px;padding:6px 4px;cursor:pointer;text-align:center;transition:all .2s;line-height:1.4;font-family:'Cinzel',serif;letter-spacing:.5px}
+.shop-tab-btn:hover{border-color:var(--gold-d);color:var(--text)}
+.shop-tab-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.06)}
+.shop-item{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg-card);border:1px solid var(--border);margin-bottom:4px}
+.shop-item-icon{font-size:22px;min-width:28px;text-align:center}
+.shop-item-info{flex:1}
+.shop-item-name{font-family:'Cinzel',serif;font-size:12px;color:var(--text);letter-spacing:.5px}
+.shop-item-stats{font-size:10px;color:var(--text-d);margin-top:2px;font-style:italic}
+.shop-item-price{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);white-space:nowrap}
+.shop-buy-btn{background:transparent;border:1px solid var(--gold-d);color:var(--gold);font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.shop-buy-btn:hover:not(:disabled){background:rgba(201,168,76,.1);border-color:var(--gold)}
+.shop-buy-btn:disabled{opacity:.35;cursor:not-allowed}
+.shop-section-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--text-d);text-transform:uppercase;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
 .loot-toast{display:none;position:fixed;top:60px;right:10px;background:var(--bg);border:1px solid var(--gold-d);padding:8px 12px;z-index:9996;animation:lootPop 2.5s ease forwards;min-width:120px}
 .loot-toast.show{display:block}
 @keyframes lootPop{0%{opacity:0;transform:translateX(10px)}15%{opacity:1;transform:translateX(0)}80%{opacity:1}100%{opacity:0}}
@@ -624,6 +637,18 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <div class="eq-slot" data-slot="net"     onclick="openEquipSlot('net')">     <div class="eq-slot-icon">🪤</div><div class="eq-slot-name">Net</div>     <div class="eq-slot-item" id="eq-net-item"></div></div>
         </div>
 
+        <div class="sec">Food</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px">
+          <div class="eq-slot" data-slot="food" onclick="openEquipSlot('food')">
+            <div class="eq-slot-icon">🍖</div>
+            <div class="eq-slot-name">Food</div>
+            <div class="eq-slot-item" id="eq-food-item"></div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);padding:6px 8px;font-size:10px;color:var(--text-d);font-style:italic;display:flex;align-items:center">
+            Auto-eaten in combat when HP drops below 50%. Uses equipped food type first.
+          </div>
+        </div>
+
         <div class="sec">Bonuses</div>
         <div class="eq-stats" id="eq-stats-wrap">
           <div class="eq-stat"><span class="eq-stat-name">Attack</span><span class="eq-stat-val" id="eq-atk">0</span></div>
@@ -676,25 +701,24 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 
       <!-- STORE -->
       <div class="pane" id="pane-store">
-        <div class="activity-header">
-          <div class="act-icon">🏪</div>
-          <div><div class="act-title">General Store</div><div class="act-sub">Sell items from your inventory</div></div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:11px;font-style:italic;color:var(--text-d)">Prices drop the more you sell. Resets every hour.</div>
+        <!-- Shop selector header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:1px">Shops</div>
           <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold)" id="store-coins">🪙 0</div>
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border);padding:8px 10px;margin-bottom:10px;font-size:10px;color:var(--text-d);font-style:italic">
-          <span style="color:var(--gold-d)">Base price:</span> 70% of item value &nbsp;|&nbsp;
-          <span style="color:var(--text-d)">After selling 10:</span> 50% &nbsp;|&nbsp;
-          <span style="color:var(--green-m)" id="store-reset-timer">Resets in: —</span>
+        <!-- Shop tab buttons -->
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px" id="shop-tab-bar">
+          <button class="shop-tab-btn active" onclick="openShop('sell')">🏪<br><span>Sell</span></button>
+          <button class="shop-tab-btn" onclick="openShop('weapons')">⚔️<br><span>Weapons</span></button>
+          <button class="shop-tab-btn" onclick="openShop('ranged')">🏹<br><span>Ranged</span></button>
+          <button class="shop-tab-btn" onclick="openShop('armour')">🛡️<br><span>Armour</span></button>
+          <button class="shop-tab-btn" onclick="openShop('magic')">🪄<br><span>Magic</span></button>
         </div>
-        <div class="sec">Your Inventory</div>
-        <div id="store-inventory-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:10px"></div>
-        <div id="store-sell-panel" style="display:none">
-          <div class="sec" id="store-sell-title">Sell</div>
-          <div id="store-sell-content"></div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:14px">
+          <button class="shop-tab-btn" onclick="openShop('general')" id="shop-tab-general">🏪<br><span>General</span></button>
         </div>
+        <!-- Shop content area -->
+        <div id="shop-content"></div>
       </div>
 
       <!-- SETTINGS -->
@@ -1269,8 +1293,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   SKILL_KEYS.forEach(k=>{ if(!S.skills[k]) S.skills[k]={xp:k==='hitpoints'?xpForLevel(10):0}; });
   if(!S.bank) S.bank={slots:50,items:{}};
   if(S.bank.slots<50) S.bank.slots=50; // migrate old saves
-  if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null};
+  if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null,food:null};
   if(!S.equipped.axe)     S.equipped.axe=null;
+  if(S.equipped.food===undefined) S.equipped.food=null;
   if(!S.equipped.pickaxe) S.equipped.pickaxe=null;
   if(!S.equipped.net)     S.equipped.net=null;
   // migrate old saves — remove removed slots
@@ -1375,7 +1400,7 @@ function showPane(id, btn){
   if(id==='skills') renderSkillsPane();
   if(id==='quests') renderQuestsPane();
   if(id==='settings') renderSettingsPane();
-  if(id==='store') renderStore();
+  if(id==='store'){ currentShop='sell'; renderShop(); }
   if(id==='leatherworking'){ buildActivityPane('leatherworking',ACTIVITIES.leatherworking); renderTanner(); }
 }
 
@@ -1926,11 +1951,52 @@ function renderEquipPane(){
   document.getElementById('eq-str').textContent=str;
   document.getElementById('eq-def').textContent=def;
   document.getElementById('eq-dr').textContent=dr+'%';
+
+  // Update food slot display
+  const foodSlot=document.getElementById('eq-food-item');
+  if(foodSlot){
+    const f=S.equipped?.food;
+    if(f){
+      const inBank=S.bank.items[f.id];
+      foodSlot.textContent=f.icon+' '+f.name+(inBank?` x${inBank.qty}`:'(out)');
+    } else {
+      foodSlot.textContent='';
+    }
+  }
 }
 
 function openEquipSlot(slot){
   const equipped=S.equipped[slot];
-  // Find items in bank that fit this slot
+
+  // Food slot — show all food in bank
+  if(slot==='food'){
+    const foods=Object.values(S.bank.items||{}).filter(i=>i.heals&&i.qty>0);
+    let html='';
+    if(equipped){
+      html+=`<div style="margin-bottom:10px;padding:8px;background:var(--bg-deep);border:1px solid var(--gold-d)">
+        <span style="font-size:14px">${equipped.icon||'🍖'}</span> <strong>${equipped.name}</strong> — selected food
+        <button class="btn btn-red btn-sm" style="margin-left:8px" onclick="unequipSlot('food')">Clear</button>
+      </div>`;
+    }
+    if(foods.length){
+      html+=`<div style="font-size:10px;font-style:italic;color:var(--text-d);margin-bottom:8px">Select which food to use in combat. Consumed from your inventory automatically.</div>`;
+      html+=foods.map(item=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg-card);border:1px solid ${equipped?.id===item.id?'var(--gold)':'var(--border)'};margin-bottom:4px;cursor:pointer" onclick="equipItem('food','${item.id}')">
+          <span style="font-size:20px">${item.icon||'🍖'}</span>
+          <div style="flex:1">
+            <div style="font-size:13px">${item.name}</div>
+            <div style="font-size:10px;color:var(--text-d)">Heals ${item.heals} HP &nbsp;·&nbsp; x${item.qty} in inventory</div>
+          </div>
+          <button class="btn btn-gold btn-sm">${equipped?.id===item.id?'Selected':'Select'}</button>
+        </div>`).join('');
+    } else {
+      html+='<div style="font-size:12px;font-style:italic;color:var(--text-d);text-align:center;padding:12px">No food in inventory. Cook some food or buy from the General Store.</div>';
+    }
+    openModal('Food — Auto-eat', html+'<div class="modal-actions"><button class="btn btn-dim" onclick="closeModal()">Close</button></div>');
+    return;
+  }
+
+  // Normal gear slot
   const candidates=Object.values(S.bank.items||{}).filter(i=>i.slot===slot&&i.qty>0);
   let html='';
   if(equipped){
@@ -1954,6 +2020,13 @@ function openEquipSlot(slot){
 function equipItem(slot,itemId){
   const item=S.bank.items[itemId];
   if(!item) return;
+  if(slot==='food'){
+    // Food slot: just select which food type to auto-eat — don't remove from bank
+    S.equipped.food={...item};
+    saveState(); closeModal(); renderEquipPane();
+    showToast('Food set!', item.name + ' will be used in combat.', true);
+    return;
+  }
   // Unequip current
   if(S.equipped[slot]){
     addToBank(S.equipped[slot].id,{...S.equipped[slot],qty:1});
@@ -2493,12 +2566,24 @@ function combatTick(monster){
 
   // Auto-eat if enabled and HP below 50%
   if(S.autoEat && S.hp.current < S.hp.max * 0.5){
-    const foods=Object.values(S.bank.items||{}).filter(i=>i.heals&&i.qty>0).sort((a,b)=>a.heals-b.heals);
-    if(foods.length){
-      const food=foods[0];
+    // Prefer equipped food, fall back to lowest-heal food in bank
+    let food = null;
+    if(S.equipped?.food){
+      const equippedFood = S.bank.items[S.equipped.food.id];
+      if(equippedFood && equippedFood.qty > 0) food = equippedFood;
+    }
+    if(!food){
+      const foods=Object.values(S.bank.items||{}).filter(i=>i.heals&&i.qty>0).sort((a,b)=>a.heals-b.heals);
+      if(foods.length) food=foods[0];
+    }
+    if(food){
       S.hp.current=Math.min(S.hp.max, S.hp.current+food.heals);
       food.qty--;
-      if(food.qty<=0) delete S.bank.items[food.id];
+      if(food.qty<=0){
+        delete S.bank.items[food.id];
+        // Clear food slot if it was the equipped food and ran out
+        if(S.equipped?.food?.id===food.id) S.equipped.food=null;
+      }
       addCombatLog(`Auto-eat: ${food.name} (+${food.heals} HP)`,'loot');
       updateAutoEatStatus();
     }
@@ -2765,6 +2850,263 @@ const LEVEL_UP_FLAVORS = {
 // Queue so multi-level-ups don't stack
 const luQueue = [];
 let luActive = false;
+
+// ═══════════════════════════════════════
+// SHOP SYSTEM
+// ═══════════════════════════════════════
+
+const SHOP_CATALOGUE = {
+  weapons: {
+    name: 'Weapon Shop', icon: '⚔️',
+    desc: 'Buy melee weapons. Crafting your own is cheaper.',
+    items: [
+      {id:'bronze_sword', name:'Bronze Sword', icon:'🗡️', price:50,  slot:'weapon', atk:10, str:10, weaponStyle:'melee', stats:'Atk 10 · Str 10'},
+      {id:'iron_long',    name:'Iron Longsword',icon:'⚔️',price:200, slot:'weapon', atk:12, str:12, weaponStyle:'melee', stats:'Atk 12 · Str 12'},
+      {id:'steel_long',   name:'Steel Longsword',icon:'⚔️',price:800, slot:'weapon', atk:14, str:14, weaponStyle:'melee', stats:'Atk 14 · Str 14'},
+    ]
+  },
+  ranged: {
+    name: 'Ranged Shop', icon: '🏹',
+    desc: 'Buy bows. Fletching your own is cheaper.',
+    items: [
+      {id:'shortbow',   name:'Shortbow',   icon:'🏹', price:150,  slot:'weapon', atk:12, str:8,  weaponStyle:'ranged', stats:'Atk 12 · Str 8'},
+      {id:'iron_bow',   name:'Iron Bow',   icon:'🏹', price:300,  slot:'weapon', atk:14, str:10, weaponStyle:'ranged', stats:'Atk 14 · Str 10'},
+      {id:'steel_bow',  name:'Steel Bow',  icon:'🏹', price:1000, slot:'weapon', atk:16, str:12, weaponStyle:'ranged', stats:'Atk 16 · Str 12'},
+    ]
+  },
+  armour: {
+    name: 'Armour Shop', icon: '🛡️',
+    desc: 'Buy melee armour. Smithing your own is cheaper.',
+    items: [
+      // Iron tier
+      {id:'iron_helm', name:'Iron Full Helm',  icon:'🪖', price:150,  slot:'head',   def:9,  dr:1, armorStyle:'melee', stats:'Def 9 · DR 1%'},
+      {id:'iron_body', name:'Iron Platebody',  icon:'🛡️', price:400,  slot:'body',   def:18, dr:3, armorStyle:'melee', stats:'Def 18 · DR 3%'},
+      {id:'iron_legs', name:'Iron Platelegs',  icon:'👖', price:300,  slot:'legs',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%'},
+      {id:'iron_kite', name:'Iron Kiteshield', icon:'🛡️', price:200,  slot:'shield', def:10, dr:2, stats:'Def 10 · DR 2%'},
+      // Steel tier
+      {id:'steel_helm', name:'Steel Full Helm',  icon:'🪖', price:600,  slot:'head',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%'},
+      {id:'steel_body', name:'Steel Platebody',  icon:'🛡️', price:1500, slot:'body',   def:28, dr:4, armorStyle:'melee', stats:'Def 28 · DR 4%'},
+      {id:'steel_legs', name:'Steel Platelegs',  icon:'👖', price:1200, slot:'legs',   def:22, dr:3, armorStyle:'melee', stats:'Def 22 · DR 3%'},
+      {id:'steel_kite', name:'Steel Kiteshield', icon:'🛡️', price:800,  slot:'shield', def:16, dr:3, stats:'Def 16 · DR 3%'},
+    ]
+  },
+  magic: {
+    name: 'Magic Shop', icon: '🪄',
+    desc: 'Buy staves and robes. Crafting your own is cheaper.',
+    items: [
+      // Staves
+      {id:'iron_staff',  name:'Iron Staff',  icon:'🪄', price:250, slot:'weapon', atk:8,  str:12, weaponStyle:'magic', stats:'Atk 8 · Str 12'},
+      {id:'steel_staff', name:'Steel Staff', icon:'🪄', price:900, slot:'weapon', atk:10, str:14, weaponStyle:'magic', stats:'Atk 10 · Str 14'},
+      // Robes
+      {id:'iron_hat',       name:'Iron Wizard Hat',  icon:'🎩', price:120,  slot:'head', def:2,  dr:0, armorStyle:'magic', stats:'Def 2'},
+      {id:'iron_robe_top',  name:'Iron Robe Top',    icon:'👘', price:300,  slot:'body', def:5,  dr:1, armorStyle:'magic', stats:'Def 5 · DR 1%'},
+      {id:'iron_robe_legs', name:'Iron Robe Legs',   icon:'👖', price:220,  slot:'legs', def:3,  dr:1, armorStyle:'magic', stats:'Def 3 · DR 1%'},
+      {id:'steel_hat',      name:'Steel Wizard Hat', icon:'🎩', price:450,  slot:'head', def:4,  dr:1, armorStyle:'magic', stats:'Def 4 · DR 1%'},
+      {id:'steel_robe_top', name:'Steel Robe Top',   icon:'👘', price:1100, slot:'body', def:8,  dr:2, armorStyle:'magic', stats:'Def 8 · DR 2%'},
+      {id:'steel_robe_legs',name:'Steel Robe Legs',  icon:'👖', price:800,  slot:'legs', def:5,  dr:1, armorStyle:'magic', stats:'Def 5 · DR 1%'},
+    ]
+  },
+  general: {
+    name: 'General Store', icon: '🏪',
+    desc: 'Tools and basic food. Also buy extra bank space.',
+    items: [
+      // Tools
+      {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', price:100, slot:'axe',      toolType:'axe',      tier:0, stats:'Woodcutting tool · Tier 1'},
+      {id:'iron_axe',       name:'Iron Axe',        icon:'🪓', price:300, slot:'axe',      toolType:'axe',      tier:1, stats:'Woodcutting tool · Tier 2'},
+      {id:'bronze_pickaxe', name:'Bronze Pickaxe',  icon:'⛏️', price:100, slot:'pickaxe',  toolType:'pickaxe',  tier:0, stats:'Mining tool · Tier 1'},
+      {id:'iron_pickaxe',   name:'Iron Pickaxe',    icon:'⛏️', price:300, slot:'pickaxe',  toolType:'pickaxe',  tier:1, stats:'Mining tool · Tier 2'},
+      {id:'bronze_net',     name:'Bronze Net',      icon:'🎣', price:80,  slot:'net',      toolType:'net',      tier:0, stats:'Fishing tool · Tier 1'},
+      {id:'iron_net',       name:'Iron Net',        icon:'🎣', price:250, slot:'net',      toolType:'net',      tier:1, stats:'Fishing tool · Tier 2'},
+      // Low level food
+      {id:'chicken', name:'Chicken', icon:'🍗', price:20,  heals:3,  stats:'Heals 3 HP'},
+      {id:'beef',    name:'Beef',    icon:'🥩', price:20,  heals:4,  stats:'Heals 4 HP'},
+      {id:'shrimp',  name:'Shrimp',  icon:'🦐', price:15,  heals:3,  stats:'Heals 3 HP'},
+    ]
+  }
+};
+
+// Bank space upgrade tiers
+const BANK_UPGRADES = [
+  {slots:75,  price:500,   label:'+25 slots (75 total)'},
+  {slots:100, price:1500,  label:'+25 slots (100 total)'},
+  {slots:150, price:5000,  label:'+50 slots (150 total)'},
+  {slots:200, price:15000, label:'+50 slots (200 total)'},
+  {slots:300, price:50000, label:'+100 slots (300 total)'},
+];
+
+let currentShop = 'sell';
+
+function openShop(shopId) {
+  currentShop = shopId;
+  // Update tab active states
+  document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active'));
+  event?.target?.closest('.shop-tab-btn')?.classList.add('active');
+  renderShop();
+}
+
+function renderShop() {
+  const coins = S.bank.items['coins']?.qty || 0;
+  const coinsEl = document.getElementById('store-coins');
+  if (coinsEl) coinsEl.textContent = '🪙 ' + coins.toLocaleString();
+
+  const content = document.getElementById('shop-content');
+  if (!content) return;
+
+  if (currentShop === 'sell') {
+    renderSellShop(content, coins);
+    return;
+  }
+
+  const shop = SHOP_CATALOGUE[currentShop];
+  if (!shop) return;
+
+  let html = `<div style="font-size:11px;font-style:italic;color:var(--text-d);margin-bottom:12px">${shop.desc}</div>`;
+
+  if (currentShop === 'general') {
+    // Split into tools, food, bank space
+    const tools = shop.items.filter(i => i.toolType);
+    const food  = shop.items.filter(i => i.heals);
+
+    html += `<div class="shop-section-label">🔧 Tools</div>`;
+    tools.forEach(item => { html += shopItemHTML(item, coins); });
+
+    html += `<div class="shop-section-label">🍖 Food</div>`;
+    food.forEach(item => { html += shopItemHTML(item, coins); });
+
+    html += `<div class="shop-section-label">🎒 Bank Space</div>`;
+    const currentSlots = S.bank.slots || 50;
+    const nextUpgrade = BANK_UPGRADES.find(u => u.slots > currentSlots);
+    if (nextUpgrade) {
+      const canAfford = coins >= nextUpgrade.price;
+      html += `<div class="shop-item">
+        <div class="shop-item-icon">🎒</div>
+        <div class="shop-item-info">
+          <div class="shop-item-name">${nextUpgrade.label}</div>
+          <div class="shop-item-stats">Current: ${currentSlots} slots</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div class="shop-item-price">🪙 ${nextUpgrade.price.toLocaleString()}</div>
+          <button class="shop-buy-btn" ${canAfford?'':'disabled'} onclick="buyBankSpace(${nextUpgrade.slots},${nextUpgrade.price})">Buy</button>
+        </div>
+      </div>`;
+    } else {
+      html += `<div style="font-size:11px;font-style:italic;color:var(--text-d);padding:8px 0">Maximum bank space reached.</div>`;
+    }
+  } else {
+    // Armour shop: split iron/steel
+    if (currentShop === 'armour') {
+      const iron  = shop.items.filter(i => i.id.startsWith('iron'));
+      const steel = shop.items.filter(i => i.id.startsWith('steel'));
+      html += `<div class="shop-section-label">Iron Tier</div>`;
+      iron.forEach(item => { html += shopItemHTML(item, coins); });
+      html += `<div class="shop-section-label">Steel Tier</div>`;
+      steel.forEach(item => { html += shopItemHTML(item, coins); });
+    } else if (currentShop === 'magic') {
+      const staves = shop.items.filter(i => i.slot === 'weapon');
+      const robes  = shop.items.filter(i => i.slot !== 'weapon');
+      html += `<div class="shop-section-label">Staves</div>`;
+      staves.forEach(item => { html += shopItemHTML(item, coins); });
+      html += `<div class="shop-section-label">Robes</div>`;
+      robes.forEach(item => { html += shopItemHTML(item, coins); });
+    } else {
+      shop.items.forEach(item => { html += shopItemHTML(item, coins); });
+    }
+  }
+
+  content.innerHTML = html;
+}
+
+function shopItemHTML(item, coins) {
+  const canAfford = coins >= item.price;
+  return `<div class="shop-item">
+    <div class="shop-item-icon">${item.icon}</div>
+    <div class="shop-item-info">
+      <div class="shop-item-name">${item.name}</div>
+      <div class="shop-item-stats">${item.stats || ''}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+      <div class="shop-item-price">🪙 ${item.price.toLocaleString()}</div>
+      <button class="shop-buy-btn" ${canAfford?'':'disabled'} onclick="buyShopItem('${item.id}')">Buy</button>
+    </div>
+  </div>`;
+}
+
+function buyShopItem(itemId) {
+  // Find item across all shops
+  let item = null;
+  for (const shop of Object.values(SHOP_CATALOGUE)) {
+    item = shop.items.find(i => i.id === itemId);
+    if (item) break;
+  }
+  if (!item) return;
+
+  const coins = S.bank.items['coins']?.qty || 0;
+  if (coins < item.price) { showToast('Not enough gold', 'You cannot afford this item.', false); return; }
+
+  // Deduct gold
+  S.bank.items['coins'].qty -= item.price;
+  if (S.bank.items['coins'].qty <= 0) delete S.bank.items['coins'];
+
+  // Add item to bank — food stacks, gear doesn't
+  const bankItem = {...item, id: item.id, qty: 1};
+  addToBank(item.id, bankItem);
+
+  saveState();
+  renderShop();
+  showToast('Purchased!', item.name + ' added to inventory.', true);
+}
+
+function buyBankSpace(newSlots, price) {
+  const coins = S.bank.items['coins']?.qty || 0;
+  if (coins < price) { showToast('Not enough gold', 'You cannot afford this upgrade.', false); return; }
+  S.bank.items['coins'].qty -= price;
+  if (S.bank.items['coins'].qty <= 0) delete S.bank.items['coins'];
+  S.bank.slots = newSlots;
+  saveState();
+  renderShop();
+  showToast('Bank Expanded!', 'You now have ' + newSlots + ' bank slots.', true);
+}
+
+function renderSellShop(container, coins) {
+  const items = Object.entries(S.bank.items || {}).filter(([id, item]) => id !== 'coins' && item.qty > 0);
+  let html = `<div style="font-size:11px;font-style:italic;color:var(--text-d);margin-bottom:12px">Sell items from your inventory. Prices drop the more you sell — resets hourly.</div>`;
+  html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div style="font-size:10px;color:var(--text-d)"><span style="color:var(--gold-d)">Base:</span> 70% value &nbsp;|&nbsp; <span style="color:var(--text-d)">After 10 sold:</span> 50%</div>
+    <div style="font-size:10px;color:var(--green-m)" id="store-reset-timer">Resets in: —</div>
+  </div>`;
+
+  if (items.length === 0) {
+    html += `<div style="font-size:12px;font-style:italic;color:var(--text-d);padding:16px 0;text-align:center">Your inventory is empty.</div>`;
+  } else {
+    html += `<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:10px" id="store-inventory-grid">`;
+    items.forEach(([id, item]) => {
+      html += `<div class="bank-slot filled" onclick="selectSellItem('${id}')" title="${item.name}">
+        <span class="bs-icon">${item.icon||'📦'}</span>
+        ${item.qty>1?`<span class="bs-qty">${item.qty}</span>`:''}
+      </div>`;
+    });
+    html += `</div>`;
+    html += `<div id="store-sell-panel"></div>`;
+  }
+  container.innerHTML = html;
+  updateStoreTimer();
+}
+
+function selectSellItem(itemId) {
+  const item = S.bank.items[itemId];
+  if (!item) return;
+  const panel = document.getElementById('store-sell-panel');
+  if (!panel) return;
+  const unitPrice = getSellPrice(itemId, 1);
+  const totalAll = getSellPrice(itemId, item.qty);
+  panel.innerHTML = `
+    <div class="sec">${item.icon||'📦'} ${item.name}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',1)">Sell 1 &nbsp;(🪙${unitPrice})</button>
+      ${item.qty>=10?`<button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',10)">Sell 10 &nbsp;(🪙${getSellPrice(itemId,10)})</button>`:''}
+      <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',${item.qty})">Sell All &nbsp;(🪙${totalAll})</button>
+    </div>`;
+}
 
 function showLevelUp(skillKey, newLv, oldLv) {
   // Use skillKey if passed, fall back to name lookup
@@ -3039,7 +3381,7 @@ function startStoreResetTimer(){
       S.store.soldCounts={};
       S.store.lastReset=Date.now();
       saveState();
-      if(document.getElementById('pane-store').classList.contains('active')) renderStore();
+      if(document.getElementById('pane-store').classList.contains('active')) renderShop();
       showToast('Store Reset','Prices are back to 70%!',true);
     }
     updateStoreTimer();
@@ -3067,68 +3409,10 @@ function getPricePct(itemId){
   return Math.max(50, Math.round(70 - (sold/10)*20));
 }
 
-function renderStore(){
-  if(!S.store) initStore();
-  updateStoreTimer();
-  // Coins display
-  const coins=S.bank.items['coins']?.qty||0;
-  const coinsEl=document.getElementById('store-coins');
-  if(coinsEl) coinsEl.textContent=`🪙 ${coins}`;
+// renderStore kept as alias for compatibility
+function renderStore(){ renderShop(); }
 
-  const grid=document.getElementById('store-inventory-grid'); if(!grid) return;
-  grid.innerHTML='';
-  // Show all sellable items (those with a base value, excluding coins/tools)
-  const sellable=Object.values(S.bank.items||{}).filter(i=>i.qty>0&&i.id!=='coins'&&ITEM_VALUES[i.id]);
-  if(!sellable.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:20px;font-style:italic;color:var(--text-d)">Nothing to sell — gather resources or defeat monsters first.</div>`;
-    document.getElementById('store-sell-panel').style.display='none';
-    return;
-  }
-  sellable.forEach(item=>{
-    const pct=getPricePct(item.id);
-    const unitPrice=Math.max(1,Math.floor((ITEM_VALUES[item.id]||1)*(pct/100)));
-    const slot=document.createElement('div');
-    slot.className='bank-slot filled';
-    slot.style.cursor='pointer';
-    slot.innerHTML=`<span class="bs-icon">${item.icon||'📦'}</span><span class="bs-name">${item.name}</span><span class="bs-qty">${item.qty}</span>`;
-    slot.onclick=()=>openSellPanel(item.id);
-    grid.appendChild(slot);
-  });
-  document.getElementById('store-sell-panel').style.display='none';
-}
-
-function openSellPanel(itemId){
-  const item=S.bank.items[itemId]; if(!item) return;
-  const panel=document.getElementById('store-sell-panel');
-  const titleEl=document.getElementById('store-sell-title');
-  const content=document.getElementById('store-sell-content');
-  panel.style.display='';
-  titleEl.textContent=`Sell — ${item.name}`;
-  const pct=getPricePct(itemId);
-  const baseVal=ITEM_VALUES[itemId]||1;
-  const unitPrice=Math.max(1,Math.floor(baseVal*(pct/100)));
-  const totalAll=getSellPrice(itemId,item.qty);
-  content.innerHTML=`
-    <div class="card" style="padding:10px 12px;margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <span style="font-size:28px">${item.icon||'📦'}</span>
-        <div>
-          <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--text)">${item.name}</div>
-          <div style="font-size:11px;color:var(--text-d);margin-top:2px">You have: <strong style="color:var(--text)">${item.qty}</strong></div>
-        </div>
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)">🪙 ${unitPrice} each</div>
-          <div style="font-size:9px;color:${pct<=50?'var(--red)':pct<70?'var(--fire)':'var(--green-m)'};letter-spacing:1px;text-transform:uppercase">${pct}% of base</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',1)">Sell 1 &nbsp;(🪙${unitPrice})</button>
-        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',10)">Sell 10 &nbsp;(🪙${getSellPrice(itemId,10)})</button>
-        <button class="btn btn-gold btn-sm" onclick="sellItem('${itemId}',${item.qty})">Sell All &nbsp;(🪙${totalAll})</button>
-      </div>
-    </div>`;
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+function openSellPanel(itemId){ selectSellItem(itemId); }
 
 function sellItem(itemId, qty){
   const item=S.bank.items[itemId]; if(!item) return;
