@@ -422,9 +422,42 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .onboarding{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
 .onboarding.done{display:none}
 .ob-logo{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--gold);letter-spacing:5px;text-shadow:0 0 24px rgba(201,168,76,.45);margin-bottom:6px}
-.ob-tagline{font-size:14px;font-style:italic;color:var(--text-m);margin-bottom:28px;line-height:1.6}
+.ob-tagline{font-size:14px;font-style:italic;color:var(--text-m);margin-bottom:20px;line-height:1.6}
 .ob-input{width:100%;max-width:300px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-family:'Crimson Text',serif;font-size:15px;padding:10px 12px;outline:none;text-align:center;transition:border-color .2s;margin-bottom:18px}
 .ob-input:focus{border-color:var(--gold-d)}
+.ob-step{display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px}
+.ob-habit-card{background:var(--bg-card);border:1px solid var(--gold-d);border-radius:8px;padding:14px 16px;width:100%;max-width:300px;margin-bottom:20px;text-align:left}
+.ob-habit-name{font-family:'Cinzel',serif;font-size:13px;color:var(--text);margin-bottom:4px}
+.ob-habit-sub{font-size:11px;color:var(--text-d);font-style:italic}
+.ob-field-label{font-size:11px;color:var(--text-m);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;align-self:flex-start;padding-left:4px}
+.ob-skill-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:340px}
+.ob-skill-btn{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:border-color .15s,background .15s}
+.ob-skill-btn:hover{border-color:var(--gold-d);background:rgba(201,168,76,.08)}
+.ob-skill-btn.selected{border-color:var(--gold);background:rgba(201,168,76,.15)}
+.ob-skill-btn .ob-sk-icon{font-size:18px}
+.ob-skill-btn .ob-sk-name{font-size:8px;color:var(--text-m);text-align:center;letter-spacing:.3px}
+.ob-log-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;width:100%;max-width:300px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .2s,background .2s}
+.ob-log-card:hover{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.ob-log-card.logged{border-color:var(--green-m);background:rgba(74,140,74,.08);pointer-events:none}
+.ob-log-check{width:32px;height:32px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gold);flex-shrink:0;transition:all .2s}
+.ob-log-card.logged .ob-log-check{background:var(--green-m);border-color:var(--green-m);color:#fff;content:"✓"}
+.ob-log-name{font-family:'Cinzel',serif;font-size:12px;color:var(--text);margin-bottom:3px}
+.ob-log-xp{font-size:11px;color:var(--gold)}
+.ob-skip{font-size:11px;color:var(--text-d);cursor:pointer;margin-top:4px;text-decoration:underline;text-underline-offset:2px}
+.ob-skip:hover{color:var(--text-m)}
+.ob-categories{width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;max-height:55vh;overflow-y:auto}
+.ob-cat{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ob-cat-head{padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.ob-cat-head-icon{font-size:16px}
+.ob-cat-head-name{font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.5px;flex:1}
+.ob-cat-head-count{font-size:10px;color:var(--text-d)}
+.ob-cat-habits{padding:0 10px 10px}
+.ob-habit-row{display:flex;align-items:center;gap:10px;padding:7px 6px;border-radius:5px;cursor:pointer;transition:background .15s}
+.ob-habit-row:hover{background:rgba(255,255,255,.04)}
+.ob-habit-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .15s}
+.ob-habit-check.on{background:var(--gold);border-color:var(--gold);color:#1a1510}
+.ob-habit-row-name{font-size:13px;color:var(--text)}
+.ob-skill-tag{font-size:9px;color:var(--text-d);margin-left:auto;background:rgba(255,255,255,.05);padding:2px 6px;border-radius:10px}
 
 /* ══════════════════════════
    OVERLAYS
@@ -498,10 +531,50 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 
 <!-- Onboarding -->
 <div class="onboarding" id="onboarding">
-  <div class="ob-logo">HabitScape</div>
-  <div class="ob-tagline">Your real life.<br>Your adventure.</div>
-  <input class="ob-input" type="text" id="ob-name" placeholder="Enter your name..." maxlength="24">
-  <button class="btn btn-gold" onclick="completeOnboarding()">Begin Your Journey</button>
+
+  <!-- STEP 1: Welcome -->
+  <div class="ob-step" id="ob-step-1">
+    <div class="ob-logo">HabitScape</div>
+    <div class="ob-tagline">Your real life.<br>Your adventure.</div>
+    <input class="ob-input" type="text" id="ob-name" placeholder="Enter your name..." maxlength="24">
+    <button class="btn btn-gold" onclick="obStep1()">Begin Your Journey</button>
+  </div>
+
+  <!-- STEP 2: Add first habit -->
+  <div class="ob-step" id="ob-step-2" style="display:none">
+    <div class="ob-logo" style="font-size:20px;letter-spacing:3px">Your First Habit</div>
+    <div class="ob-tagline">Every adventure starts somewhere.<br>Let's add your first daily habit.</div>
+    <div class="ob-habit-card">
+      <div class="ob-habit-name">📱 Open HabitScape</div>
+      <div class="ob-habit-sub">You're already doing it. Let's make it official.</div>
+    </div>
+    <div class="ob-field-label">Which skill should this train?</div>
+    <div class="ob-skill-grid" id="ob-skill-grid"></div>
+    <button class="btn btn-gold" style="margin-top:20px;width:100%;max-width:300px" onclick="obStep2()">Add This Habit →</button>
+  </div>
+
+  <!-- STEP 3: Log it now -->
+  <div class="ob-step" id="ob-step-3" style="display:none">
+    <div class="ob-logo" style="font-size:20px;letter-spacing:3px">Log It Now</div>
+    <div class="ob-tagline">You opened HabitScape today.<br>Tap to claim your first XP.</div>
+    <div class="ob-log-card" id="ob-log-card" onclick="obLogFirst()">
+      <div class="ob-log-check">+</div>
+      <div class="ob-log-info">
+        <div class="ob-log-name">📱 Open HabitScape</div>
+        <div class="ob-log-xp">+500 XP · Tap to log</div>
+      </div>
+    </div>
+    <div class="ob-skip" onclick="obStep3Skip()">Skip for now →</div>
+  </div>
+
+  <!-- STEP 4: Category picker -->
+  <div class="ob-step" id="ob-step-4" style="display:none">
+    <div class="ob-logo" style="font-size:20px;letter-spacing:3px">Build Your Routine</div>
+    <div class="ob-tagline">Choose habits to add to your daily list.<br>You can always add more later.</div>
+    <div class="ob-categories" id="ob-categories"></div>
+    <button class="btn btn-gold" style="margin-top:16px;width:100%;max-width:340px" onclick="obFinish()">Start My Journey →</button>
+  </div>
+
 </div>
 
 <!-- Level Up System -->
@@ -582,28 +655,16 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 
         <!-- Empty state -->
         <div id="habits-empty" class="empty" style="display:none">
-          <div class="empty-icon">⚔️</div>
+          <div class="empty-icon">📋</div>
           <div class="empty-title">No Habits Yet</div>
-          <div class="empty-sub">Add habits, dailies, or milestones and assign them to skills.</div>
-          <button class="btn btn-gold" onclick="openAddHabit('habit')">+ Add First Habit</button>
-        </div>
-
-        <!-- Habits (repeatable) -->
-        <div id="habits-section" style="display:none">
-          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--green-m)">⚡ Habits — 10 XP each</div><div class="vsh-line"></div></div>
-          <div id="habits-list"></div>
+          <div class="empty-sub">Add daily habits and assign them to skills to earn XP.</div>
+          <button class="btn btn-gold" onclick="openAddHabit('daily')">+ Add First Daily</button>
         </div>
 
         <!-- Dailies (once per day) -->
         <div id="dailies-section" style="display:none">
           <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--gold)">📅 Dailies — 500 XP</div><div class="vsh-line"></div></div>
           <div id="dailies-list"></div>
-        </div>
-
-        <!-- Milestones (one-time) -->
-        <div id="milestones-section" style="display:none">
-          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--fire)">🏆 Milestones — 10,000 XP</div><div class="vsh-line"></div></div>
-          <div id="milestones-list"></div>
         </div>
 
         <!-- Vices -->
@@ -613,9 +674,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         </div>
 
         <div class="add-row" id="add-row" style="display:none">
-          <button class="add-btn" onclick="openAddHabit('habit')" style="border-color:var(--green-d);color:var(--green-m)">+ Add Habit &nbsp;<span style="opacity:.6;font-size:8px">repeatable · 50 XP</span></button>
           <button class="add-btn" onclick="openAddHabit('daily')" style="border-color:var(--gold-d);color:var(--gold)">+ Add Daily &nbsp;<span style="opacity:.6;font-size:8px">once/day · 500 XP</span></button>
-          <button class="add-btn" onclick="openAddHabit('milestone')" style="border-color:var(--fire-d);color:var(--fire)">+ Add Milestone &nbsp;<span style="opacity:.6;font-size:8px">one-time · 10,000 XP</span></button>
           <button class="add-btn vice-add" onclick="openAddVice()">+ Add Something to Resist</button>
           <button class="reset-btn" onclick="confirmReset()">↺ Reset Today</button>
         </div>
@@ -1388,7 +1447,160 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 });
 
+// ═══════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════
+const OB_CATEGORIES = [
+  { id:'mood', icon:'😔', name:'Mood & Mental Health', habits:[
+    {name:'Get out of bed',      skill:'defence'},
+    {name:'Shower',              skill:'defence'},
+    {name:'Eat a meal',          skill:'hitpoints'},
+    {name:'Go outside',          skill:'hitpoints'},
+    {name:'Drink water',         skill:'hitpoints'},
+  ]},
+  { id:'fitness', icon:'💪', name:'Fitness', habits:[
+    {name:'Walk 10 minutes',     skill:'attack'},
+    {name:'Workout',             skill:'attack'},
+    {name:'Stretch',             skill:'defence'},
+  ]},
+  { id:'sleep', icon:'😴', name:'Sleep', habits:[
+    {name:'Sleep before midnight', skill:'hitpoints'},
+    {name:'Wake up early',         skill:'attack'},
+  ]},
+  { id:'productivity', icon:'📚', name:'Productivity', habits:[
+    {name:'Study / work session',  skill:'magic'},
+    {name:'Read 10 pages',         skill:'magic'},
+  ]},
+  { id:'social', icon:'🤝', name:'Social', habits:[
+    {name:'Text a friend',         skill:'defence'},
+    {name:'Call family',           skill:'defence'},
+  ]},
+];
+
+let obSelectedSkill = 'attack';
+let obSelectedHabits = {}; // categoryId_index -> true
+
+function obShowStep(n){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('ob-step-'+i);
+    if(el) el.style.display=(i===n?'flex':'none');
+  }
+}
+
+function obStep1(){
+  const name=document.getElementById('ob-name').value.trim();
+  if(!name){ document.getElementById('ob-name').focus(); return; }
+  S=defaultState(); S.name=name;
+  saveState();
+  obBuildSkillGrid();
+  obShowStep(2);
+}
+
+function obBuildSkillGrid(){
+  const grid=document.getElementById('ob-skill-grid');
+  if(!grid) return;
+  const trainable=Object.entries(SKILLS).filter(([k,v])=>!v.noTrain);
+  grid.innerHTML='';
+  trainable.forEach(([k,v])=>{
+    const btn=document.createElement('div');
+    btn.className='ob-skill-btn'+(obSelectedSkill===k?' selected':'');
+    btn.innerHTML=`<span class="ob-sk-icon">${v.icon}</span><span class="ob-sk-name">${v.name}</span>`;
+    btn.onclick=()=>{
+      obSelectedSkill=k;
+      grid.querySelectorAll('.ob-skill-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function obStep2(){
+  // Add "Open HabitScape" as daily for selected skill
+  const habit={id:'h_habitscape',type:'daily',skill:obSelectedSkill,name:'Open HabitScape',doneToday:false,streak:0,autoLog:true};
+  S.habits.push(habit);
+  saveState();
+  obShowStep(3);
+}
+
+function obLogFirst(){
+  const h=S.habits.find(x=>x.id==='h_habitscape');
+  if(!h||h.doneToday) return;
+  h.doneToday=true; h.streak=1;
+  const xp=500;
+  awardXP(h.skill,xp,false);
+  addLog(h.skill,`Daily: <strong>Open HabitScape</strong>`,xp);
+  saveState();
+  // Animate card
+  const card=document.getElementById('ob-log-card');
+  if(card){
+    card.classList.add('logged');
+    card.querySelector('.ob-log-check').textContent='✓';
+    card.querySelector('.ob-log-xp').textContent='+500 XP earned! ✨';
+    card.querySelector('.ob-log-xp').style.color='var(--green-m)';
+  }
+  setTimeout(()=>{ obBuildCategories(); obShowStep(4); }, 900);
+}
+
+function obStep3Skip(){
+  obBuildCategories();
+  obShowStep(4);
+}
+
+function obBuildCategories(){
+  const container=document.getElementById('ob-categories');
+  if(!container) return;
+  container.innerHTML='';
+  OB_CATEGORIES.forEach(cat=>{
+    const div=document.createElement('div');
+    div.className='ob-cat';
+    const head=document.createElement('div');
+    head.className='ob-cat-head';
+    head.innerHTML=`<span class="ob-cat-head-icon">${cat.icon}</span><span class="ob-cat-head-name">${cat.name}</span><span class="ob-cat-head-count" id="ob-count-${cat.id}">0 selected</span>`;
+    div.appendChild(head);
+    const body=document.createElement('div');
+    body.className='ob-cat-habits';
+    cat.habits.forEach((h,i)=>{
+      const key=cat.id+'_'+i;
+      const row=document.createElement('div');
+      row.className='ob-habit-row';
+      row.innerHTML=`
+        <div class="ob-habit-check ${obSelectedHabits[key]?'on':''}" id="ob-chk-${key}">${obSelectedHabits[key]?'✓':''}</div>
+        <div class="ob-habit-row-name">${h.name}</div>
+        <div class="ob-skill-tag">${SKILLS[h.skill]?.icon} ${SKILLS[h.skill]?.name}</div>`;
+      row.onclick=()=>{
+        obSelectedHabits[key]=!obSelectedHabits[key];
+        const chk=document.getElementById('ob-chk-'+key);
+        chk.className='ob-habit-check'+(obSelectedHabits[key]?' on':'');
+        chk.textContent=obSelectedHabits[key]?'✓':'';
+        const count=Object.keys(obSelectedHabits).filter(k=>k.startsWith(cat.id+'_')&&obSelectedHabits[k]).length;
+        document.getElementById('ob-count-'+cat.id).textContent=count+' selected';
+      };
+      body.appendChild(row);
+    });
+    div.appendChild(body);
+    container.appendChild(div);
+  });
+}
+
+function obFinish(){
+  // Add all selected habits
+  OB_CATEGORIES.forEach(cat=>{
+    cat.habits.forEach((h,i)=>{
+      const key=cat.id+'_'+i;
+      if(obSelectedHabits[key]){
+        S.habits.push({id:'h'+Date.now()+Math.random(),type:'daily',skill:h.skill,name:h.name,doneToday:false,streak:0});
+      }
+    });
+  });
+  S.onboarded=true;
+  saveState();
+  document.getElementById('onboarding').style.display='none';
+  document.getElementById('app').classList.add('ready');
+  init();
+}
+
 function completeOnboarding(){
+  // Legacy fallback — not used in new flow
   const name=document.getElementById('ob-name').value.trim();
   if(!name){ document.getElementById('ob-name').focus(); return; }
   S=defaultState(); S.onboarded=true; S.name=name;
@@ -1514,42 +1726,14 @@ function updateActivityLevels(){
 // HABITS PANE
 // ═══════════════════════════════════════
 function renderHabitsPane(){
-  const hasH=(S.habits||[]).filter(h=>h.type==='habit').length>0;
   const hasD=(S.habits||[]).filter(h=>h.type==='daily').length>0;
-  const hasM=(S.habits||[]).filter(h=>h.type==='milestone').length>0;
   const hasV=(S.vices||[]).length>0;
-  const hasAny=hasH||hasD||hasM||hasV;
+  const hasAny=hasD||hasV;
 
   document.getElementById('habits-empty').style.display=hasAny?'none':'';
-  document.getElementById('add-row').style.display=hasAny?'':'none';
-  document.getElementById('habits-section').style.display=hasH?'':'none';
+  document.getElementById('add-row').style.display='';
   document.getElementById('dailies-section').style.display=hasD?'':'none';
-  document.getElementById('milestones-section').style.display=hasM?'':'none';
   document.getElementById('vices-section').style.display=hasV?'':'none';
-
-  // ── Habits (repeatable, 10 XP each click) ──
-  const hl=document.getElementById('habits-list'); hl.innerHTML='';
-  (S.habits||[]).filter(h=>h.type==='habit').forEach(h=>{
-    const isAct=h.skill==='activity';
-    const sk=isAct?null:SKILLS[h.skill];
-    const row=document.createElement('div');
-    row.className='habit-row';
-    row.innerHTML=`
-      <div class="h-check" onclick="doHabit(event,'${h.id}')">+</div>
-      <div class="habit-info">
-        <div class="habit-name">${h.name}</div>
-        <div class="habit-meta" style="color:var(--green-m)">+50 XP per tap &nbsp;·&nbsp; done ${h.timesToday||0}× today</div>
-      </div>
-      <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
-        <span class="sb-icon">${isAct?'⚡':(sk?.icon||'?')}</span>
-        <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
-      </div>
-      <div class="habit-actions">
-        <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')">Edit</button>
-        <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
-      </div>`;
-    hl.appendChild(row);
-  });
 
   // ── Dailies (once per day, 100 XP, streak) ──
   const dl=document.getElementById('dailies-list'); dl.innerHTML='';
@@ -1578,35 +1762,6 @@ function renderHabitsPane(){
         <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
       </div>`;
     dl.appendChild(row);
-  });
-
-  // ── Milestones (one-time, 2000 XP) ──
-  const ml=document.getElementById('milestones-list'); ml.innerHTML='';
-  (S.habits||[]).filter(h=>h.type==='milestone').forEach(h=>{
-    const isAct=h.skill==='activity';
-    const sk=isAct?null:SKILLS[h.skill];
-    const row=document.createElement('div');
-    row.className='habit-row'+(h.doneToday?' done':'');
-    row.style.background=h.doneToday?'rgba(74,96,48,.08)':'';
-    row.innerHTML=`
-      <div class="h-check ${h.doneToday?'done':''}" onclick="doHabit(event,'${h.id}')">${h.doneToday?'✓':'🏆'}</div>
-      <div class="habit-info">
-        <div class="habit-name">${h.name}</div>
-        <div class="habit-meta">
-          ${h.doneToday
-            ? `<span style="color:var(--green-m)">✓ Achieved! +10,000 XP</span>`
-            : `<span style="color:var(--fire)">+10,000 XP · one-time</span>`}
-        </div>
-      </div>
-      <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
-        <span class="sb-icon">${isAct?'⚡':(sk?.icon||'?')}</span>
-        <span class="sb-name">${isAct?'Activity':(sk?.name||'?')}</span>
-      </div>
-      <div class="habit-actions">
-        <button class="h-act h-act-edit" onclick="event.stopPropagation();openEditHabit('${h.id}')" ${h.doneToday?'disabled style="opacity:.4"':''}>Edit</button>
-        <button class="h-act h-act-del"  onclick="event.stopPropagation();deleteHabit('${h.id}')">Del</button>
-      </div>`;
-    ml.appendChild(row);
   });
 
   // ── Vices ──
@@ -1855,17 +2010,14 @@ function selectSP(el,k){
 function getSelectedSP(){ const el=document.querySelector('#m-sp .sp-opt.sel'); return el?el.getAttribute('onclick').match(/'([^']+)'\)/)[1]:null; }
 
 function openAddHabit(type){
-  const labels={habit:'Habit',daily:'Daily',milestone:'Milestone'};
-  const hints={habit:'e.g. Drank a glass of water',daily:'e.g. Workout 1 hour',milestone:'e.g. Run my first 5K'};
-  const xpDesc={habit:'50 XP per tap · unlimited per day',daily:'500 XP · once per day · builds streak',milestone:'10,000 XP · one-time achievement'};
-  const colors={habit:'var(--green-m)',daily:'var(--gold)',milestone:'var(--fire)'};
-  openModal(`Add ${labels[type]}`,`
-    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:${colors[type]}">${xpDesc[type]}</div>
-    <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="${hints[type]}" maxlength="50"></div>
+  type='daily'; // dailies only
+  openModal('Add Daily Habit',`
+    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--gold)">500 XP · once per day · builds streak</div>
+    <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="e.g. Workout 30 minutes" maxlength="50"></div>
     <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker('attack')}</div></div>
     <div class="modal-actions">
       <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveHabit(null,'${type}')">Add</button>
+      <button class="btn btn-gold" onclick="saveHabit(null,'daily')">Add</button>
     </div>
   `);
   setTimeout(()=>document.getElementById('m-name')?.focus(),80);
