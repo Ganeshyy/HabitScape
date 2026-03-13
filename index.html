@@ -458,6 +458,62 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .ob-habit-check.on{background:var(--gold);border-color:var(--gold);color:#1a1510}
 .ob-habit-row-name{font-size:13px;color:var(--text)}
 .ob-skill-tag{font-size:9px;color:var(--text-d);margin-left:auto;background:rgba(255,255,255,.05);padding:2px 6px;border-radius:10px}
+.cal-toggle-row{display:flex;background:rgba(255,255,255,.06);border-radius:6px;padding:2px;gap:2px}
+.cal-toggle-btn{font-size:9px;padding:3px 9px;border-radius:4px;color:var(--text-d);cursor:pointer;border:none;background:none;font-family:'Cinzel',serif;letter-spacing:.5px;transition:all .15s}
+.cal-toggle-btn.active{background:var(--gold);color:#1a1510;font-weight:600}
+.hcal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px}
+.hcal-month{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:1px}
+.hcal-nav{font-size:14px;color:var(--text-d);cursor:pointer;padding:4px 8px;border-radius:4px;border:none;background:none;color:var(--text-m);transition:color .15s}
+.hcal-nav:hover{color:var(--gold)}
+.hcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}
+.hcal-day-lbl{font-size:8px;color:var(--text-d);text-align:center;padding-bottom:4px;letter-spacing:.3px}
+.hcal-day{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-d);cursor:pointer;transition:all .15s;position:relative;border:1px solid transparent}
+.hcal-day.empty{pointer-events:none;opacity:0}
+.hcal-day.future{opacity:.2;pointer-events:none;cursor:default}
+.hcal-day.past-lock{opacity:.25;pointer-events:none;cursor:default}
+.hcal-day.has-some{background:rgba(74,140,74,.2);color:var(--text)}
+.hcal-day.has-all{background:rgba(74,140,74,.45);color:#fff}
+.hcal-day.today{border-color:var(--gold);color:var(--gold)}
+.hcal-day.today.has-some{color:var(--gold)}
+.hcal-day.today.has-all{color:#fff;border-color:var(--gold)}
+.hcal-day.selected{border-color:rgba(255,255,255,.5)!important}
+.hcal-day:hover:not(.future):not(.past-lock){border-color:rgba(255,255,255,.2)}
+.hcal-detail{border-top:1px solid var(--border);padding-top:10px;margin-top:4px}
+.hcal-detail-title{font-family:'Cinzel',serif;font-size:10px;color:var(--text-m);letter-spacing:.5px;margin-bottom:8px}
+.hcal-habit-row{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--bg-card);border-radius:6px;margin-bottom:4px;border:1px solid var(--border);cursor:pointer;transition:border-color .15s}
+.hcal-habit-row:hover{border-color:var(--gold-d)}
+.hcal-habit-row.done{border-color:rgba(74,140,74,.3);background:rgba(74,140,74,.05)}
+.hcal-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .2s}
+.hcal-check.done{background:var(--green-m);border-color:var(--green-m);color:#fff}
+.hcal-habit-name{font-size:12px;color:var(--text);flex:1}
+.hcal-skill-tag{font-size:9px;color:var(--gold);background:rgba(201,168,76,.1);padding:2px 6px;border-radius:3px}
+.hcal-streak-bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(201,168,76,.06);border-radius:6px;margin-bottom:12px;border:1px solid rgba(201,168,76,.15)}
+.hcal-streak-num{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);line-height:1}
+.hcal-streak-lbl{font-size:10px;color:var(--text-d);margin-top:1px}
+.freq-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.freq-day-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text-d);font-size:10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;letter-spacing:.3px}
+.freq-day-btn.on{background:var(--gold);border-color:var(--gold);color:#1a1510;font-weight:700}
+.freq-type-row{display:flex;gap:6px;margin-top:4px}
+.freq-type-btn{flex:1;padding:6px;border-radius:5px;border:1px solid var(--border);background:none;color:var(--text-d);font-size:10px;cursor:pointer;transition:all .15s;font-family:'Cinzel',serif;letter-spacing:.5px}
+.freq-type-btn.on{background:rgba(201,168,76,.12);border-color:var(--gold-d);color:var(--gold)}
+.habit-freq-tag{font-size:8px;color:var(--text-d);margin-left:4px}
+.task-input{width:100%;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-family:'Crimson Text',serif;font-size:14px;padding:8px 10px;outline:none;border-radius:5px;transition:border-color .2s;box-sizing:border-box}
+.task-input:focus{border-color:var(--gold-d)}
+.task-row{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--bg-card);border-radius:6px;margin-bottom:4px;border:1px solid var(--border);cursor:pointer;transition:border-color .15s}
+.task-row.done{border-color:rgba(74,140,74,.3);background:rgba(74,140,74,.05);opacity:.7}
+.task-row:hover{border-color:var(--gold-d)}
+.task-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .2s}
+.task-check.done{background:var(--green-m);border-color:var(--green-m);color:#fff}
+.task-name{font-size:12px;color:var(--text);flex:1}
+.task-name.done{text-decoration:line-through;color:var(--text-d)}
+.task-xp{font-size:9px;color:var(--text-d)}
+.task-del{font-size:9px;color:var(--text-d);padding:2px 5px;border-radius:3px;border:none;background:none;cursor:pointer;opacity:0;transition:opacity .15s}
+.task-row:hover .task-del{opacity:1}
+.task-del:hover{color:var(--red)}
+.tasks-complete-banner{padding:8px 10px;background:rgba(74,140,74,.12);border:1px solid rgba(74,140,74,.25);border-radius:6px;margin-top:6px;font-size:11px;color:var(--green-m);text-align:center;font-family:'Cinzel',serif;letter-spacing:.5px}
+.task-skill-tag{font-size:9px;color:var(--gold);background:rgba(201,168,76,.1);padding:2px 5px;border-radius:3px;flex-shrink:0}
+.hcal-streak-num{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);line-height:1}
+.hcal-streak-lbl{font-size:10px;color:var(--text-d);margin-top:1px}
 
 /* ══════════════════════════
    OVERLAYS
@@ -650,8 +706,20 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
       <div class="pane active" id="pane-habits">
         <div class="manage-bar">
           <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-m)">Your Habits</span>
-          <button class="manage-toggle off" id="manage-toggle" onclick="toggleManage()">Manage</button>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="cal-toggle-row" id="cal-toggle-row">
+              <button class="cal-toggle-btn active" id="cal-btn-list" onclick="setHabitsView('list')">List</button>
+              <button class="cal-toggle-btn" id="cal-btn-cal" onclick="setHabitsView('calendar')">Calendar</button>
+            </div>
+            <button class="manage-toggle off" id="manage-toggle" onclick="toggleManage()">Manage</button>
+          </div>
         </div>
+        <!-- Calendar view -->
+        <div id="habits-calendar-view" style="display:none">
+          <div id="hcal-wrap"></div>
+        </div>
+        <!-- List view wrapper -->
+        <div id="habits-list-view">
 
         <!-- Empty state -->
         <div id="habits-empty" class="empty" style="display:none">
@@ -663,8 +731,15 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 
         <!-- Dailies (once per day) -->
         <div id="dailies-section" style="display:none">
-          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--gold)">📅 Dailies — 500 XP</div><div class="vsh-line"></div></div>
+          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--gold)">⚡ Habits — 500 XP</div><div class="vsh-line"></div></div>
           <div id="dailies-list"></div>
+        </div>
+
+        <!-- Daily Tasks -->
+        <div id="tasks-section" style="display:none">
+          <div class="vice-sec-head"><div class="vsh-line"></div><div class="vsh-lbl" style="color:var(--text-m)">✅ Daily Tasks</div><div class="vsh-line"></div></div>
+          <div id="tasks-list"></div>
+          <div id="tasks-add-row" style="display:none"></div>
         </div>
 
         <!-- Vices -->
@@ -673,8 +748,10 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <div id="vices-list"></div>
         </div>
 
+        </div><!-- /habits-list-view -->
         <div class="add-row" id="add-row" style="display:none">
-          <button class="add-btn" onclick="openAddHabit('daily')" style="border-color:var(--gold-d);color:var(--gold)">+ Add Daily &nbsp;<span style="opacity:.6;font-size:8px">once/day · 500 XP</span></button>
+          <button class="add-btn" onclick="openAddHabit('daily')" style="border-color:var(--gold-d);color:var(--gold)">+ Add Habit &nbsp;<span style="opacity:.6;font-size:8px">daily or custom · 500 XP</span></button>
+          <button class="add-btn" onclick="openAddTask()" style="border-color:rgba(255,255,255,.2);color:var(--text-m)">+ Add Daily Task &nbsp;<span style="opacity:.6;font-size:8px">100 XP · resets daily</span></button>
           <button class="add-btn vice-add" onclick="openAddVice()">+ Add Something to Resist</button>
           <button class="reset-btn" onclick="confirmReset()">↺ Reset Today</button>
         </div>
@@ -1325,7 +1402,7 @@ function defaultState(){
     onboarded:false, name:'', avatar:'🧙', title:'Apprentice of Life',
     startDate:todayStr(), lastActiveDate:todayStr(), streak:0, totalXP:0,
     skills,
-    habits:[], vices:[], log:[],
+    habits:[], vices:[], tasks:[], log:[],
     bank:{slots:50, items:startingBank},
     equipped:{head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null},
     autoEat:false,
@@ -1333,7 +1410,7 @@ function defaultState(){
     activeActivity:null,
     activeMode:'gather',
     combat:null,
-    questsDone:{}, questsPending:{},
+    questsDone:{}, questsPending:{}, taskBonusEarned:{},
   };
 }
 
@@ -1359,6 +1436,12 @@ function todayStr(){ return new Date().toISOString().slice(0,10); }
 // ═══════════════════════════════════════
 // DAILY ROLLOVER
 // ═══════════════════════════════════════
+function isScheduledDay(h, dateStr){
+  if(!h.frequency || h.frequency==='daily') return true;
+  const dayOfWeek = new Date(dateStr+'T12:00:00').getDay(); // 0=Sun,1=Mon...6=Sat
+  return h.frequency.includes(dayOfWeek);
+}
+
 function checkRollover(){
   const today=todayStr();
   if(S.lastActiveDate===today) return;
@@ -1366,12 +1449,14 @@ function checkRollover(){
   (S.habits||[]).forEach(h=>{
     if(h.type==='habit'){ h.timesToday=0; }
     else if(h.type==='daily'){
-      if(!h.doneToday && diff<=1) h.streak=Math.max(0,(h.streak||1)-1); // missed day breaks streak
+      // Only penalize streak if yesterday was a scheduled day
+      const wasScheduled = isScheduledDay(h, S.lastActiveDate);
+      if(!h.doneToday && diff<=1 && wasScheduled) h.streak=Math.max(0,(h.streak||1)-1);
       h.doneToday=false;
     }
-    // milestones: never touch doneToday
   });
   S.vices.forEach(v=>{ if(!v.checkedToday) v.streak=0; v.checkedToday=false; });
+  (S.tasks||[]).forEach(t=>{ t.doneToday=false; });
   if(diff>1) S.streak=0;
   S.log=[]; S.lastActiveDate=today;
   saveState();
@@ -1383,6 +1468,8 @@ function checkRollover(){
 window.addEventListener('DOMContentLoaded',()=>{
   SKILL_KEYS.forEach(k=>{ if(!S.skills[k]) S.skills[k]={xp:k==='hitpoints'?xpForLevel(10):0}; });
   if(!S.bank) S.bank={slots:50,items:{}};
+  if(!S.tasks) S.tasks=[];
+  if(!S.taskBonusEarned) S.taskBonusEarned={};
   if(S.bank.slots<50) S.bank.slots=50; // migrate old saves
   if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null,food:null};
   if(!S.equipped.axe)     S.equipped.axe=null;
@@ -1516,7 +1603,7 @@ function obBuildSkillGrid(){
 
 function obStep2(){
   // Add "Open HabitScape" as daily for selected skill
-  const habit={id:'h_habitscape',type:'daily',skill:obSelectedSkill,name:'Open HabitScape',doneToday:false,streak:0,autoLog:true};
+  const habit={id:'h_habitscape',type:'daily',skill:obSelectedSkill,name:'Open HabitScape',doneToday:false,streak:0,autoLog:true,completedDates:[]};
   S.habits.push(habit);
   saveState();
   obShowStep(3);
@@ -1526,6 +1613,8 @@ function obLogFirst(){
   const h=S.habits.find(x=>x.id==='h_habitscape');
   if(!h||h.doneToday) return;
   h.doneToday=true; h.streak=1;
+  if(!h.completedDates) h.completedDates=[];
+  const td2=todayStr(); if(!h.completedDates.includes(td2)) h.completedDates.push(td2);
   const xp=500;
   awardXP(h.skill,xp,false);
   addLog(h.skill,`Daily: <strong>Open HabitScape</strong>`,xp);
@@ -1588,7 +1677,7 @@ function obFinish(){
     cat.habits.forEach((h,i)=>{
       const key=cat.id+'_'+i;
       if(obSelectedHabits[key]){
-        S.habits.push({id:'h'+Date.now()+Math.random(),type:'daily',skill:h.skill,name:h.name,doneToday:false,streak:0});
+        S.habits.push({id:'h'+Date.now()+Math.random(),type:'daily',skill:h.skill,name:h.name,doneToday:false,streak:0,completedDates:[]});
       }
     });
   });
@@ -1725,6 +1814,154 @@ function updateActivityLevels(){
 // ═══════════════════════════════════════
 // HABITS PANE
 // ═══════════════════════════════════════
+let habitsView = 'list';
+let calSelectedDate = todayStr();
+let calViewYear = new Date().getFullYear();
+let calViewMonth = new Date().getMonth();
+
+function setHabitsView(view){
+  habitsView = view;
+  document.getElementById('cal-btn-list').className = 'cal-toggle-btn' + (view==='list'?' active':'');
+  document.getElementById('cal-btn-cal').className  = 'cal-toggle-btn' + (view==='calendar'?' active':'');
+  document.getElementById('habits-list-view').style.display = view==='list' ? '' : 'none';
+  document.getElementById('habits-calendar-view').style.display = view==='calendar' ? '' : 'none';
+  document.getElementById('manage-toggle').style.display = view==='list' ? '' : 'none';
+  if(view==='calendar'){ calSelectedDate=todayStr(); calViewYear=new Date().getFullYear(); calViewMonth=new Date().getMonth(); renderCalendar(); }
+}
+
+function renderCalendar(){
+  const wrap = document.getElementById('hcal-wrap');
+  if(!wrap) return;
+  const today = todayStr();
+  const todayD = new Date(today+'T12:00:00');
+  const habits = (S.habits||[]).filter(h=>h.type==='daily');
+
+  // Build calendar grid
+  const firstDay = new Date(calViewYear, calViewMonth, 1).getDay();
+  const daysInMonth = new Date(calViewYear, calViewMonth+1, 0).getDate();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // Overall streak display
+  const longestStreak = habits.length > 0 ? Math.max(...habits.map(h=>h.streak||0)) : 0;
+  const totalStreak = S.streak || 0;
+
+  let html = `
+    <div class="hcal-streak-bar">
+      <span style="font-size:20px">🔥</span>
+      <div>
+        <div class="hcal-streak-num">${totalStreak}</div>
+        <div class="hcal-streak-lbl">day streak</div>
+      </div>
+    </div>
+    <div class="hcal-header">
+      <button class="hcal-nav" onclick="calChangeMonth(-1)">‹</button>
+      <span class="hcal-month">${monthNames[calViewMonth]} ${calViewYear}</span>
+      <button class="hcal-nav" onclick="calChangeMonth(1)">›</button>
+    </div>
+    <div class="hcal-grid">
+      <div class="hcal-day-lbl">S</div><div class="hcal-day-lbl">M</div><div class="hcal-day-lbl">T</div><div class="hcal-day-lbl">W</div><div class="hcal-day-lbl">T</div><div class="hcal-day-lbl">F</div><div class="hcal-day-lbl">S</div>
+  `;
+
+  // Empty cells before first day
+  for(let i=0;i<firstDay;i++) html += `<div class="hcal-day empty"></div>`;
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = calViewYear+'-'+String(calViewMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const dateD = new Date(dateStr+'T12:00:00');
+    const diffDays = Math.round((todayD - dateD) / 86400000);
+    const isToday = dateStr === today;
+    const isFuture = dateD > todayD;
+    const isPastLock = !isToday && !isFuture && diffDays > 2;
+    const isSelected = dateStr === calSelectedDate;
+
+    // Count completions for this day
+    const scheduled = habits.filter(h=>isScheduledDay(h,dateStr));
+    const total = scheduled.length;
+    const done = scheduled.filter(h=>(h.completedDates||[]).includes(dateStr)).length;
+
+    let cls = 'hcal-day';
+    if(isFuture) cls += ' future';
+    else if(isPastLock) cls += ' past-lock';
+    else if(done > 0 && done < total) cls += ' has-some';
+    else if(done > 0 && done >= total) cls += ' has-all';
+    if(isToday) cls += ' today';
+    if(isSelected) cls += ' selected';
+
+    const clickable = !isFuture && !isPastLock;
+    html += `<div class="${cls}" ${clickable?`onclick="calSelectDay('${dateStr}')"`:''}>${d}</div>`;
+  }
+
+  html += `</div>`;
+
+  // Day detail panel
+  const selD = new Date(calSelectedDate+'T12:00:00');
+  const selDiff = Math.round((todayD - selD) / 86400000);
+  const canBackfill = selDiff <= 2 && selD <= todayD;
+
+  const selDate = new Date(calSelectedDate+'T12:00:00');
+  const selLabel = selDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const isSelToday = calSelectedDate === today;
+  const backfillNote = isSelToday ? 'today' : canBackfill ? 'tap to backfill' : 'view only';
+
+  html += `<div class="hcal-detail">
+    <div class="hcal-detail-title">${selLabel} &nbsp;·&nbsp; <span style="color:var(--text-d)">${backfillNote}</span></div>`;
+
+  if(habits.length === 0){
+    html += `<div style="font-size:12px;color:var(--text-d);font-style:italic;padding:8px 0">No habits yet.</div>`;
+  } else {
+    habits.filter(h=>isScheduledDay(h,calSelectedDate)).forEach(h=>{
+      const isDone = (h.completedDates||[]).includes(calSelectedDate);
+      const canToggle = canBackfill && !isDone;
+      const sk = SKILLS[h.skill];
+      html += `<div class="hcal-habit-row${isDone?' done':''}" ${canToggle?`onclick="calBackfill('${h.id}','${calSelectedDate}')"`:'style="cursor:default"'}>
+        <div class="hcal-check${isDone?' done':''}">${isDone?'✓':''}</div>
+        <div class="hcal-habit-name">${h.name}</div>
+        <div class="hcal-skill-tag">${sk?.icon||''} ${sk?.name||''}</div>
+      </div>`;
+    });
+  }
+
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+function calChangeMonth(dir){
+  calViewMonth += dir;
+  if(calViewMonth < 0){ calViewMonth = 11; calViewYear--; }
+  if(calViewMonth > 11){ calViewMonth = 0; calViewYear++; }
+  renderCalendar();
+}
+
+function calSelectDay(dateStr){
+  calSelectedDate = dateStr;
+  renderCalendar();
+}
+
+function calBackfill(habitId, dateStr){
+  const today = todayStr();
+  const todayD = new Date(today+'T12:00:00');
+  const dateD = new Date(dateStr+'T12:00:00');
+  const diff = Math.round((todayD - dateD) / 86400000);
+  if(diff > 2 || dateD > todayD) return;
+
+  const h = (S.habits||[]).find(x=>x.id===habitId);
+  if(!h) return;
+  if(!h.completedDates) h.completedDates=[];
+  if(h.completedDates.includes(dateStr)) return;
+
+  h.completedDates.push(dateStr);
+  // If backfilling today, also set doneToday
+  if(dateStr === today){ h.doneToday=true; h.streak=(h.streak||0)+1; }
+
+  // Award XP
+  const xp = 500;
+  if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
+  addLog(h.skill==='activity'?'activity':h.skill,`Daily: <strong>${h.name}</strong> (backfilled)`,xp);
+  saveState();
+  showToast('Logged!',`+${xp} XP — ${h.name}`,true);
+  renderCalendar();
+}
+
 function renderHabitsPane(){
   const hasD=(S.habits||[]).filter(h=>h.type==='daily').length>0;
   const hasV=(S.vices||[]).length>0;
@@ -1734,10 +1971,12 @@ function renderHabitsPane(){
   document.getElementById('add-row').style.display='';
   document.getElementById('dailies-section').style.display=hasD?'':'none';
   document.getElementById('vices-section').style.display=hasV?'':'none';
+  renderTasksSection();
 
   // ── Dailies (once per day, 100 XP, streak) ──
   const dl=document.getElementById('dailies-list'); dl.innerHTML='';
-  (S.habits||[]).filter(h=>h.type==='daily').forEach(h=>{
+  const todayForList=todayStr();
+  (S.habits||[]).filter(h=>h.type==='daily' && isScheduledDay(h,todayForList)).forEach(h=>{
     const isAct=h.skill==='activity';
     const sk=isAct?null:SKILLS[h.skill];
     const row=document.createElement('div');
@@ -1751,6 +1990,7 @@ function renderHabitsPane(){
             ? `<span style="color:var(--green-m)">✓ +500 XP earned</span>`
             : `<span style="color:var(--gold)">+500 XP</span>`}
           &nbsp;·&nbsp; 🔥 ${h.streak||0} day streak
+          ${h.frequency&&h.frequency!=='daily'?`<span class="habit-freq-tag">· ${freqLabel(h.frequency)}</span>`:''}
         </div>
       </div>
       <div class="${isAct?'skill-bubble activity-bubble':'skill-bubble'}" onclick="openSkillPicker('habit','${h.id}',event)">
@@ -1807,6 +2047,8 @@ function doHabit(e,id){
   } else if(type==='daily'){
     if(h.doneToday) return;
     h.doneToday=true; h.streak=(h.streak||0)+1;
+    if(!h.completedDates) h.completedDates=[];
+    const td=todayStr(); if(!h.completedDates.includes(td)) h.completedDates.push(td);
     const xp=500;
     if(h.skill==='activity') awardActivityBoost(xp); else awardXP(h.skill,xp,false);
     addLog(h.skill==='activity'?'activity':h.skill,`Daily: <strong>${h.name}</strong>`,xp);
@@ -2009,12 +2251,52 @@ function selectSP(el,k){
 }
 function getSelectedSP(){ const el=document.querySelector('#m-sp .sp-opt.sel'); return el?el.getAttribute('onclick').match(/'([^']+)'\)/)[1]:null; }
 
+function buildFreqPicker(freq){
+  const days=['S','M','T','W','T','F','S'];
+  const isCustom = Array.isArray(freq);
+  const selected = isCustom ? freq : [];
+  return `
+    <div class="freq-type-row">
+      <button class="freq-type-btn${!isCustom?' on':''}" id="freq-daily-btn" onclick="setFreqType('daily')">Daily</button>
+      <button class="freq-type-btn${isCustom?' on':''}" id="freq-custom-btn" onclick="setFreqType('custom')">Custom</button>
+    </div>
+    <div id="freq-days-row" class="freq-row" style="display:${isCustom?'flex':'none'}">
+      ${days.map((d,i)=>`<button class="freq-day-btn${selected.includes(i)?' on':''}" id="freq-d-${i}" onclick="toggleFreqDay(${i})">${d}</button>`).join('')}
+    </div>`;
+}
+
+function setFreqType(type){
+  const isCustom = type==='custom';
+  document.getElementById('freq-daily-btn').className='freq-type-btn'+(isCustom?'':' on');
+  document.getElementById('freq-custom-btn').className='freq-type-btn'+(isCustom?' on':'');
+  document.getElementById('freq-days-row').style.display=isCustom?'flex':'none';
+}
+
+function toggleFreqDay(i){
+  const btn=document.getElementById('freq-d-'+i);
+  btn.classList.toggle('on');
+}
+
+function getFreqValue(){
+  const isCustom=document.getElementById('freq-custom-btn')?.classList.contains('on');
+  if(!isCustom) return 'daily';
+  const days=[];
+  for(let i=0;i<7;i++){ if(document.getElementById('freq-d-'+i)?.classList.contains('on')) days.push(i); }
+  return days.length>0 ? days : 'daily'; // fallback to daily if nothing selected
+}
+
+function freqLabel(freq){
+  if(!freq||freq==='daily') return '';
+  const names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  return freq.map(d=>names[d]).join('/');
+}
+
 function openAddHabit(type){
-  type='daily'; // dailies only
-  openModal('Add Daily Habit',`
-    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--gold)">500 XP · once per day · builds streak</div>
+  openModal('Add Habit',`
+    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--gold)">500 XP · once per scheduled day · builds streak</div>
     <div class="field"><label>Name</label><input type="text" id="m-name" placeholder="e.g. Workout 30 minutes" maxlength="50"></div>
     <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker('attack')}</div></div>
+    <div class="field"><label>Frequency</label>${buildFreqPicker('daily')}</div>
     <div class="modal-actions">
       <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
       <button class="btn btn-gold" onclick="saveHabit(null,'daily')">Add</button>
@@ -2025,14 +2307,13 @@ function openAddHabit(type){
 
 function openEditHabit(id){
   const h=(S.habits||[]).find(x=>x.id===id); if(!h) return;
-  const type=h.type||'daily';
-  const labels={habit:'Habit',daily:'Daily',milestone:'Milestone'};
-  openModal(`Edit ${labels[type]}`,`
+  openModal('Edit Habit',`
     <div class="field"><label>Name</label><input type="text" id="m-name" value="${h.name}" maxlength="50"></div>
     <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker(h.skill)}</div></div>
+    <div class="field"><label>Frequency</label>${buildFreqPicker(h.frequency||'daily')}</div>
     <div class="modal-actions">
       <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveHabit('${id}','${type}')">Save</button>
+      <button class="btn btn-gold" onclick="saveHabit('${id}','daily')">Save</button>
     </div>
   `);
   setTimeout(()=>document.getElementById('m-name')?.focus(),80);
@@ -2041,17 +2322,155 @@ function openEditHabit(id){
 function saveHabit(id,type){
   const name=document.getElementById('m-name').value.trim();
   const skill=getSelectedSP()||'attack';
+  const freq=getFreqValue();
   if(!name){ document.getElementById('m-name').focus(); return; }
   if(id){
     const h=S.habits.find(x=>x.id===id);
-    if(h){ h.name=name; h.skill=skill; }
+    if(h){ h.name=name; h.skill=skill; h.frequency=freq; }
   } else {
-    const base={id:'h'+Date.now(),type:type||'daily',skill,name,doneToday:false};
-    if(type==='habit') base.timesToday=0;
-    if(type==='daily') base.streak=0;
+    const base={id:'h'+Date.now(),type:'daily',skill,name,doneToday:false,completedDates:[],streak:0,frequency:freq};
     S.habits.push(base);
   }
   saveState(); closeModal(); renderAll();
+}
+
+// ═══════════════════════════════════════
+// DAILY TASKS
+// ═══════════════════════════════════════
+const TASK_MAX = 10;
+const TASK_XP = 100;
+const TASK_BONUS_XP = 100;
+
+function renderTasksSection(){
+  const tasks = S.tasks || [];
+  const today = todayStr();
+  const section = document.getElementById('tasks-section');
+  const list = document.getElementById('tasks-list');
+  if(!section || !list) return;
+
+  section.style.display = tasks.length > 0 ? '' : 'none';
+  list.innerHTML = '';
+
+  const todayTasks = tasks.filter(t => {
+    const td = new Date(today+'T12:00:00');
+    const cd = new Date(t.createdDate+'T12:00:00');
+    const diff = Math.round((td - cd) / 86400000);
+    return diff <= 2;
+  });
+
+  const doneTasks = todayTasks.filter(t => (t.completedDates||[]).includes(today));
+  const totalToday = todayTasks.length;
+  const allDone = totalToday > 0 && doneTasks.length >= totalToday;
+
+  todayTasks.forEach(t => {
+    const isDone = (t.completedDates||[]).includes(today);
+    const sk = SKILLS[t.skill];
+    const row = document.createElement('div');
+    row.className = 'task-row' + (isDone ? ' done' : '');
+    row.innerHTML = `
+      <div class="task-check${isDone?' done':''}" onclick="doTask(event,'${t.id}')">${isDone?'✓':''}</div>
+      <div class="task-name${isDone?' done':''}">${t.name}</div>
+      ${sk ? `<div class="task-skill-tag">${sk.icon} ${sk.name}</div>` : ''}
+      <span class="task-xp">${isDone?'done':'+'+TASK_XP+'xp'}</span>
+      <button class="task-del" onclick="event.stopPropagation();deleteTask('${t.id}')">✕</button>`;
+    row.querySelector('.task-name').onclick = (e) => doTask(e, t.id);
+    list.appendChild(row);
+  });
+
+  if(allDone){
+    const banner = document.createElement('div');
+    banner.className = 'tasks-complete-banner';
+    banner.textContent = '✦ All tasks complete · +'+TASK_BONUS_XP+' XP bonus ✦';
+    list.appendChild(banner);
+  }
+
+  // Show count in section header
+  const lbl = section.querySelector('.vsh-lbl');
+  if(lbl) lbl.textContent = `✅ Daily Tasks (${doneTasks.length}/${totalToday})`;
+
+  // Show/hide add input based on task count
+  const addRow = document.getElementById('tasks-add-row');
+  if(addRow) addRow.style.display = tasks.length < TASK_MAX ? '' : 'none';
+}
+
+function doTask(e, id){
+  e.stopPropagation();
+  const today = todayStr();
+  const t = (S.tasks||[]).find(x=>x.id===id);
+  if(!t) return;
+  if((t.completedDates||[]).includes(today)) return;
+
+  if(!t.completedDates) t.completedDates = [];
+  t.completedDates.push(today);
+  t.doneToday = true;
+
+  const taskSkill = t.skill || 'attack';
+  awardXP(taskSkill, TASK_XP, false);
+  addLog(taskSkill, `Task: <strong>${t.name}</strong>`, TASK_XP);
+  xpPop(e.clientX, e.clientY, TASK_XP, false);
+
+  // Check for all-complete bonus
+  const tasks = S.tasks || [];
+  const todayD = new Date(today+'T12:00:00');
+  const todayTasks = tasks.filter(t2 => {
+    const cd = new Date(t2.createdDate+'T12:00:00');
+    return Math.round((todayD - cd) / 86400000) <= 2;
+  });
+  const allDone = todayTasks.every(t2 => (t2.completedDates||[]).includes(today));
+  if(allDone && todayTasks.length > 0 && !S.taskBonusEarned?.[today]){
+    if(!S.taskBonusEarned) S.taskBonusEarned = {};
+    S.taskBonusEarned[today] = true;
+    awardXP('attack', TASK_BONUS_XP, false);
+    showToast('All Tasks Done!', `+${TASK_BONUS_XP} XP bonus!`, true);
+  }
+
+  saveState(); renderTasksSection();
+}
+
+function deleteTask(id){
+  S.tasks = (S.tasks||[]).filter(x=>x.id!==id);
+  saveState(); renderTasksSection();
+}
+
+function openAddTask(){
+  if((S.tasks||[]).length >= TASK_MAX){
+    showToast('Task Limit', 'You can only have '+TASK_MAX+' tasks per day.', false);
+    return;
+  }
+  openModal('Add Daily Task',`
+    <div style="font-size:11px;font-style:italic;margin-bottom:10px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text-m)">100 XP · resets daily · up to ${TASK_MAX} per day</div>
+    <div class="field"><label>Task</label><input type="text" id="m-task-name" placeholder="e.g. Reply to emails" maxlength="60"></div>
+    <div class="field"><label>Skill to Train</label><div class="skill-picker" id="m-sp">${buildSkillPicker('attack')}</div></div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveTask()">Add</button>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('m-task-name')?.focus(), 80);
+}
+
+function saveTask(){
+  const name = document.getElementById('m-task-name')?.value.trim();
+  const skill = getSelectedSP() || 'attack';
+  if(!name){ document.getElementById('m-task-name')?.focus(); return; }
+  if((S.tasks||[]).length >= TASK_MAX){
+    showToast('Task Limit', 'You can only have '+TASK_MAX+' tasks per day.', false);
+    return;
+  }
+  const today = todayStr();
+  if(!S.tasks) S.tasks = [];
+  S.tasks.push({
+    id: 't'+Date.now(),
+    name,
+    skill,
+    createdDate: today,
+    doneToday: false,
+    completedDates: []
+  });
+  saveState(); closeModal();
+  renderTasksSection();
+  const section = document.getElementById('tasks-section');
+  if(section) section.style.display = '';
 }
 
 function openAddVice(){
