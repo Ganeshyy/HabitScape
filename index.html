@@ -771,10 +771,11 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         </div>
 
         <div class="sec">Tools</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:10px">
           <div class="eq-slot" data-slot="axe"     onclick="openEquipSlot('axe')">     <div class="eq-slot-icon">🪓</div><div class="eq-slot-name">Axe</div>     <div class="eq-slot-item" id="eq-axe-item"></div></div>
           <div class="eq-slot" data-slot="pickaxe" onclick="openEquipSlot('pickaxe')"> <div class="eq-slot-icon">⛏️</div><div class="eq-slot-name">Pickaxe</div> <div class="eq-slot-item" id="eq-pickaxe-item"></div></div>
-          <div class="eq-slot" data-slot="net"     onclick="openEquipSlot('net')">     <div class="eq-slot-icon">🪤</div><div class="eq-slot-name">Net</div>     <div class="eq-slot-item" id="eq-net-item"></div></div>
+          <div class="eq-slot" data-slot="rod"     onclick="openEquipSlot('rod')">     <div class="eq-slot-icon">🎣</div><div class="eq-slot-name">Rod</div>     <div class="eq-slot-item" id="eq-rod-item"></div></div>
+          <div class="eq-slot" data-slot="trap"    onclick="openEquipSlot('trap')">    <div class="eq-slot-icon">🪤</div><div class="eq-slot-name">Trap</div>    <div class="eq-slot-item" id="eq-trap-item"></div></div>
         </div>
 
         <div class="sec">Food</div>
@@ -1018,6 +1019,10 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <div><div class="act-title">Hunting</div><div class="act-sub">Track creatures for pelts and magical components</div></div>
           <div style="text-align:right"><div class="act-lv" id="hunting-lv">1</div><div class="act-lv-lbl">Level</div></div>
         </div>
+        <div class="smithing-tabs">
+          <button class="sm-tab active-sm" onclick="setHuntMode('animals',this)">🐾 Animals</button>
+          <button class="sm-tab" onclick="setHuntMode('magical',this)">✨ Magical</button>
+        </div>
         <div id="hunting-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
             <div class="idle-bar-label">Hunting: <strong id="idle-hunting-name">—</strong></div>
@@ -1083,47 +1088,39 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <div id="smithing-items"></div>
       </div>
 
-      <!-- FLETCHING -->
-      <div class="pane" id="pane-fletching">
+      <!-- CARVING -->
+      <div class="pane" id="pane-carving">
         <div class="activity-header">
           <div class="act-icon">🪶</div>
-          <div><div class="act-title">Fletching</div><div class="act-sub">Craft arrows and bows</div></div>
-          <div style="text-align:right"><div class="act-lv" id="fletching-lv">1</div><div class="act-lv-lbl">Level</div></div>
+          <div><div class="act-title">Carving</div><div class="act-sub">Shape wood into weapons and tools</div></div>
+          <div style="text-align:right"><div class="act-lv" id="carving-lv">1</div><div class="act-lv-lbl">Level</div></div>
         </div>
-        <div id="fletching-idle-wrap" style="display:none">
+        <div class="smithing-tabs">
+          <button class="sm-tab active-sm" onclick="setCarvingMode('traps',this)">🪤 Traps</button>
+          <button class="sm-tab" onclick="setCarvingMode('bows',this)">🏹 Bows</button>
+          <button class="sm-tab" onclick="setCarvingMode('rods',this)">🎣 Rods</button>
+          <button class="sm-tab" onclick="setCarvingMode('staves',this)">🪄 Staves</button>
+        </div>
+        <div id="carving-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
-            <div class="idle-bar-label">Fletching: <strong id="idle-fletching-name">—</strong></div>
-            <div class="idle-track"><div class="idle-fill" id="idle-fletching-fill" style="width:0%"></div><span class="idle-timer" id="idle-fletching-timer"></span></div>
+            <div class="idle-bar-label">Carving: <strong id="idle-carving-name">—</strong></div>
+            <div class="idle-track"><div class="idle-fill" id="idle-carving-fill" style="width:0%"></div><span class="idle-timer" id="idle-carving-timer"></span></div>
           </div>
-          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('fletching')">Stop</button>
+          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('carving')">Stop</button>
         </div>
-        <div id="fletching-items"></div>
+        <div id="carving-items"></div>
       </div>
 
-      <!-- RUNECRAFTING -->
-      <!-- MAGECRAFTING -->
-      <div class="pane" id="pane-enchanting">
-        <div class="activity-header">
-          <div class="act-icon">🌀</div>
-          <div><div class="act-title">Enchanting</div><div class="act-sub">Forge staves and magic armour</div></div>
-          <div style="text-align:right"><div class="act-lv" id="enchanting-lv">1</div><div class="act-lv-lbl">Level</div></div>
-        </div>
-        <div id="enchanting-idle-wrap" style="display:none">
-          <div class="idle-bar-wrap">
-            <div class="idle-bar-label">Crafting: <strong id="idle-enchanting-name">—</strong></div>
-            <div class="idle-track"><div class="idle-fill" id="idle-enchanting-fill" style="width:0%"></div><span class="idle-timer" id="idle-enchanting-timer"></span></div>
-          </div>
-          <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('enchanting')">Stop</button>
-        </div>
-        <div id="enchanting-items"></div>
-      </div>
-
-      <!-- LEATHERWORKING -->
+      <!-- CRAFTING -->
       <div class="pane" id="pane-crafting">
         <div class="activity-header">
           <div class="act-icon">🪡</div>
-          <div><div class="act-title">Crafting</div><div class="act-sub">Craft leather and studded armour</div></div>
+          <div><div class="act-title">Crafting</div><div class="act-sub">Craft ranged and magic armour</div></div>
           <div style="text-align:right"><div class="act-lv" id="crafting-lv">1</div><div class="act-lv-lbl">Level</div></div>
+        </div>
+        <div class="smithing-tabs">
+          <button class="sm-tab active-sm" onclick="setCraftMode('ranged',this)">🏹 Ranged</button>
+          <button class="sm-tab" onclick="setCraftMode('magic',this)">🔮 Magic</button>
         </div>
         <div id="crafting-idle-wrap" style="display:none">
           <div class="idle-bar-wrap">
@@ -1133,8 +1130,6 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopActivity('crafting')">Stop</button>
         </div>
         <div id="crafting-items"></div>
-
-
       </div>
 
     </div><!-- /content -->
@@ -1164,8 +1159,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
         <button class="nav-btn"        onclick="showPane('fishing',this)"     ><span class="nav-icon">🎣</span><span class="nav-label">Fishing</span></button>
         <button class="nav-btn"        onclick="showPane('cooking',this)"     ><span class="nav-icon">🍳</span><span class="nav-label">Cooking</span></button>
         <button class="nav-btn"        onclick="showPane('smithing',this)"    ><span class="nav-icon">🔨</span><span class="nav-label">Smith</span></button>
-        <button class="nav-btn"        onclick="showPane('fletching',this)"   ><span class="nav-icon">🪶</span><span class="nav-label">Fletch</span></button>
-        <button class="nav-btn"        onclick="showPane('enchanting',this)"  ><span class="nav-icon">🌀</span><span class="nav-label">Enchanting</span></button>
+        <button class="nav-btn"        onclick="showPane('carving',this)"    ><span class="nav-icon">🪶</span><span class="nav-label">Carving</span></button>
         <button class="nav-btn"        onclick="showPane('crafting',this)"><span class="nav-icon">🪡</span><span class="nav-label">Crafting</span></button>
       </div>
     </nav>
@@ -1188,9 +1182,8 @@ const SKILLS = {
   mining:        {name:'Mining',        icon:'⛏️',  color:'#9a9070', noTrain:false},
   smithing:      {name:'Smithing',      icon:'🔨',  color:'#c07840', noTrain:false},
   woodcutting:   {name:'Woodcutting',   icon:'🪓',  color:'#8a6030', noTrain:false},
-  fletching:     {name:'Fletching',     icon:'🪶',  color:'#6a9a50', noTrain:false},
-  enchanting:  {name:'Enchanting',  icon:'🌀',  color:'#7a60c0', noTrain:false},
-  crafting:{name:'Crafting',icon:'🪡',  color:'#b06080', noTrain:false},
+  carving:       {name:'Carving',       icon:'🪶',  color:'#6a9a50', noTrain:false},
+  crafting:      {name:'Crafting',      icon:'🪡',  color:'#b06080', noTrain:false},
   fishing:       {name:'Fishing',       icon:'🎣',  color:'#4a8ab0', noTrain:false},
   cooking:       {name:'Cooking',       icon:'🍳',  color:'#c09040', noTrain:false},
   hunting:       {name:'Hunting',       icon:'🐾',  color:'#8a7040', noTrain:false},
@@ -1223,21 +1216,21 @@ const MONSTERS = [
   {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:35, maxHit:25, defLv:45, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
 ];
 
-// Tool speed tiers — equipped tool reduces gather interval by 1 min per tier
-// bronze=600000ms(10min), iron=540000, steel=480000, mithril=420000, adamant=360000
 const TOOL_TIERS = {
-  bronze_axe:0, iron_axe:1, steel_axe:2, mithril_axe:3, adamant_axe:4,
-  bronze_pickaxe:0, iron_pickaxe:1, steel_pickaxe:2, mithril_pickaxe:3, adamant_pickaxe:4,
-  bronze_net:0, iron_net:1,
+  bronze_axe:0, iron_axe:1, steel_axe:2, mithril_axe:3, adamant_axe:4, rune_axe:5,
+  bronze_pickaxe:0, iron_pickaxe:1, steel_pickaxe:2, mithril_pickaxe:3, adamant_pickaxe:4, rune_pickaxe:5,
+  normal_rod:0, oak_rod:1, willow_rod:2, teak_rod:3, yew_rod:4, magic_rod:5,
+  normal_trap:0, oak_trap:1, willow_trap:2, teak_trap:3, yew_trap:4, magic_trap:5,
 };
-const BASE_GATHER = 10000; // 10 seconds (testing)
-const FOCUS_XP_INTERVAL = 10000; // 10 seconds (testing)
+const BASE_GATHER = 10000;
+const FOCUS_XP_INTERVAL = 10000;
 
 function getToolInterval(skill){
   let tool = null;
   if(skill==='woodcutting') tool = S.equipped?.axe;
   if(skill==='mining')      tool = S.equipped?.pickaxe;
-  if(skill==='fishing')     tool = S.equipped?.net;
+  if(skill==='fishing')     tool = S.equipped?.rod;
+  if(skill==='hunting')     tool = S.equipped?.trap;
   if(!tool) return BASE_GATHER;
   const tier = TOOL_TIERS[tool.id];
   if(tier===undefined) return BASE_GATHER;
@@ -1247,137 +1240,193 @@ function getToolInterval(skill){
 function hasTool(skill){
   if(skill==='woodcutting') return !!(S.equipped?.axe);
   if(skill==='mining')      return !!(S.equipped?.pickaxe);
-  if(skill==='fishing')     return !!(S.equipped?.net);
+  if(skill==='fishing')     return !!(S.equipped?.rod);
+  if(skill==='hunting')     return !!(S.equipped?.trap);
   return true;
 }
 
 // Activity definitions — base intervals are placeholders; actual interval computed from tool
 const ACTIVITIES = {
   mining: [
-    {id:'iron_ore',    name:'Iron Ore',    icon:'🪨',req:1, xp:35, gives:{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:1}},
-    {id:'steel_ore',   name:'Steel Ore',   icon:'🩶',req:5, xp:50, gives:{item:'steel_ore',name:'Steel Ore',icon:'🩶',qty:1}},
-    {id:'mithril_ore', name:'Mithril Ore', icon:'🔵',req:20,xp:80, gives:{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:1}},
-    {id:'adamant_ore', name:'Adamant Ore', icon:'🟢',req:30,xp:95, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
+    {id:'tin_ore',     name:'Tin Ore',     icon:'🪨',req:1, xp:17, gives:{item:'tin_ore',    name:'Tin Ore',    icon:'🪨',qty:1}},
+    {id:'copper_ore',  name:'Copper Ore',  icon:'🟤',req:1, xp:17, gives:{item:'copper_ore', name:'Copper Ore', icon:'🟤',qty:1}},
+    {id:'iron_ore',    name:'Iron Ore',    icon:'🩶',req:10,xp:35, gives:{item:'iron_ore',   name:'Iron Ore',   icon:'🩶',qty:1}},
+    {id:'steel_ore',   name:'Steel Ore',   icon:'⚫',req:20,xp:50, gives:{item:'steel_ore',  name:'Steel Ore',  icon:'⚫',qty:1}},
+    {id:'mithril_ore', name:'Mithril Ore', icon:'🔵',req:30,xp:80, gives:{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:1}},
+    {id:'adamant_ore', name:'Adamant Ore', icon:'🟢',req:40,xp:95, gives:{item:'adamant_ore',name:'Adamant Ore',icon:'🟢',qty:1}},
+    {id:'rune_ore',    name:'Rune Ore',    icon:'🔴',req:50,xp:125,gives:{item:'rune_ore',   name:'Rune Ore',   icon:'🔴',qty:1}},
   ],
   woodcutting: [
-    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',name:'Logs',icon:'🪵',qty:1}},
-    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:5, xp:38, gives:{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:1}},
-    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:68, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
-    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:30,xp:88, gives:{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:1}},
-    {id:'magic_logs',  name:'Magic Tree',  icon:'🌟',req:40,xp:115,gives:{item:'magic_logs',name:'Magic Logs',icon:'✨',qty:1}},
+    {id:'normal_logs', name:'Normal Tree', icon:'🌲',req:1, xp:25, gives:{item:'logs',      name:'Logs',       icon:'🪵',qty:1}},
+    {id:'oak_logs',    name:'Oak Tree',    icon:'🌳',req:10,xp:38, gives:{item:'oak_logs',  name:'Oak Logs',   icon:'🪵',qty:1}},
+    {id:'willow_logs', name:'Willow Tree', icon:'🌿',req:20,xp:55, gives:{item:'willow_logs',name:'Willow Logs',icon:'🪵',qty:1}},
+    {id:'teak_logs',   name:'Teak Tree',   icon:'🌴',req:30,xp:75, gives:{item:'teak_logs', name:'Teak Logs',  icon:'🪵',qty:1}},
+    {id:'yew_logs',    name:'Yew Tree',    icon:'🎄',req:40,xp:95, gives:{item:'yew_logs',  name:'Yew Logs',   icon:'🪵',qty:1}},
+    {id:'magic_logs',  name:'Magic Tree',  icon:'🌟',req:50,xp:120,gives:{item:'magic_logs',name:'Magic Logs', icon:'✨',qty:1}},
   ],
   fishing: [
-    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10, gives:{item:'raw_shrimp',name:'Raw Shrimp',icon:'🦐',qty:1}},
-    {id:'trout',     name:'Trout',     icon:'🐟',req:20,xp:50, gives:{item:'raw_trout',name:'Raw Trout',icon:'🐟',qty:1}},
-    {id:'salmon',    name:'Salmon',    icon:'🐠',req:30,xp:70, gives:{item:'raw_salmon',name:'Raw Salmon',icon:'🐠',qty:1}},
-    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90, gives:{item:'raw_lobster',name:'Raw Lobster',icon:'🦞',qty:1}},
-    {id:'swordfish', name:'Swordfish', icon:'🐡',req:50,xp:100,gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐡',qty:1}},
+    {id:'shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:10,  gives:{item:'raw_shrimp',   name:'Raw Shrimp',   icon:'🦐',qty:1}},
+    {id:'sardine',   name:'Sardine',   icon:'🐟',req:10,xp:30,  gives:{item:'raw_sardine',  name:'Raw Sardine',  icon:'🐟',qty:1}},
+    {id:'trout',     name:'Trout',     icon:'🐠',req:20,xp:50,  gives:{item:'raw_trout',    name:'Raw Trout',    icon:'🐠',qty:1}},
+    {id:'salmon',    name:'Salmon',    icon:'🐡',req:30,xp:70,  gives:{item:'raw_salmon',   name:'Raw Salmon',   icon:'🐡',qty:1}},
+    {id:'lobster',   name:'Lobster',   icon:'🦞',req:40,xp:90,  gives:{item:'raw_lobster',  name:'Raw Lobster',  icon:'🦞',qty:1}},
+    {id:'swordfish', name:'Swordfish', icon:'🐬',req:50,xp:110, gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐬',qty:1}},
   ],
   cooking: [
     {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
     {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',name:'Raw Shrimp'},gives:{item:'shrimp',name:'Shrimp',icon:'🦐',qty:1,heals:3}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐟',req:15,xp:70, interval:5000, needs:{item:'raw_trout',name:'Raw Trout'},gives:{item:'trout',name:'Trout',icon:'🐟',qty:1,heals:7}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',  name:'Raw Shrimp'},  gives:{item:'shrimp',  name:'Shrimp',  icon:'🦐',qty:1,heals:3}},
+    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:10,xp:50, interval:4500, needs:{item:'raw_sardine', name:'Raw Sardine'}, gives:{item:'sardine', name:'Sardine', icon:'🐟',qty:1,heals:5}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐠',req:20,xp:70, interval:5000, needs:{item:'raw_trout',   name:'Raw Trout'},   gives:{item:'trout',   name:'Trout',   icon:'🐠',qty:1,heals:7}},
     {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
     {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
     {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
   ],
   smithing_smelt: [
-    {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:1, xp:12, interval:5000, needs:{item:'iron_ore',   qty:2,name:'2x Iron Ore'},   gives:{item:'iron_bar',   name:'Iron Bar',   icon:'🔩',qty:1}},
-    {id:'smelt_steel',   name:'Steel Bar',   icon:'🔧',req:5, xp:17, interval:6000, needs:{item:'steel_ore',  qty:2,name:'2x Steel Ore'},  gives:{item:'steel_bar',  name:'Steel Bar',  icon:'🔧',qty:1}},
-    {id:'smelt_mithril', name:'Mithril Bar', icon:'🔵',req:20,xp:30, interval:8000, needs:{item:'mithril_ore',qty:2,name:'2x Mithril Ore'},gives:{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:1}},
-    {id:'smelt_adamant', name:'Adamant Bar', icon:'🟢',req:30,xp:37, interval:10000,needs:{item:'adamant_ore',qty:2,name:'2x Adamant Ore'},gives:{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1}},
+    {id:'smelt_bronze',  name:'Bronze Bar',  icon:'🟫',req:1, xp:6,  interval:4000, needs:{item:'tin_ore',    qty:1,name:'1x Tin Ore + 1x Copper Ore',item2:'copper_ore',qty2:1}, gives:{item:'bronze_bar', name:'Bronze Bar', icon:'🟫',qty:1}},
+    {id:'smelt_iron',    name:'Iron Bar',    icon:'🔩',req:10,xp:12, interval:5000, needs:{item:'iron_ore',   qty:2,name:'2x Iron Ore'},   gives:{item:'iron_bar',   name:'Iron Bar',   icon:'🔩',qty:1}},
+    {id:'smelt_steel',   name:'Steel Bar',   icon:'🔧',req:20,xp:17, interval:6000, needs:{item:'steel_ore',  qty:2,name:'2x Steel Ore'},  gives:{item:'steel_bar',  name:'Steel Bar',  icon:'🔧',qty:1}},
+    {id:'smelt_mithril', name:'Mithril Bar', icon:'🔵',req:30,xp:30, interval:8000, needs:{item:'mithril_ore',qty:2,name:'2x Mithril Ore'},gives:{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:1}},
+    {id:'smelt_adamant', name:'Adamant Bar', icon:'🟢',req:40,xp:37, interval:10000,needs:{item:'adamant_ore',qty:2,name:'2x Adamant Ore'},gives:{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1}},
+    {id:'smelt_rune',    name:'Rune Bar',    icon:'🔴',req:50,xp:50, interval:12000,needs:{item:'rune_ore',   qty:2,name:'2x Rune Ore'},   gives:{item:'rune_bar',   name:'Rune Bar',   icon:'🔴',qty:1}},
   ],
   smithing_smith: [
-    // Iron
-    // Iron — armorStyle:'melee' gives +5% DR vs ranged when using melee weapon
-    {id:'iron_helm', name:'Iron Full Helm', icon:'🪖',req:1, xp:37, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_helm',name:'Iron Full Helm',icon:'🪖',qty:1,slot:'head',def:9,dr:1,armorStyle:'melee'}},
-    {id:'iron_body', name:'Iron Platebody', icon:'🛡️',req:1, xp:75, interval:6000, needs:{item:'iron_bar',qty:5,name:'5x Iron Bar'}, gives:{item:'iron_body',name:'Iron Platebody',icon:'🛡️',qty:1,slot:'body',def:18,dr:3,armorStyle:'melee'}},
-    {id:'iron_legs', name:'Iron Platelegs', icon:'👖',req:1, xp:62, interval:5500, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_legs',name:'Iron Platelegs',icon:'👖',qty:1,slot:'legs',def:14,dr:2,armorStyle:'melee'}},
-    {id:'iron_shield',name:'Iron Kiteshield',icon:'🛡️',req:1,xp:50, interval:5000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_kite',name:'Iron Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:10,dr:2}},
-    {id:'iron_long', name:'Iron Longsword', icon:'⚔️',req:1, xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_long',name:'Iron Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:12,str:12,weaponStyle:'melee'}},
-    {id:'iron_axe',  name:'Iron Axe',       icon:'🪓',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_axe',name:'Iron Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:1}},
-    {id:'iron_pick', name:'Iron Pickaxe',   icon:'⛏️',req:1, xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_pickaxe',name:'Iron Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:1}},
-    // Steel
-    {id:'steel_helm', name:'Steel Full Helm', icon:'🪖',req:5, xp:75, interval:6000, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_helm',name:'Steel Full Helm',icon:'🪖',qty:1,slot:'head',def:14,dr:2,armorStyle:'melee'}},
-    {id:'steel_body', name:'Steel Platebody', icon:'🛡️',req:5, xp:150,interval:8000, needs:{item:'steel_bar',qty:5,name:'5x Steel Bar'}, gives:{item:'steel_body',name:'Steel Platebody',icon:'🛡️',qty:1,slot:'body',def:28,dr:4,armorStyle:'melee'}},
-    {id:'steel_legs', name:'Steel Platelegs', icon:'👖',req:5, xp:125,interval:7000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_legs',name:'Steel Platelegs',icon:'👖',qty:1,slot:'legs',def:22,dr:3,armorStyle:'melee'}},
-    {id:'steel_shield',name:'Steel Kiteshield',icon:'🛡️',req:5,xp:100,interval:6500, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_kite',name:'Steel Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:16,dr:3}},
-    {id:'steel_long', name:'Steel Longsword', icon:'⚔️',req:5, xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_long',name:'Steel Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:14,str:14,weaponStyle:'melee'}},
-    {id:'steel_axe',  name:'Steel Axe',       icon:'🪓',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_axe',name:'Steel Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:2}},
-    {id:'steel_pick', name:'Steel Pickaxe',   icon:'⛏️',req:5, xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_pickaxe',name:'Steel Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:2}},
-    // Mithril
-    {id:'mith_helm', name:'Mithril Full Helm', icon:'🪖',req:20,xp:137,interval:7000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_helm',name:'Mithril Full Helm',icon:'🪖',qty:1,slot:'head',def:21,dr:3,armorStyle:'melee'}},
-    {id:'mith_body', name:'Mithril Platebody', icon:'🛡️',req:20,xp:275,interval:9000, needs:{item:'mithril_bar',qty:5,name:'5x Mithril Bar'}, gives:{item:'mith_body',name:'Mithril Platebody',icon:'🛡️',qty:1,slot:'body',def:42,dr:6,armorStyle:'melee'}},
-    {id:'mith_legs', name:'Mithril Platelegs', icon:'👖',req:20,xp:225,interval:8000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_legs',name:'Mithril Platelegs',icon:'👖',qty:1,slot:'legs',def:34,dr:4,armorStyle:'melee'}},
-    {id:'mith_shield',name:'Mithril Kiteshield',icon:'🛡️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_kite',name:'Mithril Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:24,dr:4}},
-    {id:'mith_long', name:'Mithril Longsword', icon:'⚔️',req:20,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_long',name:'Mithril Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:16,weaponStyle:'melee'}},
-    {id:'mith_axe',  name:'Mithril Axe',       icon:'🪓',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_axe',name:'Mithril Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:3}},
-    {id:'mith_pick', name:'Mithril Pickaxe',   icon:'⛏️',req:20,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_pickaxe',name:'Mithril Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:3}},
-    // Adamant
-    {id:'adam_helm', name:'Adamant Full Helm', icon:'🪖',req:30,xp:200,interval:8000,  needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_helm',name:'Adamant Full Helm',icon:'🪖',qty:1,slot:'head',def:28,dr:4,armorStyle:'melee'}},
-    {id:'adam_body', name:'Adamant Platebody', icon:'🛡️',req:30,xp:400,interval:11000, needs:{item:'adamant_bar',qty:5,name:'5x Adamant Bar'}, gives:{item:'adam_body',name:'Adamant Platebody',icon:'🛡️',qty:1,slot:'body',def:56,dr:8,armorStyle:'melee'}},
-    {id:'adam_legs', name:'Adamant Platelegs', icon:'👖',req:30,xp:325,interval:9500,  needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_legs',name:'Adamant Platelegs',icon:'👖',qty:1,slot:'legs',def:46,dr:6,armorStyle:'melee'}},
-    {id:'adam_shield',name:'Adamant Kiteshield',icon:'🛡️',req:30,xp:250,interval:9000, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_kite',name:'Adamant Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:32,dr:5}},
-    {id:'adam_long', name:'Adamant Longsword', icon:'⚔️',req:30,xp:250,interval:9000,  needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_long',name:'Adamant Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:18,str:18,weaponStyle:'melee'}},
-    {id:'adam_axe',  name:'Adamant Axe',       icon:'🪓',req:30,xp:125,interval:7000,  needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_axe',name:'Adamant Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:4}},
-    {id:'adam_pick', name:'Adamant Pickaxe',   icon:'⛏️',req:30,xp:125,interval:7000,  needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_pickaxe',name:'Adamant Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:4}},
+    // Bronze (lv 1-6)
+    {id:'bronze_pick',  name:'Bronze Pickaxe', icon:'⛏️',req:1, xp:12, interval:4000, needs:{item:'bronze_bar',qty:1,name:'1x Bronze Bar'}, gives:{item:'bronze_pickaxe',name:'Bronze Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:0}},
+    {id:'bronze_axe_s', name:'Bronze Axe',     icon:'🪓',req:1, xp:12, interval:4000, needs:{item:'bronze_bar',qty:1,name:'1x Bronze Bar'}, gives:{item:'bronze_axe',name:'Bronze Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:0}},
+    {id:'bronze_helm',  name:'Bronze Full Helm',icon:'🪖',req:2, xp:20, interval:4000, needs:{item:'bronze_bar',qty:2,name:'2x Bronze Bar'}, gives:{item:'bronze_helm',name:'Bronze Full Helm',icon:'🪖',qty:1,slot:'head',def:4,dr:0,armorStyle:'melee',tier:0}},
+    {id:'bronze_kite',  name:'Bronze Kiteshield',icon:'🛡️',req:3,xp:25, interval:4000, needs:{item:'bronze_bar',qty:3,name:'3x Bronze Bar'}, gives:{item:'bronze_kite',name:'Bronze Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:5,dr:1,tier:0}},
+    {id:'bronze_long',  name:'Bronze Longsword',icon:'⚔️',req:4, xp:25, interval:4000, needs:{item:'bronze_bar',qty:2,name:'2x Bronze Bar'}, gives:{item:'bronze_long',name:'Bronze Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:10,str:10,weaponStyle:'melee',tier:0}},
+    {id:'bronze_legs',  name:'Bronze Platelegs',icon:'👖',req:5, xp:30, interval:4500, needs:{item:'bronze_bar',qty:3,name:'3x Bronze Bar'}, gives:{item:'bronze_legs',name:'Bronze Platelegs',icon:'👖',qty:1,slot:'legs',def:6,dr:1,armorStyle:'melee',tier:0}},
+    {id:'bronze_body',  name:'Bronze Platebody',icon:'🛡️',req:6, xp:37, interval:5000, needs:{item:'bronze_bar',qty:5,name:'5x Bronze Bar'}, gives:{item:'bronze_body',name:'Bronze Platebody',icon:'🛡️',qty:1,slot:'body',def:9,dr:1,armorStyle:'melee',tier:0}},
+    // Iron (lv 10-16)
+    {id:'iron_axe',   name:'Iron Axe',         icon:'🪓',req:10,xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_axe',name:'Iron Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:1}},
+    {id:'iron_pick',  name:'Iron Pickaxe',      icon:'⛏️',req:10,xp:25, interval:4000, needs:{item:'iron_bar',qty:1,name:'1x Iron Bar'}, gives:{item:'iron_pickaxe',name:'Iron Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:1}},
+    {id:'iron_helm',  name:'Iron Full Helm',    icon:'🪖',req:11,xp:37, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_helm',name:'Iron Full Helm',icon:'🪖',qty:1,slot:'head',def:9,dr:1,armorStyle:'melee',tier:1}},
+    {id:'iron_shield',name:'Iron Kiteshield',   icon:'🛡️',req:12,xp:50, interval:5000, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_kite',name:'Iron Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:10,dr:2,tier:1}},
+    {id:'iron_long',  name:'Iron Longsword',    icon:'⚔️',req:13,xp:50, interval:5000, needs:{item:'iron_bar',qty:2,name:'2x Iron Bar'}, gives:{item:'iron_long',name:'Iron Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:12,str:12,weaponStyle:'melee',tier:1}},
+    {id:'iron_legs',  name:'Iron Platelegs',    icon:'👖',req:14,xp:62, interval:5500, needs:{item:'iron_bar',qty:3,name:'3x Iron Bar'}, gives:{item:'iron_legs',name:'Iron Platelegs',icon:'👖',qty:1,slot:'legs',def:14,dr:2,armorStyle:'melee',tier:1}},
+    {id:'iron_body',  name:'Iron Platebody',    icon:'🛡️',req:15,xp:75, interval:6000, needs:{item:'iron_bar',qty:5,name:'5x Iron Bar'}, gives:{item:'iron_body',name:'Iron Platebody',icon:'🛡️',qty:1,slot:'body',def:18,dr:3,armorStyle:'melee',tier:1}},
+    // Steel (lv 20-26)
+    {id:'steel_axe',  name:'Steel Axe',         icon:'🪓',req:20,xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_axe',name:'Steel Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:2}},
+    {id:'steel_pick', name:'Steel Pickaxe',      icon:'⛏️',req:20,xp:50, interval:5000, needs:{item:'steel_bar',qty:1,name:'1x Steel Bar'}, gives:{item:'steel_pickaxe',name:'Steel Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:2}},
+    {id:'steel_helm', name:'Steel Full Helm',    icon:'🪖',req:21,xp:75, interval:6000, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_helm',name:'Steel Full Helm',icon:'🪖',qty:1,slot:'head',def:14,dr:2,armorStyle:'melee',tier:2}},
+    {id:'steel_shield',name:'Steel Kiteshield',  icon:'🛡️',req:22,xp:100,interval:6500, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_kite',name:'Steel Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:16,dr:3,tier:2}},
+    {id:'steel_long', name:'Steel Longsword',    icon:'⚔️',req:23,xp:100,interval:6500, needs:{item:'steel_bar',qty:2,name:'2x Steel Bar'}, gives:{item:'steel_long',name:'Steel Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:14,str:14,weaponStyle:'melee',tier:2}},
+    {id:'steel_legs', name:'Steel Platelegs',    icon:'👖',req:24,xp:125,interval:7000, needs:{item:'steel_bar',qty:3,name:'3x Steel Bar'}, gives:{item:'steel_legs',name:'Steel Platelegs',icon:'👖',qty:1,slot:'legs',def:22,dr:3,armorStyle:'melee',tier:2}},
+    {id:'steel_body', name:'Steel Platebody',    icon:'🛡️',req:25,xp:150,interval:8000, needs:{item:'steel_bar',qty:5,name:'5x Steel Bar'}, gives:{item:'steel_body',name:'Steel Platebody',icon:'🛡️',qty:1,slot:'body',def:28,dr:4,armorStyle:'melee',tier:2}},
+    // Mithril (lv 30-36)
+    {id:'mith_axe',  name:'Mithril Axe',         icon:'🪓',req:30,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_axe',name:'Mithril Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:3}},
+    {id:'mith_pick', name:'Mithril Pickaxe',      icon:'⛏️',req:30,xp:87, interval:6000, needs:{item:'mithril_bar',qty:1,name:'1x Mithril Bar'}, gives:{item:'mithril_pickaxe',name:'Mithril Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:3}},
+    {id:'mith_helm', name:'Mithril Full Helm',    icon:'🪖',req:31,xp:137,interval:7000, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_helm',name:'Mithril Full Helm',icon:'🪖',qty:1,slot:'head',def:21,dr:3,armorStyle:'melee',tier:3}},
+    {id:'mith_shield',name:'Mithril Kiteshield',  icon:'🛡️',req:32,xp:175,interval:7500, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_kite',name:'Mithril Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:24,dr:4,tier:3}},
+    {id:'mith_long', name:'Mithril Longsword',    icon:'⚔️',req:33,xp:175,interval:7500, needs:{item:'mithril_bar',qty:2,name:'2x Mithril Bar'}, gives:{item:'mith_long',name:'Mithril Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:16,str:16,weaponStyle:'melee',tier:3}},
+    {id:'mith_legs', name:'Mithril Platelegs',    icon:'👖',req:34,xp:225,interval:8000, needs:{item:'mithril_bar',qty:3,name:'3x Mithril Bar'}, gives:{item:'mith_legs',name:'Mithril Platelegs',icon:'👖',qty:1,slot:'legs',def:34,dr:4,armorStyle:'melee',tier:3}},
+    {id:'mith_body', name:'Mithril Platebody',    icon:'🛡️',req:35,xp:275,interval:9000, needs:{item:'mithril_bar',qty:5,name:'5x Mithril Bar'}, gives:{item:'mith_body',name:'Mithril Platebody',icon:'🛡️',qty:1,slot:'body',def:42,dr:6,armorStyle:'melee',tier:3}},
+    // Adamant (lv 40-46)
+    {id:'adam_axe',  name:'Adamant Axe',          icon:'🪓',req:40,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_axe',name:'Adamant Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:4}},
+    {id:'adam_pick', name:'Adamant Pickaxe',       icon:'⛏️',req:40,xp:125,interval:7000, needs:{item:'adamant_bar',qty:1,name:'1x Adamant Bar'}, gives:{item:'adamant_pickaxe',name:'Adamant Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:4}},
+    {id:'adam_helm', name:'Adamant Full Helm',     icon:'🪖',req:41,xp:200,interval:8000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_helm',name:'Adamant Full Helm',icon:'🪖',qty:1,slot:'head',def:28,dr:4,armorStyle:'melee',tier:4}},
+    {id:'adam_shield',name:'Adamant Kiteshield',   icon:'🛡️',req:42,xp:250,interval:9000, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_kite',name:'Adamant Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:32,dr:5,tier:4}},
+    {id:'adam_long', name:'Adamant Longsword',     icon:'⚔️',req:43,xp:250,interval:9000, needs:{item:'adamant_bar',qty:2,name:'2x Adamant Bar'}, gives:{item:'adam_long',name:'Adamant Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:18,str:18,weaponStyle:'melee',tier:4}},
+    {id:'adam_legs', name:'Adamant Platelegs',     icon:'👖',req:44,xp:325,interval:9500, needs:{item:'adamant_bar',qty:3,name:'3x Adamant Bar'}, gives:{item:'adam_legs',name:'Adamant Platelegs',icon:'👖',qty:1,slot:'legs',def:46,dr:6,armorStyle:'melee',tier:4}},
+    {id:'adam_body', name:'Adamant Platebody',     icon:'🛡️',req:45,xp:400,interval:11000,needs:{item:'adamant_bar',qty:5,name:'5x Adamant Bar'}, gives:{item:'adam_body',name:'Adamant Platebody',icon:'🛡️',qty:1,slot:'body',def:56,dr:8,armorStyle:'melee',tier:4}},
+    // Rune (lv 50-56)
+    {id:'rune_axe',  name:'Rune Axe',             icon:'🪓',req:50,xp:175,interval:8000, needs:{item:'rune_bar',qty:1,name:'1x Rune Bar'}, gives:{item:'rune_axe',name:'Rune Axe',icon:'🪓',qty:1,slot:'axe',toolType:'axe',tier:5}},
+    {id:'rune_pick', name:'Rune Pickaxe',          icon:'⛏️',req:50,xp:175,interval:8000, needs:{item:'rune_bar',qty:1,name:'1x Rune Bar'}, gives:{item:'rune_pickaxe',name:'Rune Pickaxe',icon:'⛏️',qty:1,slot:'pickaxe',toolType:'pickaxe',tier:5}},
+    {id:'rune_helm', name:'Rune Full Helm',        icon:'🪖',req:51,xp:275,interval:9000, needs:{item:'rune_bar',qty:2,name:'2x Rune Bar'}, gives:{item:'rune_helm',name:'Rune Full Helm',icon:'🪖',qty:1,slot:'head',def:35,dr:5,armorStyle:'melee',tier:5}},
+    {id:'rune_kite', name:'Rune Kiteshield',       icon:'🛡️',req:52,xp:350,interval:10000,needs:{item:'rune_bar',qty:3,name:'3x Rune Bar'}, gives:{item:'rune_kite',name:'Rune Kiteshield',icon:'🛡️',qty:1,slot:'shield',def:40,dr:6,tier:5}},
+    {id:'rune_long', name:'Rune Longsword',        icon:'⚔️',req:53,xp:350,interval:10000,needs:{item:'rune_bar',qty:2,name:'2x Rune Bar'}, gives:{item:'rune_long',name:'Rune Longsword',icon:'⚔️',qty:1,slot:'weapon',atk:22,str:22,weaponStyle:'melee',tier:5}},
+    {id:'rune_legs', name:'Rune Platelegs',        icon:'👖',req:54,xp:450,interval:11000,needs:{item:'rune_bar',qty:3,name:'3x Rune Bar'}, gives:{item:'rune_legs',name:'Rune Platelegs',icon:'👖',qty:1,slot:'legs',def:58,dr:7,armorStyle:'melee',tier:5}},
+    {id:'rune_body', name:'Rune Platebody',        icon:'🛡️',req:55,xp:550,interval:13000,needs:{item:'rune_bar',qty:5,name:'5x Rune Bar'}, gives:{item:'rune_body',name:'Rune Platebody',icon:'🛡️',qty:1,slot:'body',def:70,dr:10,armorStyle:'melee',tier:5}},
   ],
-  fletching: [
-    // Ranged — precise (higher atk than str), armorStyle:'ranged' gets +5% DR vs magic
-    {id:'oak_bow',    name:'Oak Bow',    icon:'🏹',req:1, xp:20, interval:8000,  needs:{item:'logs',qty:2,name:'2x Logs'},              gives:{item:'oak_bow',    name:'Oak Bow',    icon:'🏹',qty:1,slot:'weapon',atk:14,str:10,weaponStyle:'ranged'}},
-    {id:'willow_bow',   name:'Willow Bow',   icon:'🏹',req:5, xp:35, interval:10000, needs:{item:'oak_logs',qty:2,name:'2x Oak Logs'},       gives:{item:'willow_bow',   name:'Willow Bow',   icon:'🏹',qty:1,slot:'weapon',atk:16,str:12,weaponStyle:'ranged'}},
-    {id:'yew_bow', name:'Yew Bow', icon:'🏹',req:20,xp:60, interval:13000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'yew_bow', name:'Yew Bow', icon:'🏹',qty:1,slot:'weapon',atk:18,str:14,weaponStyle:'ranged'}},
-    {id:'magic_bow', name:'Magic Bow', icon:'🏹',req:30,xp:90, interval:16000, needs:{item:'magic_logs',qty:2,name:'2x Magic Logs'},    gives:{item:'magic_bow', name:'Magic Bow', icon:'🏹',qty:1,slot:'weapon',atk:21,str:16,weaponStyle:'ranged'}},
+  carving_traps: [
+    {id:'normal_trap', name:'Normal Trap', icon:'🪤',req:1, xp:15, interval:5000,  needs:{item:'logs',       qty:1,name:'1x Logs'},        gives:{item:'normal_trap', name:'Normal Trap', icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:0}},
+    {id:'oak_trap',    name:'Oak Trap',    icon:'🪤',req:10,xp:28, interval:6000,  needs:{item:'oak_logs',   qty:1,name:'1x Oak Logs'},    gives:{item:'oak_trap',    name:'Oak Trap',    icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:1}},
+    {id:'willow_trap', name:'Willow Trap', icon:'🪤',req:20,xp:45, interval:7000,  needs:{item:'willow_logs',qty:1,name:'1x Willow Logs'}, gives:{item:'willow_trap', name:'Willow Trap', icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:2}},
+    {id:'teak_trap',   name:'Teak Trap',   icon:'🪤',req:30,xp:65, interval:8000,  needs:{item:'teak_logs',  qty:1,name:'1x Teak Logs'},   gives:{item:'teak_trap',   name:'Teak Trap',   icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:3}},
+    {id:'yew_trap',    name:'Yew Trap',    icon:'🪤',req:40,xp:90, interval:9000,  needs:{item:'yew_logs',   qty:1,name:'1x Yew Logs'},    gives:{item:'yew_trap',    name:'Yew Trap',    icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:4}},
+    {id:'magic_trap',  name:'Magic Trap',  icon:'🪤',req:50,xp:120,interval:10000, needs:{item:'magic_logs', qty:1,name:'1x Magic Logs'},  gives:{item:'magic_trap',  name:'Magic Trap',  icon:'🪤',qty:1,slot:'trap',toolType:'trap',tier:5}},
   ],
-  hunting: [
-    // Leather creatures
-    {id:'rabbit', name:'Rabbit', icon:'🐇', req:1,  xp:15, interval:5000,  gives:{item:'rabbit_fur',  name:'Rabbit Fur',  icon:'🟫',qty:1}},
-    {id:'fox',    name:'Fox',    icon:'🦊', req:5,  xp:28, interval:7000,  gives:{item:'fox_pelt',    name:'Fox Pelt',    icon:'🟤',qty:1}},
-    {id:'deer',   name:'Deer',   icon:'🦌', req:10, xp:45, interval:9000,  gives:{item:'deer_hide',   name:'Deer Hide',   icon:'🟫',qty:1}},
-    {id:'wolf',   name:'Wolf',   icon:'🐺', req:20, xp:70, interval:11000, gives:{item:'wolf_pelt',   name:'Wolf Pelt',   icon:'⬛',qty:1}},
-    {id:'bear',   name:'Bear',   icon:'🐻', req:30, xp:95, interval:13000, gives:{item:'bear_hide',   name:'Bear Hide',   icon:'🟤',qty:1}},
-    // Magical creatures
-    {id:'wisp',    name:'Wisp',    icon:'🌟', req:1,  xp:20, interval:6000,  gives:{item:'crude_essence',  name:'Crude Essence',  icon:'🔵',qty:1}},
-    {id:'sprite',  name:'Sprite',  icon:'🧚', req:10, xp:40, interval:8000,  gives:{item:'arcane_fragment', name:'Arcane Fragment', icon:'💜',qty:1}},
-    {id:'wraith',  name:'Wraith',  icon:'👻', req:20, xp:65, interval:10000, gives:{item:'soul_shard',      name:'Soul Shard',      icon:'🩵',qty:1}},
-    {id:'phoenix', name:'Phoenix', icon:'🔥', req:30, xp:90, interval:12000, gives:{item:'ember_crystal',   name:'Ember Crystal',   icon:'🔴',qty:1}},
+  carving_bows: [
+    {id:'normal_bow', name:'Normal Bow', icon:'🏹',req:3, xp:20, interval:7000,  needs:{item:'logs',       qty:2,name:'2x Logs'},        gives:{item:'normal_bow', name:'Normal Bow', icon:'🏹',qty:1,slot:'weapon',atk:12,str:8, weaponStyle:'ranged',tier:0}},
+    {id:'oak_bow',    name:'Oak Bow',    icon:'🏹',req:13,xp:35, interval:8000,  needs:{item:'oak_logs',   qty:2,name:'2x Oak Logs'},    gives:{item:'oak_bow',    name:'Oak Bow',    icon:'🏹',qty:1,slot:'weapon',atk:14,str:10,weaponStyle:'ranged',tier:1}},
+    {id:'willow_bow', name:'Willow Bow', icon:'🏹',req:23,xp:55, interval:10000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'willow_bow', name:'Willow Bow', icon:'🏹',qty:1,slot:'weapon',atk:16,str:12,weaponStyle:'ranged',tier:2}},
+    {id:'teak_bow',   name:'Teak Bow',   icon:'🏹',req:33,xp:80, interval:12000, needs:{item:'teak_logs',  qty:2,name:'2x Teak Logs'},   gives:{item:'teak_bow',   name:'Teak Bow',   icon:'🏹',qty:1,slot:'weapon',atk:18,str:14,weaponStyle:'ranged',tier:3}},
+    {id:'yew_bow',    name:'Yew Bow',    icon:'🏹',req:43,xp:110,interval:14000, needs:{item:'yew_logs',   qty:2,name:'2x Yew Logs'},    gives:{item:'yew_bow',    name:'Yew Bow',    icon:'🏹',qty:1,slot:'weapon',atk:20,str:16,weaponStyle:'ranged',tier:4}},
+    {id:'magic_bow',  name:'Magic Bow',  icon:'🏹',req:53,xp:145,interval:16000, needs:{item:'magic_logs', qty:2,name:'2x Magic Logs'},  gives:{item:'magic_bow',  name:'Magic Bow',  icon:'🏹',qty:1,slot:'weapon',atk:22,str:18,weaponStyle:'ranged',tier:5}},
   ],
-  enchanting: [
-    // Staves — crafted from magical hunting components
-    {id:'iron_staff',    name:'Iron Staff',    icon:'🪄',req:1, xp:30, interval:6000,  needs:{item:'crude_essence',  qty:3,name:'3x Crude Essence'},   gives:{item:'iron_staff',   name:'Iron Staff',    icon:'🪄',qty:1,slot:'weapon',atk:8, str:12,weaponStyle:'magic'}},
-    {id:'steel_staff',   name:'Steel Staff',   icon:'🪄',req:5, xp:55, interval:8000,  needs:{item:'crude_essence',  qty:5,name:'5x Crude Essence'},   gives:{item:'steel_staff',  name:'Steel Staff',   icon:'🪄',qty:1,slot:'weapon',atk:10,str:14,weaponStyle:'magic'}},
-    {id:'mithril_staff', name:'Mithril Staff', icon:'🪄',req:20,xp:90, interval:10000, needs:{item:'arcane_fragment',qty:3,name:'3x Arcane Fragment'}, gives:{item:'mithril_staff',name:'Mithril Staff', icon:'🪄',qty:1,slot:'weapon',atk:12,str:16,weaponStyle:'magic'}},
-    {id:'adamant_staff', name:'Adamant Staff', icon:'🪄',req:30,xp:130,interval:13000, needs:{item:'soul_shard',     qty:3,name:'3x Soul Shard'},       gives:{item:'adamant_staff',name:'Adamant Staff', icon:'🪄',qty:1,slot:'weapon',atk:14,str:18,weaponStyle:'magic'}},
-    // Magic armour
-    // Magic robes — low def/dr (squishy) but armorStyle:'magic' gives +5% DR vs melee attacks
-    {id:'iron_robe_top',    name:'Iron Robe Top',      icon:'👘',req:1, xp:25, interval:5000,  needs:{item:'crude_essence',qty:3,name:'3x Crude Essence'}, gives:{item:'iron_robe_top',   name:'Iron Robe Top',      icon:'👘',qty:1,slot:'body',def:5, dr:1,armorStyle:'magic'}},
-    {id:'iron_robe_legs',   name:'Iron Robe Legs',     icon:'👖',req:1, xp:20, interval:5000,  needs:{item:'crude_essence',qty:2,name:'2x Crude Essence'}, gives:{item:'iron_robe_legs',  name:'Iron Robe Legs',     icon:'👖',qty:1,slot:'legs',def:3, dr:1,armorStyle:'magic'}},
-    {id:'iron_hat',         name:'Iron Wizard Hat',    icon:'🎩',req:1, xp:15, interval:4000,  needs:{item:'crude_essence',qty:2,name:'2x Crude Essence'}, gives:{item:'iron_hat',        name:'Iron Wizard Hat',    icon:'🎩',qty:1,slot:'head',def:2, dr:0,armorStyle:'magic'}},
-    {id:'steel_robe_top',   name:'Steel Robe Top',     icon:'👘',req:5, xp:50, interval:7000,  needs:{item:'arcane_fragment',qty:3,name:'3x Arcane Fragment'}, gives:{item:'steel_robe_top',  name:'Steel Robe Top',     icon:'👘',qty:1,slot:'body',def:8, dr:2,armorStyle:'magic'}},
-    {id:'steel_robe_legs',  name:'Steel Robe Legs',    icon:'👖',req:5, xp:40, interval:6000,  needs:{item:'arcane_fragment',qty:2,name:'2x Arcane Fragment'}, gives:{item:'steel_robe_legs', name:'Steel Robe Legs',    icon:'👖',qty:1,slot:'legs',def:5, dr:1,armorStyle:'magic'}},
-    {id:'steel_hat',        name:'Steel Wizard Hat',   icon:'🎩',req:5, xp:30, interval:5000,  needs:{item:'arcane_fragment',qty:2,name:'2x Arcane Fragment'}, gives:{item:'steel_hat',       name:'Steel Wizard Hat',   icon:'🎩',qty:1,slot:'head',def:4, dr:1,armorStyle:'magic'}},
-    {id:'mithril_robe_top', name:'Mithril Robe Top',   icon:'👘',req:20,xp:90, interval:10000, needs:{item:'arcane_fragment',qty:4,name:'4x Arcane Fragment'}, gives:{item:'mithril_robe_top',name:'Mithril Robe Top',   icon:'👘',qty:1,slot:'body',def:13,dr:3,armorStyle:'magic'}},
-    {id:'mithril_robe_legs',name:'Mithril Robe Legs',  icon:'👖',req:20,xp:75, interval:9000,  needs:{item:'arcane_fragment',qty:3,name:'3x Arcane Fragment'}, gives:{item:'mithril_robe_legs',name:'Mithril Robe Legs', icon:'👖',qty:1,slot:'legs',def:9, dr:2,armorStyle:'magic'}},
-    {id:'mithril_hat',      name:'Mithril Wizard Hat', icon:'🎩',req:20,xp:55, interval:7000,  needs:{item:'arcane_fragment',qty:3,name:'3x Arcane Fragment'}, gives:{item:'mithril_hat',     name:'Mithril Wizard Hat', icon:'🎩',qty:1,slot:'head',def:7, dr:1,armorStyle:'magic'}},
-    {id:'adamant_robe_top', name:'Adamant Robe Top',   icon:'👘',req:30,xp:140,interval:14000, needs:{item:'soul_shard',qty:4,name:'4x Soul Shard'}, gives:{item:'adamant_robe_top',name:'Adamant Robe Top',   icon:'👘',qty:1,slot:'body',def:18,dr:4,armorStyle:'magic'}},
-    {id:'adamant_robe_legs',name:'Adamant Robe Legs',  icon:'👖',req:30,xp:115,interval:12000, needs:{item:'soul_shard',qty:3,name:'3x Soul Shard'}, gives:{item:'adamant_robe_legs',name:'Adamant Robe Legs', icon:'👖',qty:1,slot:'legs',def:12,dr:3,armorStyle:'magic'}},
-    {id:'adamant_hat',      name:'Adamant Wizard Hat', icon:'🎩',req:30,xp:85, interval:10000, needs:{item:'soul_shard',qty:3,name:'3x Soul Shard'}, gives:{item:'adamant_hat',     name:'Adamant Wizard Hat', icon:'🎩',qty:1,slot:'head',def:8, dr:2,armorStyle:'magic'}},
+  carving_rods: [
+    {id:'normal_rod', name:'Normal Rod', icon:'🎣',req:4, xp:15, interval:5000,  needs:{item:'logs',       qty:1,name:'1x Logs'},        gives:{item:'normal_rod', name:'Normal Rod', icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:0}},
+    {id:'oak_rod',    name:'Oak Rod',    icon:'🎣',req:14,xp:28, interval:6000,  needs:{item:'oak_logs',   qty:1,name:'1x Oak Logs'},    gives:{item:'oak_rod',    name:'Oak Rod',    icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:1}},
+    {id:'willow_rod', name:'Willow Rod', icon:'🎣',req:24,xp:45, interval:7000,  needs:{item:'willow_logs',qty:1,name:'1x Willow Logs'}, gives:{item:'willow_rod', name:'Willow Rod', icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:2}},
+    {id:'teak_rod',   name:'Teak Rod',   icon:'🎣',req:34,xp:65, interval:8000,  needs:{item:'teak_logs',  qty:1,name:'1x Teak Logs'},   gives:{item:'teak_rod',   name:'Teak Rod',   icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:3}},
+    {id:'yew_rod',    name:'Yew Rod',    icon:'🎣',req:44,xp:90, interval:9000,  needs:{item:'yew_logs',   qty:1,name:'1x Yew Logs'},    gives:{item:'yew_rod',    name:'Yew Rod',    icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:4}},
+    {id:'magic_rod',  name:'Magic Rod',  icon:'🎣',req:54,xp:120,interval:10000, needs:{item:'magic_logs', qty:1,name:'1x Magic Logs'},  gives:{item:'magic_rod',  name:'Magic Rod',  icon:'🎣',qty:1,slot:'rod',toolType:'rod',tier:5}},
   ],
-  crafting: [
-    // Leather (no bar needed — raw material)
-    // Leather — ranged armor: armorStyle:'ranged' gives +5% DR vs magic attacks
-    {id:'leather_coif',     name:'Leather Coif',      icon:'🧢',req:1, xp:13, interval:4000, needs:{item:'rabbit_fur',qty:1,name:'1x Rabbit Fur'},             gives:{item:'leather_coif',    name:'Leather Coif',      icon:'🧢',qty:1,slot:'head',def:4, dr:1,armorStyle:'ranged'}},
-    {id:'leather_body',     name:'Leather Body',      icon:'🥋',req:1, xp:25, interval:5000, needs:{item:'rabbit_fur',qty:3,name:'3x Rabbit Fur'},             gives:{item:'leather_body',    name:'Leather Body',      icon:'🥋',qty:1,slot:'body',def:8, dr:2,armorStyle:'ranged'}},
-    {id:'leather_chaps',    name:'Leather Chaps',     icon:'👖',req:1, xp:18, interval:4000, needs:{item:'rabbit_fur',qty:2,name:'2x Rabbit Fur'},             gives:{item:'leather_chaps',   name:'Leather Chaps',     icon:'👖',qty:1,slot:'legs',def:6, dr:1,armorStyle:'ranged'}},
-    // Hard Leather
-    {id:'hardleather_coif', name:'Hard Leather Coif', icon:'🧢',req:3, xp:22, interval:5000, needs:{item:'rabbit_fur',qty:2,name:'2x Rabbit Fur'},   gives:{item:'hardleather_coif',name:'Hard Leather Coif', icon:'🧢',qty:1,slot:'head',def:7, dr:2,armorStyle:'ranged'}},
-    {id:'hardleather_body', name:'Hard Leather Body', icon:'🥋',req:3, xp:43, interval:6000, needs:{item:'deer_hide',qty:3,name:'3x Deer Hide'},   gives:{item:'hardleather_body',name:'Hard Leather Body', icon:'🥋',qty:1,slot:'body',def:14,dr:3,armorStyle:'ranged'}},
-    {id:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',req:3, xp:30, interval:5000, needs:{item:'rabbit_fur',qty:3,name:'3x Rabbit Fur'},   gives:{item:'hardleather_chaps',name:'Hard Leather Chaps',icon:'👖',qty:1,slot:'legs',def:10,dr:2,armorStyle:'ranged'}},
-    // Studded
-    {id:'studded_chaps',     name:'Studded Chaps',         icon:'👖',req:10,xp:56, interval:7000,  needs:{item:'hardleather_chaps',qty:1,item2:'iron_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Iron Bar'},    gives:{item:'studded_chaps',    name:'Studded Chaps',         icon:'👖',qty:1,slot:'legs',def:14,dr:3,armorStyle:'ranged'}},
-    {id:'mith_studded_chaps',name:'Mithril Studded Chaps', icon:'👖',req:20,xp:95, interval:9000,  needs:{item:'hardleather_chaps',qty:1,item2:'mithril_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Mithril Bar'},gives:{item:'mith_studded_chaps',name:'Mithril Studded Chaps', icon:'👖',qty:1,slot:'legs',def:20,dr:4,armorStyle:'ranged'}},
-    {id:'adam_studded_chaps',name:'Adamant Studded Chaps', icon:'👖',req:30,xp:140,interval:11000, needs:{item:'hardleather_chaps',qty:1,item2:'adamant_bar',qty2:1,name:'1x Hard Leather Chaps + 1x Adamant Bar'},gives:{item:'adam_studded_chaps',name:'Adamant Studded Chaps', icon:'👖',qty:1,slot:'legs',def:28,dr:5,armorStyle:'ranged'}},
+  carving_staves: [
+    {id:'normal_staff', name:'Normal Staff', icon:'🪄',req:4, xp:20, interval:7000,  needs:{item:'logs',       qty:2,name:'2x Logs'},        gives:{item:'normal_staff', name:'Normal Staff', icon:'🪄',qty:1,slot:'weapon',atk:8, str:12,weaponStyle:'magic',tier:0}},
+    {id:'oak_staff',    name:'Oak Staff',    icon:'🪄',req:14,xp:35, interval:8000,  needs:{item:'oak_logs',   qty:2,name:'2x Oak Logs'},    gives:{item:'oak_staff',    name:'Oak Staff',    icon:'🪄',qty:1,slot:'weapon',atk:10,str:14,weaponStyle:'magic',tier:1}},
+    {id:'willow_staff', name:'Willow Staff', icon:'🪄',req:24,xp:55, interval:10000, needs:{item:'willow_logs',qty:2,name:'2x Willow Logs'}, gives:{item:'willow_staff', name:'Willow Staff', icon:'🪄',qty:1,slot:'weapon',atk:12,str:16,weaponStyle:'magic',tier:2}},
+    {id:'teak_staff',   name:'Teak Staff',   icon:'🪄',req:34,xp:80, interval:12000, needs:{item:'teak_logs',  qty:2,name:'2x Teak Logs'},   gives:{item:'teak_staff',   name:'Teak Staff',   icon:'🪄',qty:1,slot:'weapon',atk:14,str:18,weaponStyle:'magic',tier:3}},
+    {id:'yew_staff',    name:'Yew Staff',    icon:'🪄',req:44,xp:110,interval:14000, needs:{item:'yew_logs',   qty:2,name:'2x Yew Logs'},    gives:{item:'yew_staff',    name:'Yew Staff',    icon:'🪄',qty:1,slot:'weapon',atk:16,str:20,weaponStyle:'magic',tier:4}},
+    {id:'magic_staff',  name:'Magic Staff',  icon:'🪄',req:54,xp:145,interval:16000, needs:{item:'magic_logs', qty:2,name:'2x Magic Logs'},  gives:{item:'magic_staff',  name:'Magic Staff',  icon:'🪄',qty:1,slot:'weapon',atk:18,str:22,weaponStyle:'magic',tier:5}},
+  ],
+  hunting_animals: [
+    {id:'rabbit',     name:'Rabbit',     icon:'🐇', req:1,  xp:15,  interval:5000,  gives:{item:'rabbit_fur',  name:'Rabbit Fur',  icon:'🟫',qty:1}},
+    {id:'fox',        name:'Fox',        icon:'🦊', req:10, xp:28,  interval:7000,  gives:{item:'fox_pelt',    name:'Fox Pelt',    icon:'🟤',qty:1}},
+    {id:'deer',       name:'Deer',       icon:'🦌', req:20, xp:45,  interval:9000,  gives:{item:'deer_hide',   name:'Deer Hide',   icon:'🟫',qty:1}},
+    {id:'wolf',       name:'Wolf',       icon:'🐺', req:30, xp:70,  interval:11000, gives:{item:'wolf_pelt',   name:'Wolf Pelt',   icon:'⬛',qty:1}},
+    {id:'bear',       name:'Bear',       icon:'🐻', req:40, xp:95,  interval:13000, gives:{item:'bear_hide',   name:'Bear Hide',   icon:'🟤',qty:1}},
+    {id:'crocodile',  name:'Crocodile',  icon:'🐊', req:50, xp:120, interval:15000, gives:{item:'croc_scale',  name:'Croc Scale',  icon:'🟩',qty:1}},
+  ],
+  hunting_magical: [
+    {id:'wisp',            name:'Wisp',            icon:'🌟', req:1,  xp:20,  interval:6000,  gives:{item:'crude_essence',   name:'Crude Essence',   icon:'🔵',qty:1}},
+    {id:'sprite',          name:'Sprite',          icon:'🧚', req:10, xp:40,  interval:8000,  gives:{item:'crude_shard',     name:'Crude Shard',     icon:'🟣',qty:1}},
+    {id:'nixie',           name:'Nixie',           icon:'🌊', req:20, xp:65,  interval:10000, gives:{item:'refined_essence', name:'Refined Essence', icon:'🔷',qty:1}},
+    {id:'sylph',           name:'Sylph',           icon:'🌬️', req:30, xp:90,  interval:12000, gives:{item:'refined_shard',   name:'Refined Shard',   icon:'🔮',qty:1}},
+    {id:'ember_elemental', name:'Ember Elemental', icon:'🌋', req:40, xp:115, interval:14000, gives:{item:'pure_essence',    name:'Pure Essence',    icon:'✨',qty:1}},
+    {id:'void_sprite',     name:'Void Sprite',     icon:'🌑', req:50, xp:140, interval:16000, gives:{item:'pure_shard',      name:'Pure Shard',      icon:'💎',qty:1}},
+  ],
+  crafting_ranged: [
+    {id:'rabbit_coif',  name:'Rabbit Fur Coif',  icon:'🧢',req:1, xp:13, interval:4000, needs:{item:'rabbit_fur',qty:1,name:'1x Rabbit Fur'}, gives:{item:'rabbit_coif',  name:'Rabbit Fur Coif',  icon:'🧢',qty:1,slot:'head',def:4, dr:1,armorStyle:'ranged'}},
+    {id:'rabbit_chaps', name:'Rabbit Fur Chaps', icon:'👖',req:3, xp:18, interval:4000, needs:{item:'rabbit_fur',qty:2,name:'2x Rabbit Fur'}, gives:{item:'rabbit_chaps', name:'Rabbit Fur Chaps', icon:'👖',qty:1,slot:'legs',def:6, dr:1,armorStyle:'ranged'}},
+    {id:'rabbit_body',  name:'Rabbit Fur Body',  icon:'🥋',req:5, xp:25, interval:5000, needs:{item:'rabbit_fur',qty:3,name:'3x Rabbit Fur'}, gives:{item:'rabbit_body',  name:'Rabbit Fur Body',  icon:'🥋',qty:1,slot:'body',def:8, dr:2,armorStyle:'ranged'}},
+    {id:'fox_coif',  name:'Fox Pelt Coif',  icon:'🧢',req:10,xp:22, interval:5000, needs:{item:'fox_pelt',qty:1,name:'1x Fox Pelt'}, gives:{item:'fox_coif',  name:'Fox Pelt Coif',  icon:'🧢',qty:1,slot:'head',def:8, dr:2,armorStyle:'ranged'}},
+    {id:'fox_chaps', name:'Fox Pelt Chaps', icon:'👖',req:13,xp:30, interval:5000, needs:{item:'fox_pelt',qty:2,name:'2x Fox Pelt'}, gives:{item:'fox_chaps', name:'Fox Pelt Chaps', icon:'👖',qty:1,slot:'legs',def:11,dr:2,armorStyle:'ranged'}},
+    {id:'fox_body',  name:'Fox Pelt Body',  icon:'🥋',req:15,xp:43, interval:6000, needs:{item:'fox_pelt',qty:3,name:'3x Fox Pelt'}, gives:{item:'fox_body',  name:'Fox Pelt Body',  icon:'🥋',qty:1,slot:'body',def:15,dr:3,armorStyle:'ranged'}},
+    {id:'deer_coif',  name:'Deer Hide Coif',  icon:'🧢',req:20,xp:35, interval:6000, needs:{item:'deer_hide',qty:1,name:'1x Deer Hide'}, gives:{item:'deer_coif',  name:'Deer Hide Coif',  icon:'🧢',qty:1,slot:'head',def:13,dr:3,armorStyle:'ranged'}},
+    {id:'deer_chaps', name:'Deer Hide Chaps', icon:'👖',req:23,xp:48, interval:6000, needs:{item:'deer_hide',qty:2,name:'2x Deer Hide'}, gives:{item:'deer_chaps', name:'Deer Hide Chaps', icon:'👖',qty:1,slot:'legs',def:18,dr:3,armorStyle:'ranged'}},
+    {id:'deer_body',  name:'Deer Hide Body',  icon:'🥋',req:25,xp:68, interval:7000, needs:{item:'deer_hide',qty:3,name:'3x Deer Hide'}, gives:{item:'deer_body',  name:'Deer Hide Body',  icon:'🥋',qty:1,slot:'body',def:24,dr:4,armorStyle:'ranged'}},
+    {id:'wolf_coif',  name:'Wolf Pelt Coif',  icon:'🧢',req:30,xp:55, interval:7000, needs:{item:'wolf_pelt',qty:1,name:'1x Wolf Pelt'}, gives:{item:'wolf_coif',  name:'Wolf Pelt Coif',  icon:'🧢',qty:1,slot:'head',def:19,dr:4,armorStyle:'ranged'}},
+    {id:'wolf_chaps', name:'Wolf Pelt Chaps', icon:'👖',req:33,xp:75, interval:8000, needs:{item:'wolf_pelt',qty:2,name:'2x Wolf Pelt'}, gives:{item:'wolf_chaps', name:'Wolf Pelt Chaps', icon:'👖',qty:1,slot:'legs',def:26,dr:4,armorStyle:'ranged'}},
+    {id:'wolf_body',  name:'Wolf Pelt Body',  icon:'🥋',req:35,xp:105,interval:9000, needs:{item:'wolf_pelt',qty:3,name:'3x Wolf Pelt'}, gives:{item:'wolf_body',  name:'Wolf Pelt Body',  icon:'🥋',qty:1,slot:'body',def:34,dr:5,armorStyle:'ranged'}},
+    {id:'bear_coif',  name:'Bear Hide Coif',  icon:'🧢',req:40,xp:80, interval:8000,  needs:{item:'bear_hide',qty:1,name:'1x Bear Hide'}, gives:{item:'bear_coif',  name:'Bear Hide Coif',  icon:'🧢',qty:1,slot:'head',def:26,dr:5,armorStyle:'ranged'}},
+    {id:'bear_chaps', name:'Bear Hide Chaps', icon:'👖',req:43,xp:110,interval:9000,  needs:{item:'bear_hide',qty:2,name:'2x Bear Hide'}, gives:{item:'bear_chaps', name:'Bear Hide Chaps', icon:'👖',qty:1,slot:'legs',def:35,dr:6,armorStyle:'ranged'}},
+    {id:'bear_body',  name:'Bear Hide Body',  icon:'🥋',req:45,xp:150,interval:10000, needs:{item:'bear_hide',qty:3,name:'3x Bear Hide'}, gives:{item:'bear_body',  name:'Bear Hide Body',  icon:'🥋',qty:1,slot:'body',def:46,dr:7,armorStyle:'ranged'}},
+    {id:'croc_coif',  name:'Croc Scale Coif',  icon:'🧢',req:50,xp:110,interval:9000,  needs:{item:'croc_scale',qty:1,name:'1x Croc Scale'}, gives:{item:'croc_coif',  name:'Croc Scale Coif',  icon:'🧢',qty:1,slot:'head',def:34,dr:6,armorStyle:'ranged'}},
+    {id:'croc_chaps', name:'Croc Scale Chaps', icon:'👖',req:53,xp:150,interval:10000, needs:{item:'croc_scale',qty:2,name:'2x Croc Scale'}, gives:{item:'croc_chaps', name:'Croc Scale Chaps', icon:'👖',qty:1,slot:'legs',def:46,dr:7,armorStyle:'ranged'}},
+    {id:'croc_body',  name:'Croc Scale Body',  icon:'🥋',req:55,xp:200,interval:12000, needs:{item:'croc_scale',qty:3,name:'3x Croc Scale'}, gives:{item:'croc_body',  name:'Croc Scale Body',  icon:'🥋',qty:1,slot:'body',def:60,dr:9,armorStyle:'ranged'}},
+  ],
+  crafting_magic: [
+    {id:'novice_hood',     name:'Novice Hood',     icon:'🎩',req:2, xp:15, interval:4000, needs:{item:'crude_essence',qty:2,name:'2x Crude Essence'}, gives:{item:'novice_hood',     name:'Novice Hood',     icon:'🎩',qty:1,slot:'head',def:2, dr:0,armorStyle:'magic'}},
+    {id:'novice_leggings', name:'Novice Leggings', icon:'👖',req:4, xp:20, interval:5000, needs:{item:'crude_essence',qty:2,name:'2x Crude Essence'}, gives:{item:'novice_leggings', name:'Novice Leggings', icon:'👖',qty:1,slot:'legs',def:3, dr:1,armorStyle:'magic'}},
+    {id:'novice_robes',    name:'Novice Robes',    icon:'👘',req:6, xp:25, interval:5000, needs:{item:'crude_essence',qty:3,name:'3x Crude Essence'}, gives:{item:'novice_robes',    name:'Novice Robes',    icon:'👘',qty:1,slot:'body',def:5, dr:1,armorStyle:'magic'}},
+    {id:'apprentice_hood',     name:'Apprentice Hood',     icon:'🎩',req:12,xp:30, interval:5000, needs:{item:'crude_shard',qty:2,name:'2x Crude Shard'}, gives:{item:'apprentice_hood',     name:'Apprentice Hood',     icon:'🎩',qty:1,slot:'head',def:4, dr:1,armorStyle:'magic'}},
+    {id:'apprentice_leggings', name:'Apprentice Leggings', icon:'👖',req:14,xp:40, interval:6000, needs:{item:'crude_shard',qty:2,name:'2x Crude Shard'}, gives:{item:'apprentice_leggings', name:'Apprentice Leggings', icon:'👖',qty:1,slot:'legs',def:6, dr:1,armorStyle:'magic'}},
+    {id:'apprentice_robes',    name:'Apprentice Robes',    icon:'👘',req:16,xp:55, interval:7000, needs:{item:'crude_shard',qty:3,name:'3x Crude Shard'}, gives:{item:'apprentice_robes',    name:'Apprentice Robes',    icon:'👘',qty:1,slot:'body',def:9, dr:2,armorStyle:'magic'}},
+    {id:'adept_hood',     name:'Adept Hood',     icon:'🎩',req:22,xp:55, interval:7000,  needs:{item:'refined_essence',qty:2,name:'2x Refined Essence'}, gives:{item:'adept_hood',     name:'Adept Hood',     icon:'🎩',qty:1,slot:'head',def:7, dr:1,armorStyle:'magic'}},
+    {id:'adept_leggings', name:'Adept Leggings', icon:'👖',req:24,xp:75, interval:8000,  needs:{item:'refined_essence',qty:2,name:'2x Refined Essence'}, gives:{item:'adept_leggings', name:'Adept Leggings', icon:'👖',qty:1,slot:'legs',def:10,dr:2,armorStyle:'magic'}},
+    {id:'adept_robes',    name:'Adept Robes',    icon:'👘',req:26,xp:100,interval:9000,  needs:{item:'refined_essence',qty:3,name:'3x Refined Essence'}, gives:{item:'adept_robes',    name:'Adept Robes',    icon:'👘',qty:1,slot:'body',def:14,dr:3,armorStyle:'magic'}},
+    {id:'invoker_hood',     name:'Invoker Hood',     icon:'🎩',req:32,xp:85, interval:9000,  needs:{item:'refined_shard',qty:2,name:'2x Refined Shard'}, gives:{item:'invoker_hood',     name:'Invoker Hood',     icon:'🎩',qty:1,slot:'head',def:10,dr:2,armorStyle:'magic'}},
+    {id:'invoker_leggings', name:'Invoker Leggings', icon:'👖',req:34,xp:115,interval:10000, needs:{item:'refined_shard',qty:2,name:'2x Refined Shard'}, gives:{item:'invoker_leggings', name:'Invoker Leggings', icon:'👖',qty:1,slot:'legs',def:14,dr:3,armorStyle:'magic'}},
+    {id:'invoker_robes',    name:'Invoker Robes',    icon:'👘',req:36,xp:155,interval:12000, needs:{item:'refined_shard',qty:3,name:'3x Refined Shard'}, gives:{item:'invoker_robes',    name:'Invoker Robes',    icon:'👘',qty:1,slot:'body',def:19,dr:4,armorStyle:'magic'}},
+    {id:'mystic_hood',     name:'Mystic Hood',     icon:'🎩',req:42,xp:120,interval:10000, needs:{item:'pure_essence',qty:2,name:'2x Pure Essence'}, gives:{item:'mystic_hood',     name:'Mystic Hood',     icon:'🎩',qty:1,slot:'head',def:14,dr:3,armorStyle:'magic'}},
+    {id:'mystic_leggings', name:'Mystic Leggings', icon:'👖',req:44,xp:160,interval:12000, needs:{item:'pure_essence',qty:2,name:'2x Pure Essence'}, gives:{item:'mystic_leggings', name:'Mystic Leggings', icon:'👖',qty:1,slot:'legs',def:19,dr:4,armorStyle:'magic'}},
+    {id:'mystic_robes',    name:'Mystic Robes',    icon:'👘',req:46,xp:215,interval:13000, needs:{item:'pure_essence',qty:3,name:'3x Pure Essence'}, gives:{item:'mystic_robes',    name:'Mystic Robes',    icon:'👘',qty:1,slot:'body',def:26,dr:5,armorStyle:'magic'}},
+    {id:'arcanist_hood',     name:'Arcanist Hood',     icon:'🎩',req:52,xp:165,interval:12000, needs:{item:'pure_shard',qty:2,name:'2x Pure Shard'}, gives:{item:'arcanist_hood',     name:'Arcanist Hood',     icon:'🎩',qty:1,slot:'head',def:19,dr:4,armorStyle:'magic'}},
+    {id:'arcanist_leggings', name:'Arcanist Leggings', icon:'👖',req:54,xp:220,interval:13000, needs:{item:'pure_shard',qty:2,name:'2x Pure Shard'}, gives:{item:'arcanist_leggings', name:'Arcanist Leggings', icon:'👖',qty:1,slot:'legs',def:26,dr:5,armorStyle:'magic'}},
+    {id:'arcanist_robes',    name:'Arcanist Robes',    icon:'👘',req:56,xp:290,interval:15000, needs:{item:'pure_shard',qty:3,name:'3x Pure Shard'}, gives:{item:'arcanist_robes',    name:'Arcanist Robes',    icon:'👘',qty:1,slot:'body',def:35,dr:7,armorStyle:'magic'}},
   ],
 };
 
@@ -1390,12 +1439,14 @@ function defaultState(){
   const skills={};
   SKILL_KEYS.forEach(k=>skills[k]={xp: k==='hitpoints'?xpForLevel(10):0});
   const startingBank = {
-    bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee'},
+    bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee', tier:0},
     bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'axe',     toolType:'axe',     tier:0},
     bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'pickaxe', toolType:'pickaxe', tier:0},
-    bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'net',     toolType:'net',     tier:0},
+    normal_rod:     {id:'normal_rod',     name:'Normal Rod',     icon:'🎣', qty:1, slot:'rod',  toolType:'rod',  tier:0},
+    normal_trap:    {id:'normal_trap',    name:'Normal Trap',    icon:'🪤', qty:1, slot:'trap', toolType:'trap', tier:0},
     shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon',  atk:12, str:8, weaponStyle:'ranged'},
-    iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  atk:8, str:12, weaponStyle:'magic'},
+    normal_staff:   {id:'normal_staff',   name:'Normal Staff',   icon:'🪄', qty:1, slot:'weapon',  atk:8,  str:12,weaponStyle:'magic'},
+    novice_hood:    {id:'novice_hood',    name:'Novice Hood',    icon:'🎩', qty:1, slot:'head', def:2, dr:0, armorStyle:'magic'},
     shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
   };
   return {
@@ -1404,7 +1455,7 @@ function defaultState(){
     skills,
     habits:[], vices:[], tasks:[], log:[],
     bank:{slots:50, items:startingBank},
-    equipped:{head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null},
+    equipped:{head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,rod:null,trap:null},
     autoEat:false,
     hp:{current:10,max:10},
     activeActivity:null,
@@ -1471,23 +1522,26 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(!S.tasks) S.tasks=[];
   if(!S.taskBonusEarned) S.taskBonusEarned={};
   if(S.bank.slots<50) S.bank.slots=50; // migrate old saves
-  if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,net:null,food:null};
+  if(!S.equipped) S.equipped={head:null,weapon:null,body:null,shield:null,legs:null,feet:null,axe:null,pickaxe:null,rod:null,trap:null,food:null};
   if(!S.equipped.axe)     S.equipped.axe=null;
   if(S.equipped.food===undefined) S.equipped.food=null;
   if(!S.equipped.pickaxe) S.equipped.pickaxe=null;
-  if(!S.equipped.net)     S.equipped.net=null;
-  // migrate old saves — remove removed slots
-  ['cape','neck','hands','ring','ammo'].forEach(s=>{ if(s in S.equipped) delete S.equipped[s]; });
+  if(!S.equipped.rod)     S.equipped.rod=null;
+  if(!S.equipped.trap)    S.equipped.trap=null;
+  // migrate old saves — remove removed/renamed slots
+  ['cape','neck','hands','ring','ammo','net'].forEach(s=>{ if(s in S.equipped) delete S.equipped[s]; });
   if(!S.hp) S.hp={current:10,max:10};
   if(!S.activeMode) S.activeMode='gather';
   if(!S.store) S.store={soldCounts:{},lastReset:Date.now()};
   if(!S.questsPending) S.questsPending={};
   // Migrate: fix any tools in bank that still have slot:'weapon'
-  const toolSlotMap = {axe:'axe', pickaxe:'pickaxe', net:'net'};
+  const toolSlotMap = {axe:'axe', pickaxe:'pickaxe', rod:'rod', trap:'trap', net:'rod'};
   Object.values(S.bank.items||{}).forEach(item=>{
     if(item.toolType && item.slot==='weapon'){
       item.slot = toolSlotMap[item.toolType] || item.slot;
     }
+    // migrate old net items to rod slot
+    if(item.toolType==='net'){ item.toolType='rod'; item.slot='rod'; }
   });
   // Migrate: fix any tools equipped in weapon slot that should be in tool slots
   const wp = S.equipped?.weapon;
@@ -1497,7 +1551,6 @@ window.addEventListener('DOMContentLoaded',()=>{
       S.equipped[correctSlot] = wp;
       S.equipped.weapon = null;
     } else if(correctSlot){
-      // tool slot already filled — move weapon back to bank
       addToBank(wp.id, {...wp, qty:1});
       S.equipped.weapon = null;
     }
@@ -1514,12 +1567,14 @@ window.addEventListener('DOMContentLoaded',()=>{
   // seed starter items for existing saves that have an empty bank
   if(S.onboarded && Object.keys(S.bank.items||{}).length===0){
     S.bank.items = {
-      bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee'},
+      bronze_sword:   {id:'bronze_sword',   name:'Bronze Sword',   icon:'🗡️', qty:1, slot:'weapon', atk:10, str:10, weaponStyle:'melee', tier:0},
       bronze_axe:     {id:'bronze_axe',     name:'Bronze Axe',     icon:'🪓', qty:1, slot:'axe',     toolType:'axe',     tier:0},
       bronze_pickaxe: {id:'bronze_pickaxe', name:'Bronze Pickaxe', icon:'⛏️', qty:1, slot:'pickaxe', toolType:'pickaxe', tier:0},
-      bronze_net:     {id:'bronze_net',     name:'Fishing Net',    icon:'🪤', qty:1, slot:'net',     toolType:'net',     tier:0},
+      normal_rod:     {id:'normal_rod',     name:'Normal Rod',     icon:'🎣', qty:1, slot:'rod',  toolType:'rod',  tier:0},
+      normal_trap:    {id:'normal_trap',    name:'Normal Trap',    icon:'🪤', qty:1, slot:'trap', toolType:'trap', tier:0},
       shortbow:       {id:'shortbow',       name:'Shortbow',       icon:'🏹', qty:1, slot:'weapon', rng:5},
-      iron_staff:     {id:'iron_staff',     name:'Iron Staff',     icon:'🪄', qty:1, slot:'weapon',  atk:8, str:12, weaponStyle:'magic'},
+      normal_staff:   {id:'normal_staff',   name:'Normal Staff',   icon:'🪄', qty:1, slot:'weapon',  atk:8, str:12, weaponStyle:'magic'},
+      novice_hood:    {id:'novice_hood',    name:'Novice Hood',    icon:'🎩', qty:1, slot:'head', def:2, dr:0, armorStyle:'magic'},
       shrimp:         {id:'shrimp',         name:'Shrimp',         icon:'🍤', qty:5, heals:3},
         };
     saveState();
@@ -1731,8 +1786,8 @@ function showPane(id, btn){
   if(id==='quests') renderQuestsPane();
   if(id==='settings') renderSettingsPane();
   if(id==='store'){ currentShop='sell'; renderShop(); }
-  if(id==='crafting'){ buildActivityPane('crafting',ACTIVITIES.crafting); }
-  if(id==='hunting'){ buildActivityPane('hunting',ACTIVITIES.hunting); }
+  if(id==='crafting'){ buildActivityPane('crafting', currentCraftMode==='ranged'?ACTIVITIES.crafting_ranged:ACTIVITIES.crafting_magic); }
+  if(id==='hunting'){  buildActivityPane('hunting',  currentHuntMode==='animals'?ACTIVITIES.hunting_animals:ACTIVITIES.hunting_magical); }
 }
 
 // ═══════════════════════════════════════
@@ -1805,7 +1860,7 @@ function renderSkillDetail(k){
 }
 
 function updateActivityLevels(){
-  ['mining','woodcutting','fishing','cooking','smithing','fletching','runecrafting','crafting'].forEach(k=>{
+  ['mining','woodcutting','fishing','cooking','smithing','carving','runecrafting','crafting'].forEach(k=>{
     const el=document.getElementById(k+'-lv');
     if(el) el.textContent=getLvForXP(S.skills[k]?.xp||0);
   });
@@ -2541,7 +2596,7 @@ function saveProfile(){
 // EQUIPMENT
 // ═══════════════════════════════════════
 function renderEquipPane(){
-  const slots=['head','weapon','body','shield','legs','feet','axe','pickaxe','net'];
+  const slots=['head','weapon','body','shield','legs','feet','axe','pickaxe','rod','trap'];
   slots.forEach(s=>{
     const el=document.getElementById('eq-'+s+'-item'); if(!el) return;
     const item=S.equipped[s];
@@ -2626,15 +2681,45 @@ function openEquipSlot(slot){
   openModal('Equip — '+slot.charAt(0).toUpperCase()+slot.slice(1), html+'<div class="modal-actions"><button class="btn btn-dim" onclick="closeModal()">Close</button></div>');
 }
 
+function getEquipReq(item){
+  // Returns {skill, level} requirement or null
+  if(!item) return null;
+  const slot = item.slot;
+  const ws = item.weaponStyle;
+  const tt = item.toolType;
+  const tier = item.tier; // 0=bronze,1=iron,2=steel,3=mithril,4=adamant,5=rune
+  const tierLevels = [1,10,20,30,40,50];
+  const lv = (tier!==undefined && tierLevels[tier]!==undefined) ? tierLevels[tier] : null;
+  if(lv===null) return null;
+  if(tt==='axe')      return {skill:'woodcutting', level:lv};
+  if(tt==='pickaxe')  return {skill:'mining',      level:lv};
+  if(tt==='rod')      return {skill:'fishing',     level:lv};
+  if(tt==='trap')     return {skill:'hunting',      level:lv};
+  if(ws==='melee')    return {skill:'attack',      level:lv};
+  if(ws==='ranged')   return {skill:'ranged',      level:lv};
+  if(ws==='magic')    return {skill:'magic',       level:lv};
+  if(slot==='head'||slot==='body'||slot==='legs'||slot==='shield'||slot==='feet') return {skill:'defence', level:lv};
+  return null;
+}
+
 function equipItem(slot,itemId){
   const item=S.bank.items[itemId];
   if(!item) return;
   if(slot==='food'){
-    // Food slot: just select which food type to auto-eat — don't remove from bank
     S.equipped.food={...item};
     saveState(); closeModal(); renderEquipPane();
     showToast('Food set!', item.name + ' will be used in combat.', true);
     return;
+  }
+  // Check level requirements
+  const req = getEquipReq(item);
+  if(req){
+    const playerLv = getLvForXP(S.skills[req.skill]?.xp||0);
+    if(playerLv < req.level){
+      const sk = SKILLS[req.skill];
+      showToast('Level Required', `Need ${sk?.name||req.skill} level ${req.level} to equip this.`, false);
+      return;
+    }
   }
   // Unequip current
   if(S.equipped[slot]){
@@ -2644,7 +2729,6 @@ function equipItem(slot,itemId){
   item.qty--;
   if(item.qty<=0) delete S.bank.items[itemId];
   saveState(); closeModal(); renderEquipPane(); renderBank(); buildActivityPanes();
-  // Update combat style if weapon changed
   if(slot==='weapon') updateCombatStyles();
 }
 
@@ -2722,7 +2806,7 @@ function confirmIncinerate(id){
 
 function openBankItem(id){
   const item=S.bank.items[id]; if(!item) return;
-  const canEquip=item.slot&&['head','weapon','body','shield','legs','feet','axe','pickaxe','net'].includes(item.slot);
+  const canEquip=item.slot&&['head','weapon','body','shield','legs','feet','axe','pickaxe','rod','trap'].includes(item.slot);
   const canEat=item.heals>0;
   const statLines=[];
   if(item.atk) statLines.push(`Attack Bonus: +${item.atk}`);
@@ -2763,7 +2847,7 @@ function buildActivityPane(skill, items, smithMode){
   if(!container) return;
   container.innerHTML='';
 
-  const isGather = ['mining','woodcutting','fishing'].includes(skill);
+  const isGather = ['mining','woodcutting','fishing','hunting'].includes(skill);
   const isSmith  = skill==='smithing';
   const listItems= isSmith?(smithMode==='smelt'?ACTIVITIES.smithing_smelt:ACTIVITIES.smithing_smith):items;
 
@@ -2851,31 +2935,55 @@ function buildNeedsStr(item){
   return parts.join(', ');
 }
 
+let currentSmithMode='smelt';
+let currentHuntMode='animals';
+let currentCraftMode='ranged';
+let currentCarvingMode='traps';
+
 function buildActivityPanes(){
   buildActivityPane('mining',         ACTIVITIES.mining);
   buildActivityPane('woodcutting',    ACTIVITIES.woodcutting);
   buildActivityPane('fishing',        ACTIVITIES.fishing);
   buildActivityPane('cooking',        ACTIVITIES.cooking);
-  buildActivityPane('fletching',      ACTIVITIES.fletching);
-  buildActivityPane('enchanting',   ACTIVITIES.enchanting);
-  buildActivityPane('hunting',      ACTIVITIES.hunting);
-  buildActivityPane('crafting', ACTIVITIES.crafting);
+  buildActivityPane('carving',        ACTIVITIES['carving_'+currentCarvingMode]);
+  buildActivityPane('hunting',      currentHuntMode==='animals'?ACTIVITIES.hunting_animals:ACTIVITIES.hunting_magical);
+  buildActivityPane('crafting', currentCraftMode==='ranged'?ACTIVITIES.crafting_ranged:ACTIVITIES.crafting_magic);
   buildActivityPane('smithing',       null, currentSmithMode);
 }
 
-let currentSmithMode='smelt';
 function setSmithMode(mode,btn){
   currentSmithMode=mode;
-  document.querySelectorAll('.sm-tab').forEach(b=>b.classList.remove('active-sm'));
+  document.querySelectorAll('#pane-smithing .sm-tab').forEach(b=>b.classList.remove('active-sm'));
   btn.classList.add('active-sm');
   buildActivityPane('smithing',null,mode);
+}
+
+function setHuntMode(mode,btn){
+  currentHuntMode=mode;
+  document.querySelectorAll('#pane-hunting .sm-tab').forEach(b=>b.classList.remove('active-sm'));
+  btn.classList.add('active-sm');
+  buildActivityPane('hunting', mode==='animals'?ACTIVITIES.hunting_animals:ACTIVITIES.hunting_magical);
+}
+
+function setCraftMode(mode,btn){
+  currentCraftMode=mode;
+  document.querySelectorAll('#pane-crafting .sm-tab').forEach(b=>b.classList.remove('active-sm'));
+  btn.classList.add('active-sm');
+  buildActivityPane('crafting', mode==='ranged'?ACTIVITIES.crafting_ranged:ACTIVITIES.crafting_magic);
+}
+
+function setCarvingMode(mode,btn){
+  currentCarvingMode=mode;
+  document.querySelectorAll('#pane-carving .sm-tab').forEach(b=>b.classList.remove('active-sm'));
+  btn.classList.add('active-sm');
+  buildActivityPane('carving', ACTIVITIES['carving_'+mode]);
 }
 
 function startActivity(skill,itemId,smithMode,focusMode){
   stopActivity(null,true);
   S.activeActivity={skill,itemId,smithMode:smithMode||null,focusMode:!!focusMode};
   idleProgress=0;
-  const isGather=['mining','woodcutting','fishing'].includes(skill);
+  const isGather=['mining','woodcutting','fishing','hunting'].includes(skill);
   idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
   saveState(); buildActivityPanes(); showActivityBar(skill,itemId,smithMode,focusMode);
 }
@@ -2887,6 +2995,9 @@ function getActivityItem(skill,itemId,smithMode){
 
 function getActivityItems(skill,smithMode){
   if(skill==='smithing') return smithMode==='smelt'?ACTIVITIES.smithing_smelt:ACTIVITIES.smithing_smith;
+  if(skill==='hunting')  return currentHuntMode==='animals'?ACTIVITIES.hunting_animals:ACTIVITIES.hunting_magical;
+  if(skill==='crafting') return currentCraftMode==='ranged'?ACTIVITIES.crafting_ranged:ACTIVITIES.crafting_magic;
+  if(skill==='carving')  return ACTIVITIES['carving_'+currentCarvingMode]||[];
   return ACTIVITIES[skill]||[];
 }
 
@@ -2928,7 +3039,7 @@ function idleTick(){
   if(!S.activeActivity) return;
   // Recalculate interval in case tool changed
   const {skill,itemId,smithMode,focusMode}=S.activeActivity;
-  const isGather=['mining','woodcutting','fishing'].includes(skill);
+  const isGather=['mining','woodcutting','fishing','hunting'].includes(skill);
   idleInterval = focusMode ? FOCUS_XP_INTERVAL : isGather ? getToolInterval(skill) : (getActivityItem(skill,itemId,smithMode)?.interval||5000);
 
   idleProgress+=100;
@@ -3390,25 +3501,47 @@ const SKILL_UNLOCKS = {
     {req:30, name:'Adamant Longsword',icon:'⚔️', cat:'Wield'},
   ],
   ranged: [
-    {req:1,  name:'Shortbow',         icon:'🏹', cat:'Wield'},
-    {req:1,  name:'Oak Bow',         icon:'🏹', cat:'Wield'},
-    {req:5,  name:'Willow Bow',        icon:'🏹', cat:'Wield'},
-    {req:20, name:'Yew Bow',      icon:'🏹', cat:'Wield'},
-    {req:30, name:'Magic Bow',      icon:'🏹', cat:'Wield'},
+    {req:1,  name:'Shortbow',     icon:'🏹', cat:'Wield'},
+    {req:1,  name:'Normal Bow',   icon:'🏹', cat:'Wield'},
+    {req:10, name:'Oak Bow',      icon:'🏹', cat:'Wield'},
+    {req:20, name:'Willow Bow',   icon:'🏹', cat:'Wield'},
+    {req:30, name:'Teak Bow',     icon:'🏹', cat:'Wield'},
+    {req:40, name:'Yew Bow',      icon:'🏹', cat:'Wield'},
+    {req:50, name:'Magic Bow',    icon:'🏹', cat:'Wield'},
   ],
   magic: [
-    {req:1,  name:'Iron Staff',       icon:'🪄', cat:'Wield'},
-    {req:5,  name:'Steel Staff',      icon:'🪄', cat:'Wield'},
-    {req:20, name:'Mithril Staff',    icon:'🪄', cat:'Wield'},
-    {req:30, name:'Adamant Staff',    icon:'🪄', cat:'Wield'},
+    {req:1,  name:'Normal Staff', icon:'🪄', cat:'Wield'},
+    {req:10, name:'Oak Staff',    icon:'🪄', cat:'Wield'},
+    {req:20, name:'Willow Staff', icon:'🪄', cat:'Wield'},
+    {req:30, name:'Teak Staff',   icon:'🪄', cat:'Wield'},
+    {req:40, name:'Yew Staff',    icon:'🪄', cat:'Wield'},
+    {req:50, name:'Magic Staff',  icon:'🪄', cat:'Wield'},
+    {req:1,  name:'Novice Robes',      icon:'👘', cat:'Wear'},
+    {req:10, name:'Apprentice Robes',  icon:'👘', cat:'Wear'},
+    {req:20, name:'Adept Robes',       icon:'👘', cat:'Wear'},
+    {req:30, name:'Invoker Robes',     icon:'👘', cat:'Wear'},
+    {req:40, name:'Mystic Robes',      icon:'👘', cat:'Wear'},
+    {req:50, name:'Arcanist Robes',    icon:'👘', cat:'Wear'},
   ],
   defence: [
-    {req:1,  name:'Leather Coif',     icon:'🧢', cat:'Wear'},
-    {req:1,  name:'Leather Body',     icon:'🥋', cat:'Wear'},
-    {req:1,  name:'Leather Chaps',    icon:'👖', cat:'Wear'},
-    {req:3,  name:'Hard Leather Coif',icon:'🧢', cat:'Wear'},
-    {req:3,  name:'Hard Leather Body',icon:'🥋', cat:'Wear'},
-    {req:3,  name:'Hard Leather Chaps',icon:'👖',cat:'Wear'},
+    {req:1,  name:'Rabbit Fur Coif',  icon:'🧢', cat:'Wear'},
+    {req:3,  name:'Rabbit Fur Chaps', icon:'👖', cat:'Wear'},
+    {req:5,  name:'Rabbit Fur Body',  icon:'🥋', cat:'Wear'},
+    {req:10, name:'Fox Pelt Coif',    icon:'🧢', cat:'Wear'},
+    {req:13, name:'Fox Pelt Chaps',   icon:'👖', cat:'Wear'},
+    {req:15, name:'Fox Pelt Body',    icon:'🥋', cat:'Wear'},
+    {req:20, name:'Deer Hide Coif',   icon:'🧢', cat:'Wear'},
+    {req:23, name:'Deer Hide Chaps',  icon:'👖', cat:'Wear'},
+    {req:25, name:'Deer Hide Body',   icon:'🥋', cat:'Wear'},
+    {req:30, name:'Wolf Pelt Coif',   icon:'🧢', cat:'Wear'},
+    {req:33, name:'Wolf Pelt Chaps',  icon:'👖', cat:'Wear'},
+    {req:35, name:'Wolf Pelt Body',   icon:'🥋', cat:'Wear'},
+    {req:40, name:'Bear Hide Coif',   icon:'🧢', cat:'Wear'},
+    {req:43, name:'Bear Hide Chaps',  icon:'👖', cat:'Wear'},
+    {req:45, name:'Bear Hide Body',   icon:'🥋', cat:'Wear'},
+    {req:50, name:'Croc Scale Coif',  icon:'🧢', cat:'Wear'},
+    {req:53, name:'Croc Scale Chaps', icon:'👖', cat:'Wear'},
+    {req:55, name:'Croc Scale Body',  icon:'🥋', cat:'Wear'},
     {req:1,  name:'Iron Full Helm',   icon:'🪖', cat:'Wear'},
     {req:1,  name:'Iron Platebody',   icon:'🛡️', cat:'Wear'},
     {req:1,  name:'Iron Platelegs',   icon:'👖', cat:'Wear'},
@@ -3427,89 +3560,160 @@ const SKILL_UNLOCKS = {
     {req:30, name:'Adamant Kiteshield',icon:'🛡️',cat:'Wear'},
   ],
   smithing: [
-    {req:1,  name:'Iron Full Helm',   icon:'🪖', cat:'Smith'},
-    {req:1,  name:'Iron Platebody',   icon:'🛡️', cat:'Smith'},
-    {req:1,  name:'Iron Platelegs',   icon:'👖', cat:'Smith'},
-    {req:1,  name:'Iron Kiteshield',  icon:'🛡️', cat:'Smith'},
-    {req:1,  name:'Iron Longsword',   icon:'⚔️', cat:'Smith'},
-    {req:5,  name:'Steel Full Helm',  icon:'🪖', cat:'Smith'},
-    {req:5,  name:'Steel Platebody',  icon:'🛡️', cat:'Smith'},
-    {req:5,  name:'Steel Platelegs',  icon:'👖', cat:'Smith'},
-    {req:5,  name:'Steel Kiteshield', icon:'🛡️', cat:'Smith'},
-    {req:5,  name:'Steel Longsword',  icon:'⚔️', cat:'Smith'},
-    {req:20, name:'Mithril Full Helm',icon:'🪖', cat:'Smith'},
-    {req:20, name:'Mithril Platebody',icon:'🛡️', cat:'Smith'},
-    {req:20, name:'Mithril Platelegs',icon:'👖', cat:'Smith'},
-    {req:20, name:'Mithril Kiteshield',icon:'🛡️',cat:'Smith'},
-    {req:20, name:'Mithril Longsword',icon:'⚔️', cat:'Smith'},
-    {req:30, name:'Adamant Full Helm',icon:'🪖', cat:'Smith'},
-    {req:30, name:'Adamant Platebody',icon:'🛡️', cat:'Smith'},
-    {req:30, name:'Adamant Platelegs',icon:'👖', cat:'Smith'},
-    {req:30, name:'Adamant Kiteshield',icon:'🛡️',cat:'Smith'},
-    {req:30, name:'Adamant Longsword',icon:'⚔️', cat:'Smith'},
+    {req:1,  name:'Bronze Pickaxe & Axe',  icon:'⛏️', cat:'Smith'},
+    {req:2,  name:'Bronze Full Helm',      icon:'🪖', cat:'Smith'},
+    {req:3,  name:'Bronze Kiteshield',     icon:'🛡️', cat:'Smith'},
+    {req:4,  name:'Bronze Longsword',      icon:'⚔️', cat:'Smith'},
+    {req:5,  name:'Bronze Platelegs',      icon:'👖', cat:'Smith'},
+    {req:6,  name:'Bronze Platebody',      icon:'🛡️', cat:'Smith'},
+    {req:10, name:'Iron Pickaxe & Axe',    icon:'⛏️', cat:'Smith'},
+    {req:11, name:'Iron Full Helm',        icon:'🪖', cat:'Smith'},
+    {req:12, name:'Iron Kiteshield',       icon:'🛡️', cat:'Smith'},
+    {req:13, name:'Iron Longsword',        icon:'⚔️', cat:'Smith'},
+    {req:14, name:'Iron Platelegs',        icon:'👖', cat:'Smith'},
+    {req:15, name:'Iron Platebody',        icon:'🛡️', cat:'Smith'},
+    {req:20, name:'Steel Pickaxe & Axe',   icon:'⛏️', cat:'Smith'},
+    {req:21, name:'Steel Full Helm',       icon:'🪖', cat:'Smith'},
+    {req:22, name:'Steel Kiteshield',      icon:'🛡️', cat:'Smith'},
+    {req:23, name:'Steel Longsword',       icon:'⚔️', cat:'Smith'},
+    {req:24, name:'Steel Platelegs',       icon:'👖', cat:'Smith'},
+    {req:25, name:'Steel Platebody',       icon:'🛡️', cat:'Smith'},
+    {req:30, name:'Mithril Pickaxe & Axe', icon:'⛏️', cat:'Smith'},
+    {req:31, name:'Mithril Full Helm',     icon:'🪖', cat:'Smith'},
+    {req:32, name:'Mithril Kiteshield',    icon:'🛡️', cat:'Smith'},
+    {req:33, name:'Mithril Longsword',     icon:'⚔️', cat:'Smith'},
+    {req:34, name:'Mithril Platelegs',     icon:'👖', cat:'Smith'},
+    {req:35, name:'Mithril Platebody',     icon:'🛡️', cat:'Smith'},
+    {req:40, name:'Adamant Pickaxe & Axe', icon:'⛏️', cat:'Smith'},
+    {req:41, name:'Adamant Full Helm',     icon:'🪖', cat:'Smith'},
+    {req:42, name:'Adamant Kiteshield',    icon:'🛡️', cat:'Smith'},
+    {req:43, name:'Adamant Longsword',     icon:'⚔️', cat:'Smith'},
+    {req:44, name:'Adamant Platelegs',     icon:'👖', cat:'Smith'},
+    {req:45, name:'Adamant Platebody',     icon:'🛡️', cat:'Smith'},
+    {req:50, name:'Rune Pickaxe & Axe',    icon:'⛏️', cat:'Smith'},
+    {req:51, name:'Rune Full Helm',        icon:'🪖', cat:'Smith'},
+    {req:52, name:'Rune Kiteshield',       icon:'🛡️', cat:'Smith'},
+    {req:53, name:'Rune Longsword',        icon:'⚔️', cat:'Smith'},
+    {req:54, name:'Rune Platelegs',        icon:'👖', cat:'Smith'},
+    {req:55, name:'Rune Platebody',        icon:'🛡️', cat:'Smith'},
   ],
-  fletching: [
-    {req:1,  name:'Oak Bow',         icon:'🏹', cat:'Fletch'},
-    {req:5,  name:'Willow Bow',        icon:'🏹', cat:'Fletch'},
-    {req:20, name:'Yew Bow',      icon:'🏹', cat:'Fletch'},
-    {req:30, name:'Magic Bow',      icon:'🏹', cat:'Fletch'},
-  ],
-  enchanting: [
-    {req:1,  name:'Iron Staff',       icon:'🪄', cat:'Craft'},
-    {req:5,  name:'Steel Staff',      icon:'🪄', cat:'Craft'},
-    {req:20, name:'Mithril Staff',    icon:'🪄', cat:'Craft'},
-    {req:30, name:'Adamant Staff',    icon:'🪄', cat:'Craft'},
+  carving: [
+    {req:1,  name:'Normal Trap', icon:'🪤', cat:'Carve'},
+    {req:10, name:'Oak Trap',    icon:'🪤', cat:'Carve'},
+    {req:20, name:'Willow Trap', icon:'🪤', cat:'Carve'},
+    {req:30, name:'Teak Trap',   icon:'🪤', cat:'Carve'},
+    {req:40, name:'Yew Trap',    icon:'🪤', cat:'Carve'},
+    {req:50, name:'Magic Trap',  icon:'🪤', cat:'Carve'},
+    {req:3,  name:'Normal Bow',  icon:'🏹', cat:'Carve'},
+    {req:13, name:'Oak Bow',     icon:'🏹', cat:'Carve'},
+    {req:23, name:'Willow Bow',  icon:'🏹', cat:'Carve'},
+    {req:33, name:'Teak Bow',    icon:'🏹', cat:'Carve'},
+    {req:43, name:'Yew Bow',     icon:'🏹', cat:'Carve'},
+    {req:53, name:'Magic Bow',   icon:'🏹', cat:'Carve'},
+    {req:4,  name:'Normal Rod',  icon:'🎣', cat:'Carve'},
+    {req:14, name:'Oak Rod',     icon:'🎣', cat:'Carve'},
+    {req:24, name:'Willow Rod',  icon:'🎣', cat:'Carve'},
+    {req:34, name:'Teak Rod',    icon:'🎣', cat:'Carve'},
+    {req:44, name:'Yew Rod',     icon:'🎣', cat:'Carve'},
+    {req:54, name:'Magic Rod',   icon:'🎣', cat:'Carve'},
+    {req:4,  name:'Normal Staff',icon:'🪄', cat:'Carve'},
+    {req:14, name:'Oak Staff',   icon:'🪄', cat:'Carve'},
+    {req:24, name:'Willow Staff',icon:'🪄', cat:'Carve'},
+    {req:34, name:'Teak Staff',  icon:'🪄', cat:'Carve'},
+    {req:44, name:'Yew Staff',   icon:'🪄', cat:'Carve'},
+    {req:54, name:'Magic Staff', icon:'🪄', cat:'Carve'},
   ],
   crafting: [
-    {req:1,  name:'Leather Coif',     icon:'🧢', cat:'Craft'},
-    {req:1,  name:'Leather Body',     icon:'🥋', cat:'Craft'},
-    {req:1,  name:'Leather Chaps',    icon:'👖', cat:'Craft'},
-    {req:3,  name:'Hard Leather Coif',icon:'🧢', cat:'Craft'},
-    {req:3,  name:'Hard Leather Body',icon:'🥋', cat:'Craft'},
-    {req:3,  name:'Hard Leather Chaps',icon:'👖',cat:'Craft'},
-    {req:10, name:'Studded Chaps',    icon:'👖', cat:'Craft'},
-    {req:20, name:'Mithril Studded Chaps',icon:'👖',cat:'Craft'},
-    {req:30, name:'Adamant Studded Chaps',icon:'👖',cat:'Craft'},
+    {req:1,  name:'Rabbit Fur Coif',    icon:'🧢', cat:'Craft'},
+    {req:3,  name:'Rabbit Fur Chaps',   icon:'👖', cat:'Craft'},
+    {req:5,  name:'Rabbit Fur Body',    icon:'🥋', cat:'Craft'},
+    {req:2,  name:'Novice Hood',        icon:'🎩', cat:'Craft'},
+    {req:4,  name:'Novice Leggings',    icon:'👖', cat:'Craft'},
+    {req:6,  name:'Novice Robes',       icon:'👘', cat:'Craft'},
+    {req:10, name:'Fox Pelt Coif',      icon:'🧢', cat:'Craft'},
+    {req:13, name:'Fox Pelt Chaps',     icon:'👖', cat:'Craft'},
+    {req:15, name:'Fox Pelt Body',      icon:'🥋', cat:'Craft'},
+    {req:12, name:'Apprentice Hood',    icon:'🎩', cat:'Craft'},
+    {req:14, name:'Apprentice Leggings',icon:'👖', cat:'Craft'},
+    {req:16, name:'Apprentice Robes',   icon:'👘', cat:'Craft'},
+    {req:20, name:'Deer Hide Coif',     icon:'🧢', cat:'Craft'},
+    {req:23, name:'Deer Hide Chaps',    icon:'👖', cat:'Craft'},
+    {req:25, name:'Deer Hide Body',     icon:'🥋', cat:'Craft'},
+    {req:22, name:'Adept Hood',         icon:'🎩', cat:'Craft'},
+    {req:24, name:'Adept Leggings',     icon:'👖', cat:'Craft'},
+    {req:26, name:'Adept Robes',        icon:'👘', cat:'Craft'},
+    {req:30, name:'Wolf Pelt Coif',     icon:'🧢', cat:'Craft'},
+    {req:33, name:'Wolf Pelt Chaps',    icon:'👖', cat:'Craft'},
+    {req:35, name:'Wolf Pelt Body',     icon:'🥋', cat:'Craft'},
+    {req:32, name:'Invoker Hood',       icon:'🎩', cat:'Craft'},
+    {req:34, name:'Invoker Leggings',   icon:'👖', cat:'Craft'},
+    {req:36, name:'Invoker Robes',      icon:'👘', cat:'Craft'},
+    {req:40, name:'Bear Hide Coif',     icon:'🧢', cat:'Craft'},
+    {req:43, name:'Bear Hide Chaps',    icon:'👖', cat:'Craft'},
+    {req:45, name:'Bear Hide Body',     icon:'🥋', cat:'Craft'},
+    {req:42, name:'Mystic Hood',        icon:'🎩', cat:'Craft'},
+    {req:44, name:'Mystic Leggings',    icon:'👖', cat:'Craft'},
+    {req:46, name:'Mystic Robes',       icon:'👘', cat:'Craft'},
+    {req:50, name:'Croc Scale Coif',    icon:'🧢', cat:'Craft'},
+    {req:53, name:'Croc Scale Chaps',   icon:'👖', cat:'Craft'},
+    {req:55, name:'Croc Scale Body',    icon:'🥋', cat:'Craft'},
+    {req:52, name:'Arcanist Hood',      icon:'🎩', cat:'Craft'},
+    {req:54, name:'Arcanist Leggings',  icon:'👖', cat:'Craft'},
+    {req:56, name:'Arcanist Robes',     icon:'👘', cat:'Craft'},
   ],
   mining: [
-    {req:1,  name:'Iron Ore',         icon:'🪨', cat:'Mine'},
-    {req:5,  name:'Steel Ore',        icon:'🩶', cat:'Mine'},
-    {req:20, name:'Mithril Ore',      icon:'🔵', cat:'Mine'},
-    {req:30, name:'Adamant Ore',      icon:'🟢', cat:'Mine'},
+    {req:1,  name:'Tin Ore',          icon:'🪨', cat:'Mine'},
+    {req:1,  name:'Copper Ore',       icon:'🟤', cat:'Mine'},
+    {req:10, name:'Iron Ore',         icon:'🩶', cat:'Mine'},
+    {req:10, name:'Iron Pickaxe',     icon:'⛏️', cat:'Tool'},
+    {req:20, name:'Steel Ore',        icon:'⚫', cat:'Mine'},
+    {req:20, name:'Steel Pickaxe',    icon:'⛏️', cat:'Tool'},
+    {req:30, name:'Mithril Ore',      icon:'🔵', cat:'Mine'},
+    {req:30, name:'Mithril Pickaxe',  icon:'⛏️', cat:'Tool'},
+    {req:40, name:'Adamant Ore',      icon:'🟢', cat:'Mine'},
+    {req:40, name:'Adamant Pickaxe',  icon:'⛏️', cat:'Tool'},
+    {req:50, name:'Rune Ore',         icon:'🔴', cat:'Mine'},
+    {req:50, name:'Rune Pickaxe',     icon:'⛏️', cat:'Tool'},
   ],
   woodcutting: [
-    {req:1,  name:'Normal Logs',      icon:'🌲', cat:'Chop'},
-    {req:5,  name:'Oak Logs',         icon:'🌳', cat:'Chop'},
-    {req:20, name:'Willow Logs',      icon:'🌿', cat:'Chop'},
-    {req:30, name:'Yew Logs',         icon:'🎄', cat:'Chop'},
-    {req:40, name:'Magic Logs',       icon:'🌟', cat:'Chop'},
+    {req:1,  name:'Normal Logs',  icon:'🌲', cat:'Chop'},
+    {req:10, name:'Oak Logs',     icon:'🌳', cat:'Chop'},
+    {req:20, name:'Willow Logs',  icon:'🌿', cat:'Chop'},
+    {req:30, name:'Teak Logs',    icon:'🌴', cat:'Chop'},
+    {req:40, name:'Yew Logs',     icon:'🎄', cat:'Chop'},
+    {req:50, name:'Magic Logs',   icon:'🌟', cat:'Chop'},
   ],
   hunting: [
-    {req:1,  name:'Rabbit',           icon:'🐇', cat:'Hunt'},
-    {req:5,  name:'Fox',              icon:'🦊', cat:'Hunt'},
-    {req:10, name:'Deer',             icon:'🦌', cat:'Hunt'},
-    {req:20, name:'Wolf',             icon:'🐺', cat:'Hunt'},
-    {req:30, name:'Bear',             icon:'🐻', cat:'Hunt'},
-    {req:1,  name:'Wisp',             icon:'🌟', cat:'Hunt'},
-    {req:10, name:'Sprite',           icon:'🧚', cat:'Hunt'},
-    {req:20, name:'Wraith',           icon:'👻', cat:'Hunt'},
-    {req:30, name:'Phoenix',          icon:'🔥', cat:'Hunt'},
+    {req:1,  name:'Rabbit',          icon:'🐇', cat:'Hunt'},
+    {req:10, name:'Fox',             icon:'🦊', cat:'Hunt'},
+    {req:20, name:'Deer',            icon:'🦌', cat:'Hunt'},
+    {req:30, name:'Wolf',            icon:'🐺', cat:'Hunt'},
+    {req:40, name:'Bear',            icon:'🐻', cat:'Hunt'},
+    {req:50, name:'Crocodile',       icon:'🐊', cat:'Hunt'},
+    {req:1,  name:'Wisp',            icon:'🌟', cat:'Hunt'},
+    {req:10, name:'Sprite',          icon:'🧚', cat:'Hunt'},
+    {req:20, name:'Nixie',           icon:'🌊', cat:'Hunt'},
+    {req:30, name:'Sylph',           icon:'🌬️', cat:'Hunt'},
+    {req:40, name:'Ember Elemental', icon:'🌋', cat:'Hunt'},
+    {req:50, name:'Void Sprite',     icon:'🌑', cat:'Hunt'},
   ],
   fishing: [
-    {req:1,  name:'Shrimp',           icon:'🦐', cat:'Fish'},
-    {req:20, name:'Trout',            icon:'🐟', cat:'Fish'},
-    {req:30, name:'Salmon',           icon:'🐠', cat:'Fish'},
-    {req:40, name:'Lobster',          icon:'🦞', cat:'Fish'},
-    {req:50, name:'Swordfish',        icon:'🐡', cat:'Fish'},
+    {req:1,  name:'Shrimp',    icon:'🦐', cat:'Fish'},
+    {req:10, name:'Sardine',   icon:'🐟', cat:'Fish'},
+    {req:20, name:'Trout',     icon:'🐠', cat:'Fish'},
+    {req:30, name:'Salmon',    icon:'🐡', cat:'Fish'},
+    {req:40, name:'Lobster',   icon:'🦞', cat:'Fish'},
+    {req:50, name:'Swordfish', icon:'🐬', cat:'Fish'},
   ],
   cooking: [
-    {req:1,  name:'Chicken',          icon:'🍗', cat:'Cook'},
-    {req:1,  name:'Beef',             icon:'🥩', cat:'Cook'},
-    {req:1,  name:'Shrimp',           icon:'🦐', cat:'Cook'},
-    {req:15, name:'Trout',            icon:'🐟', cat:'Cook'},
-    {req:25, name:'Salmon',           icon:'🐠', cat:'Cook'},
-    {req:40, name:'Lobster',          icon:'🦞', cat:'Cook'},
-    {req:45, name:'Swordfish',        icon:'🐡', cat:'Cook'},
+    {req:1,  name:'Chicken',   icon:'🍗', cat:'Cook'},
+    {req:1,  name:'Beef',      icon:'🥩', cat:'Cook'},
+    {req:1,  name:'Shrimp',    icon:'🦐', cat:'Cook'},
+    {req:10, name:'Sardine',   icon:'🐟', cat:'Cook'},
+    {req:20, name:'Trout',     icon:'🐠', cat:'Cook'},
+    {req:25, name:'Salmon',    icon:'🐡', cat:'Cook'},
+    {req:40, name:'Lobster',   icon:'🦞', cat:'Cook'},
+    {req:45, name:'Swordfish', icon:'🐬', cat:'Cook'},
   ],
 };
 
@@ -3522,9 +3726,8 @@ const LEVEL_UP_FLAVORS = {
   mining:       ["The earth yields its secrets.", "Your pickaxe sings.", "Ore veins bow before you."],
   smithing:     ["The forge obeys.", "Metal bends to your will.", "Your craft grows masterful."],
   woodcutting:  ["The forest parts for you.", "Timber falls at your command.", "Axes sing in your hands."],
-  fletching:    ["Arrows fly true.", "Your bows grow deadly.", "The wood speaks to you."],
-  enchanting: ["Staves hum with potential.", "Arcane craft perfected.", "Magic flows through your hands."],
-  crafting:["Hide and sinew yield.", "Your craft grows supple.", "Armor takes perfect form."],
+  carving:       ["The wood yields to your blade.", "Bows and staves take shape.", "Your carving grows masterful."],
+  crafting:     ["Hide and sinew yield.", "Your craft grows supple.", "Armor takes perfect form."],
   fishing:      ["The waters reveal their bounty.", "Fish cannot hide from you.", "The deep respects your patience."],
   cooking:      ["Flavors bloom under your hand.", "The hearth welcomes you.", "Even monsters smell the feast."],
   hunting:      ["The hunt sharpens your senses.", "Prey cannot hide from you.", "The wilderness bends to your will."],
@@ -3543,18 +3746,20 @@ const SHOP_CATALOGUE = {
     name: 'Weapon Shop', icon: '⚔️',
     desc: 'Buy melee weapons. Crafting your own is cheaper.',
     items: [
-      {id:'bronze_sword', name:'Bronze Sword', icon:'🗡️', price:50,  slot:'weapon', atk:10, str:10, weaponStyle:'melee', stats:'Atk 10 · Str 10'},
-      {id:'iron_long',    name:'Iron Longsword',icon:'⚔️',price:200, slot:'weapon', atk:12, str:12, weaponStyle:'melee', stats:'Atk 12 · Str 12'},
-      {id:'steel_long',   name:'Steel Longsword',icon:'⚔️',price:800, slot:'weapon', atk:14, str:14, weaponStyle:'melee', stats:'Atk 14 · Str 14'},
+      {id:'bronze_sword', name:'Bronze Sword', icon:'🗡️', price:50,  slot:'weapon', atk:10, str:10, weaponStyle:'melee', stats:'Atk 10 · Str 10', tier:0},
+      {id:'iron_long',    name:'Iron Longsword',icon:'⚔️',price:200, slot:'weapon', atk:12, str:12, weaponStyle:'melee', stats:'Atk 12 · Str 12', tier:1},
+      {id:'steel_long',   name:'Steel Longsword',icon:'⚔️',price:800, slot:'weapon', atk:14, str:14, weaponStyle:'melee', stats:'Atk 14 · Str 14', tier:2},
     ]
   },
   ranged: {
     name: 'Ranged Shop', icon: '🏹',
-    desc: 'Buy bows. Fletching your own is cheaper.',
+    desc: 'Buy bows. Carving your own is cheaper.',
     items: [
-      {id:'shortbow',   name:'Shortbow',   icon:'🏹', price:150,  slot:'weapon', atk:12, str:8,  weaponStyle:'ranged', stats:'Atk 12 · Str 8'},
-      {id:'oak_bow',   name:'Oak Bow',   icon:'🏹', price:300,  slot:'weapon', atk:14, str:10, weaponStyle:'ranged', stats:'Atk 14 · Str 10'},
-      {id:'willow_bow',  name:'Willow Bow',  icon:'🏹', price:1000, slot:'weapon', atk:16, str:12, weaponStyle:'ranged', stats:'Atk 16 · Str 12'},
+      {id:'shortbow',    name:'Shortbow',    icon:'🏹', price:150,  slot:'weapon', atk:12, str:8,  weaponStyle:'ranged', stats:'Atk 12 · Str 8',  tier:0},
+      {id:'normal_bow',  name:'Normal Bow',  icon:'🏹', price:200,  slot:'weapon', atk:12, str:8,  weaponStyle:'ranged', stats:'Atk 12 · Str 8',  tier:0},
+      {id:'oak_bow',     name:'Oak Bow',     icon:'🏹', price:420,  slot:'weapon', atk:14, str:10, weaponStyle:'ranged', stats:'Atk 14 · Str 10', tier:1},
+      {id:'willow_bow',  name:'Willow Bow',  icon:'🏹', price:900,  slot:'weapon', atk:16, str:12, weaponStyle:'ranged', stats:'Atk 16 · Str 12', tier:2},
+      {id:'teak_bow',    name:'Teak Bow',    icon:'🏹', price:1600, slot:'weapon', atk:18, str:14, weaponStyle:'ranged', stats:'Atk 18 · Str 14', tier:3},
     ]
   },
   armour: {
@@ -3562,31 +3767,31 @@ const SHOP_CATALOGUE = {
     desc: 'Buy melee armour. Smithing your own is cheaper.',
     items: [
       // Iron tier
-      {id:'iron_helm', name:'Iron Full Helm',  icon:'🪖', price:150,  slot:'head',   def:9,  dr:1, armorStyle:'melee', stats:'Def 9 · DR 1%'},
-      {id:'iron_body', name:'Iron Platebody',  icon:'🛡️', price:400,  slot:'body',   def:18, dr:3, armorStyle:'melee', stats:'Def 18 · DR 3%'},
-      {id:'iron_legs', name:'Iron Platelegs',  icon:'👖', price:300,  slot:'legs',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%'},
-      {id:'iron_kite', name:'Iron Kiteshield', icon:'🛡️', price:200,  slot:'shield', def:10, dr:2, stats:'Def 10 · DR 2%'},
+      {id:'iron_helm', name:'Iron Full Helm',  icon:'🪖', price:150,  slot:'head',   def:9,  dr:1, armorStyle:'melee', stats:'Def 9 · DR 1%', tier:1},
+      {id:'iron_body', name:'Iron Platebody',  icon:'🛡️', price:400,  slot:'body',   def:18, dr:3, armorStyle:'melee', stats:'Def 18 · DR 3%', tier:1},
+      {id:'iron_legs', name:'Iron Platelegs',  icon:'👖', price:300,  slot:'legs',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%', tier:1},
+      {id:'iron_kite', name:'Iron Kiteshield', icon:'🛡️', price:200,  slot:'shield', def:10, dr:2, stats:'Def 10 · DR 2%', tier:1},
       // Steel tier
-      {id:'steel_helm', name:'Steel Full Helm',  icon:'🪖', price:600,  slot:'head',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%'},
+      {id:'steel_helm', name:'Steel Full Helm',  icon:'🪖', price:600,  slot:'head',   def:14, dr:2, armorStyle:'melee', stats:'Def 14 · DR 2%', tier:2},
       {id:'steel_body', name:'Steel Platebody',  icon:'🛡️', price:1500, slot:'body',   def:28, dr:4, armorStyle:'melee', stats:'Def 28 · DR 4%'},
       {id:'steel_legs', name:'Steel Platelegs',  icon:'👖', price:1200, slot:'legs',   def:22, dr:3, armorStyle:'melee', stats:'Def 22 · DR 3%'},
       {id:'steel_kite', name:'Steel Kiteshield', icon:'🛡️', price:800,  slot:'shield', def:16, dr:3, stats:'Def 16 · DR 3%'},
     ]
   },
   magic: {
-    name: 'Magic Shop', icon: '🪄',
-    desc: 'Buy staves and robes. Crafting your own is cheaper.',
+    name: 'Magic Shop', icon: '🔮',
+    desc: 'Buy robes and staves. Carving and Crafting your own is cheaper.',
     items: [
-      // Staves
-      {id:'iron_staff',  name:'Iron Staff',  icon:'🪄', price:250, slot:'weapon', atk:8,  str:12, weaponStyle:'magic', stats:'Atk 8 · Str 12'},
-      {id:'steel_staff', name:'Steel Staff', icon:'🪄', price:900, slot:'weapon', atk:10, str:14, weaponStyle:'magic', stats:'Atk 10 · Str 14'},
-      // Robes
-      {id:'iron_hat',       name:'Iron Wizard Hat',  icon:'🎩', price:120,  slot:'head', def:2,  dr:0, armorStyle:'magic', stats:'Def 2'},
-      {id:'iron_robe_top',  name:'Iron Robe Top',    icon:'👘', price:300,  slot:'body', def:5,  dr:1, armorStyle:'magic', stats:'Def 5 · DR 1%'},
-      {id:'iron_robe_legs', name:'Iron Robe Legs',   icon:'👖', price:220,  slot:'legs', def:3,  dr:1, armorStyle:'magic', stats:'Def 3 · DR 1%'},
-      {id:'steel_hat',      name:'Steel Wizard Hat', icon:'🎩', price:450,  slot:'head', def:4,  dr:1, armorStyle:'magic', stats:'Def 4 · DR 1%'},
-      {id:'steel_robe_top', name:'Steel Robe Top',   icon:'👘', price:1100, slot:'body', def:8,  dr:2, armorStyle:'magic', stats:'Def 8 · DR 2%'},
-      {id:'steel_robe_legs',name:'Steel Robe Legs',  icon:'👖', price:800,  slot:'legs', def:5,  dr:1, armorStyle:'magic', stats:'Def 5 · DR 1%'},
+      {id:'normal_staff',   name:'Normal Staff',   icon:'🪄', price:200,  slot:'weapon', atk:8,  str:12, weaponStyle:'magic', stats:'Atk 8 · Str 12',  tier:0},
+      {id:'oak_staff',      name:'Oak Staff',      icon:'🪄', price:420,  slot:'weapon', atk:10, str:14, weaponStyle:'magic', stats:'Atk 10 · Str 14', tier:1},
+      {id:'willow_staff',   name:'Willow Staff',   icon:'🪄', price:900,  slot:'weapon', atk:12, str:16, weaponStyle:'magic', stats:'Atk 12 · Str 16', tier:2},
+      {id:'teak_staff',     name:'Teak Staff',     icon:'🪄', price:1600, slot:'weapon', atk:14, str:18, weaponStyle:'magic', stats:'Atk 14 · Str 18', tier:3},
+      {id:'novice_hood',      name:'Novice Hood',      icon:'🎩', price:120,  slot:'head', def:2,  dr:0, armorStyle:'magic', stats:'Def 2'},
+      {id:'novice_leggings',  name:'Novice Leggings',  icon:'👖', price:220,  slot:'legs', def:3,  dr:1, armorStyle:'magic', stats:'Def 3 · DR 1%'},
+      {id:'novice_robes',     name:'Novice Robes',     icon:'👘', price:340,  slot:'body', def:5,  dr:1, armorStyle:'magic', stats:'Def 5 · DR 1%'},
+      {id:'apprentice_hood',  name:'Apprentice Hood',  icon:'🎩', price:450,  slot:'head', def:4,  dr:1, armorStyle:'magic', stats:'Def 4 · DR 1%'},
+      {id:'apprentice_leggings',name:'Apprentice Leggings',icon:'👖',price:800, slot:'legs', def:6, dr:1, armorStyle:'magic', stats:'Def 6 · DR 1%'},
+      {id:'apprentice_robes', name:'Apprentice Robes', icon:'👘', price:1200, slot:'body', def:9,  dr:2, armorStyle:'magic', stats:'Def 9 · DR 2%'},
     ]
   },
   general: {
@@ -3598,8 +3803,8 @@ const SHOP_CATALOGUE = {
       {id:'iron_axe',       name:'Iron Axe',        icon:'🪓', price:300, slot:'axe',      toolType:'axe',      tier:1, stats:'Woodcutting tool · Tier 2'},
       {id:'bronze_pickaxe', name:'Bronze Pickaxe',  icon:'⛏️', price:100, slot:'pickaxe',  toolType:'pickaxe',  tier:0, stats:'Mining tool · Tier 1'},
       {id:'iron_pickaxe',   name:'Iron Pickaxe',    icon:'⛏️', price:300, slot:'pickaxe',  toolType:'pickaxe',  tier:1, stats:'Mining tool · Tier 2'},
-      {id:'bronze_net',     name:'Bronze Net',      icon:'🎣', price:80,  slot:'net',      toolType:'net',      tier:0, stats:'Fishing tool · Tier 1'},
-      {id:'iron_net',       name:'Iron Net',        icon:'🎣', price:250, slot:'net',      toolType:'net',      tier:1, stats:'Fishing tool · Tier 2'},
+      {id:'normal_rod',  name:'Normal Rod',  icon:'🎣', price:80,  slot:'rod',  toolType:'rod',  tier:0, stats:'Fishing tool · Tier 1 · Carve your own for free'},
+      {id:'normal_trap', name:'Normal Trap', icon:'🪤', price:80,  slot:'trap', toolType:'trap', tier:0, stats:'Hunting tool · Tier 1 · Carve your own for free'},
       // Low level food
       {id:'chicken', name:'Chicken', icon:'🍗', price:20,  heals:3,  stats:'Heals 3 HP'},
       {id:'beef',    name:'Beef',    icon:'🥩', price:20,  heals:4,  stats:'Heals 4 HP'},
@@ -3953,10 +4158,22 @@ function showLootToast(icon,name,qty){
 const ITEM_VALUES = {
   // Raw materials
   iron_ore:4, steel_ore:8, mithril_ore:10, adamant_ore:18,
-  logs:2, oak_logs:5, willow_logs:12, yew_logs:25, magic_logs:40,
-  rabbit_fur:8, fox_pelt:15, deer_hide:25, wolf_pelt:45, bear_hide:70,
-  crude_essence:12, arcane_fragment:28, soul_shard:55, ember_crystal:90,
-  raw_shrimp:2, raw_trout:8, raw_salmon:14, raw_lobster:22, raw_swordfish:30,
+  tin_ore:3, copper_ore:3, bronze_bar:8,
+  logs:2, oak_logs:5, willow_logs:12, teak_logs:22, yew_logs:35, magic_logs:55,
+  rune_ore:60, rune_bar:150,
+  bronze_helm:25, bronze_kite:28, bronze_long:22, bronze_legs:30, bronze_body:40,
+  rune_helm:280, rune_kite:320, rune_long:300, rune_legs:360, rune_body:450, rune_axe:180, rune_pickaxe:180,
+  rabbit_fur:8, fox_pelt:15, deer_hide:25, wolf_pelt:45, bear_hide:70, croc_scale:110,
+  crude_essence:12, crude_shard:25, refined_essence:50, refined_shard:90, pure_essence:160, pure_shard:280,
+  novice_hood:12,      novice_leggings:18,      novice_robes:28,
+  apprentice_hood:28,  apprentice_leggings:40,  apprentice_robes:62,
+  adept_hood:55,       adept_leggings:80,       adept_robes:120,
+  invoker_hood:100,    invoker_leggings:145,     invoker_robes:215,
+  mystic_hood:175,     mystic_leggings:250,      mystic_robes:370,
+  arcanist_hood:280,   arcanist_leggings:400,    arcanist_robes:590,
+  normal_rod:5, oak_rod:12, willow_rod:25, teak_rod:45, yew_rod:75, magic_rod:120,
+  normal_trap:5, oak_trap:12, willow_trap:25, teak_trap:45, yew_trap:75, magic_trap:120,
+  raw_sardine:5, sardine:8,
   raw_chicken:1, raw_beef:2, cowhide:4,
   rune_essence:3, leather:3, hard_leather:8,
   green_hide:30, black_hide:80, green_leather:50, black_leather:120,
@@ -3970,11 +4187,14 @@ const ITEM_VALUES = {
   steel_long:60, steel_scim:62, steel_2h:90, steel_helm:40, steel_body:110, steel_legs:80, steel_kite:60,
   mith_long:120, mith_scim:122, mith_2h:180, mith_helm:80, mith_body:220, mith_legs:160, mith_kite:120,
   adam_long:220, adam_scim:222, adam_2h:340, adam_helm:150, adam_body:420, adam_legs:300, adam_kite:220,
-  oak_bow:25, willow_bow:55, yew_bow:110, magic_bow:200,
-  iron_staff:28, steel_staff:58, mithril_staff:115, adamant_staff:210,
-  leather_coif:8, leather_body:18, leather_chaps:12,
-  hardleather_coif:16, hardleather_body:35, hardleather_chaps:24,
-  studded_chaps:45, mith_studded_chaps:90, adam_studded_chaps:160,
+  normal_bow:12, oak_bow:28, willow_bow:55, teak_bow:95, yew_bow:150, magic_bow:230,
+  normal_staff:12, oak_staff:28, willow_staff:55, teak_staff:95, yew_staff:150, magic_staff:230,
+  rabbit_coif:8,  rabbit_chaps:12, rabbit_body:18,
+  fox_coif:18,    fox_chaps:26,    fox_body:38,
+  deer_coif:35,   deer_chaps:50,   deer_body:72,
+  wolf_coif:65,   wolf_chaps:95,   wolf_body:135,
+  bear_coif:110,  bear_chaps:160,  bear_body:230,
+  croc_coif:175,  croc_chaps:250,  croc_body:360,
 };
 
 // ═══════════════════════════════════════
