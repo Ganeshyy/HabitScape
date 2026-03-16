@@ -370,6 +370,35 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
 .mc-drops{font-size:9px;color:var(--text-d);margin-top:2px}
 .mc-combat-lv{font-family:'Cinzel',serif;font-size:14px;color:var(--red-d);font-weight:700}
 
+.zone-card{background:var(--bg-card);border:1px solid var(--border);margin-bottom:6px;overflow:hidden}
+.zone-header{display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;transition:background .15s}
+.zone-header:hover{background:rgba(255,255,255,.03)}
+.zone-card.zone-open .zone-header{border-bottom:1px solid var(--border)}
+.zone-icon{font-size:20px;flex-shrink:0}
+.zone-info{flex:1}
+.zone-name{font-family:'Cinzel',serif;font-size:12px;color:var(--text);letter-spacing:.5px}
+.zone-meta{font-size:10px;color:var(--text-d);margin-top:2px}
+.zone-arrow{font-size:10px;color:var(--text-d);transition:transform .2s}
+.zone-card.zone-open .zone-arrow{transform:rotate(90deg)}
+.zone-monsters{display:none;padding:6px 0}
+.zone-card.zone-open .zone-monsters{display:block}
+.zone-monster-row{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;transition:background .15s}
+.zone-monster-row:hover{background:rgba(255,255,255,.03)}
+.zone-monster-row.active-monster{background:rgba(201,168,76,.05);border-left:2px solid var(--gold-d)}
+.zm-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.zm-name{font-family:'Cinzel',serif;font-size:11px;color:var(--text);flex:1;letter-spacing:.3px}
+.zm-lv{font-size:10px;color:var(--text-d);margin-right:4px}
+.style-badge{font-size:9px;padding:2px 5px;letter-spacing:.5px;font-family:'Cinzel',serif}
+.style-melee{background:rgba(192,80,64,.15);color:#c05040;border:1px solid rgba(192,80,64,.3)}
+.style-ranged{background:rgba(109,191,90,.15);color:#6dbf5a;border:1px solid rgba(109,191,90,.3)}
+.style-magic{background:rgba(138,96,160,.15);color:#a070c0;border:1px solid rgba(138,96,160,.3)}
+.zm-weak{font-size:10px;color:var(--text-d);margin-left:2px}
+.zone-boss-row{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:4px 6px 6px;background:rgba(201,168,76,.04);border:1px solid var(--gold-d);cursor:pointer;transition:background .15s}
+.zone-boss-row:hover{background:rgba(201,168,76,.08)}
+.zone-boss-row.boss-locked{cursor:default;opacity:.6}
+.zone-boss-row.boss-locked:hover{background:rgba(201,168,76,.04)}
+.zone-boss-row.active-monster{background:rgba(201,168,76,.12)}
+
 .combat-style-bar{margin-bottom:8px}
 .cs-btn{padding:7px 4px 6px;border:1px solid var(--border);background:var(--bg-deep);cursor:pointer;color:var(--text-d);transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
 .cs-btn:hover{border-color:var(--gold-d);color:var(--text-m)}
@@ -974,7 +1003,7 @@ body.manage-mode .vice-skill-bubble{pointer-events:none;opacity:.5}
           </div>
           <button class="btn btn-red btn-block idle-stop-btn btn-sm" onclick="stopCombat()">Stop</button>
         </div>
-        <div class="sec">Select Monster</div>
+        <div class="sec">Select Zone</div>
         <div class="monster-list" id="monster-list"></div>
       </div>
 
@@ -1204,17 +1233,90 @@ function getLvForXP(xp){ let l=1; while(l<MAX_LV && XP_TABLE[l]<=xp) l++; return
 function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 
 // Monsters
-const MONSTERS = [
-  // defLv = defence level used for player hit chance formula
-  // atk   = monster's max hit (raw damage before player DR)
-  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  maxHit:1,  defLv:1,  xp:5,   style:'melee', weakness:'melee',  drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
-  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:10,  maxhp:10,  atk:2,  maxHit:1,  defLv:2,  xp:8,   style:'melee', weakness:'magic',  drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
-  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:15,  maxhp:15,  atk:3,  maxHit:2,  defLv:3,  xp:15,  style:'melee', weakness:'ranged', drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
-  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:8,  maxHit:6,  defLv:14, xp:85,  style:'melee', weakness:'ranged', drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
-  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:14, maxHit:10, defLv:24, xp:130, style:'melee', weakness:'magic',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
-  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:22, maxHit:16, defLv:36, xp:250, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
-  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:35, maxHit:25, defLv:45, xp:600, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
+const ZONES = [
+  {
+    id:'farmlands', name:'Farmlands', icon:'🌾',
+    desc:'Peaceful countryside', range:'Lv 1–20',
+    bossKeyItem:'farmlands_key', bossKeyName:'Farmlands Key',
+    monsters:[
+      {id:'chicken',      name:'Chicken',      icon:'🐔', level:1,  hp:5,   maxhp:5,   atk:1,  maxHit:1,  defLv:1,  xp:5,   style:'melee',  weakness:'melee',  drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'cow',          name:'Cow',          icon:'🐄', level:2,  hp:10,  maxhp:10,  atk:2,  maxHit:2,  defLv:2,  xp:12,  style:'melee',  weakness:'magic',  drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'boar',         name:'Boar',         icon:'🐗', level:4,  hp:18,  maxhp:18,  atk:3,  maxHit:3,  defLv:4,  xp:20,  style:'melee',  weakness:'ranged', drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.9},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'bull',         name:'Bull',         icon:'🐂', level:6,  hp:28,  maxhp:28,  atk:5,  maxHit:4,  defLv:6,  xp:32,  style:'melee',  weakness:'magic',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:8,chance:.9},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'goblin_archer',name:'Goblin Archer',icon:'🏹', level:8,  hp:22,  maxhp:22,  atk:6,  maxHit:5,  defLv:5,  xp:40,  style:'ranged', weakness:'melee',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:10,chance:.8},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'goblin_mage',  name:'Goblin Mage',  icon:'🔮', level:10, hp:18,  maxhp:18,  atk:7,  maxHit:6,  defLv:4,  xp:50,  style:'magic',  weakness:'melee',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:12,chance:.8},{item:'crude_essence',name:'Crude Essence',icon:'🔵',qty:1,chance:.3},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'goblin_knight',name:'Goblin Knight',icon:'⚔️', level:14, hp:40,  maxhp:40,  atk:9,  maxHit:7,  defLv:10, xp:70,  style:'melee',  weakness:'ranged', drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:20,chance:.9},{item:'bronze_bar',name:'Bronze Bar',icon:'🟫',qty:1,chance:.15},{item:'farmlands_key',name:'Farmlands Key',icon:'🗝️',qty:1,chance:.003}]},
+    ],
+    boss:{id:'goblin_king',name:'Goblin King',icon:'👑', level:20, hp:120, maxhp:120, atk:14, maxHit:11, defLv:14, xp:200, style:'melee', weakness:'ranged', isBoss:true, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:80,chance:1},{item:'iron_bar',name:'Iron Bar',icon:'🔩',qty:2,chance:.5},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.2}]},
+  },
+  {
+    id:'dark_forest', name:'Dark Forest', icon:'🌲',
+    desc:'Dangerous woodland', range:'Lv 15–40',
+    bossKeyItem:'forest_key', bossKeyName:'Forest Key',
+    monsters:[
+      {id:'wolf',         name:'Wolf',         icon:'🐺', level:15, hp:45,  maxhp:45,  atk:11, maxHit:8,  defLv:12, xp:90,  style:'melee',  weakness:'magic',  drops:[{item:'wolf_pelt',name:'Wolf Pelt',icon:'⬛',qty:1,chance:.8},{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'giant_spider', name:'Giant Spider', icon:'🕷️', level:18, hp:35,  maxhp:35,  atk:13, maxHit:9,  defLv:10, xp:105, style:'ranged', weakness:'melee',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:20,chance:.8},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'dark_elf',     name:'Dark Elf',     icon:'🧝', level:22, hp:42,  maxhp:42,  atk:15, maxHit:11, defLv:14, xp:125, style:'ranged', weakness:'melee',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:30,chance:1},{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:2,chance:.4},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'giant',        name:'Giant',        icon:'👾', level:25, hp:70,  maxhp:70,  atk:14, maxHit:10, defLv:18, xp:145, style:'melee',  weakness:'ranged', drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:35,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🩶',qty:3,chance:.5},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'zombie',       name:'Zombie',       icon:'🧟', level:28, hp:60,  maxhp:60,  atk:13, maxHit:9,  defLv:16, xp:160, style:'melee',  weakness:'magic',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:.8},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'vampire',      name:'Vampire',      icon:'🧛', level:30, hp:50,  maxhp:50,  atk:18, maxHit:13, defLv:14, xp:175, style:'magic',  weakness:'ranged', drops:[{item:'coins',name:'Coins',icon:'🪙',qty:50,chance:1},{item:'refined_essence',name:'Refined Essence',icon:'🔷',qty:1,chance:.25},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'bear',         name:'Bear',         icon:'🐻', level:32, hp:80,  maxhp:80,  atk:16, maxHit:12, defLv:20, xp:190, style:'melee',  weakness:'magic',  drops:[{item:'bear_hide',name:'Bear Hide',icon:'🟤',qty:1,chance:.8},{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'forest_key',name:'Forest Key',icon:'🗝️',qty:1,chance:.003}]},
+    ],
+    boss:{id:'shadow_witch',name:'Shadow Witch',icon:'🌑', level:40, hp:200, maxhp:200, atk:25, maxHit:18, defLv:24, xp:450, style:'magic', weakness:'ranged', isBoss:true, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1},{item:'mithril_ore',name:'Mithril Ore',icon:'🔵',qty:2,chance:.4},{item:'refined_shard',name:'Refined Shard',icon:'🔮',qty:2,chance:.5}]},
+  },
+  {
+    id:'bandit_stronghold', name:'Bandit Stronghold', icon:'⚔️',
+    desc:'Mixed combat styles', range:'Lv 35–60',
+    bossKeyItem:'bandit_key', bossKeyName:'Bandit Key',
+    monsters:[
+      {id:'bandit',        name:'Bandit',        icon:'🗡️', level:35, hp:80,  maxhp:80,  atk:20, maxHit:14, defLv:22, xp:210, style:'melee',  weakness:'ranged', drops:[{item:'coins',name:'Coins',icon:'🪙',qty:50,chance:1},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'bandit_archer', name:'Bandit Archer', icon:'🏹', level:38, hp:65,  maxhp:65,  atk:22, maxHit:16, defLv:18, xp:230, style:'ranged', weakness:'melee',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:55,chance:1},{item:'oak_logs',name:'Oak Logs',icon:'🪵',qty:3,chance:.4},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'dark_mage',     name:'Dark Mage',     icon:'🔮', level:42, hp:55,  maxhp:55,  atk:26, maxHit:18, defLv:16, xp:255, style:'magic',  weakness:'melee',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'arcane_fragment',name:'Arcane Fragment',icon:'💜',qty:1,chance:.3},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'black_knight',  name:'Black Knight',  icon:'🛡️', level:45, hp:100, maxhp:100, atk:24, maxHit:17, defLv:30, xp:275, style:'melee',  weakness:'magic',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:70,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'assassin',      name:'Assassin',      icon:'🥷', level:48, hp:70,  maxhp:70,  atk:28, maxHit:20, defLv:20, xp:295, style:'ranged', weakness:'magic',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:75,chance:1},{item:'teak_logs',name:'Teak Logs',icon:'🪵',qty:2,chance:.35},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'knight_captain',name:'Knight Captain',icon:'⚔️', level:52, hp:120, maxhp:120, atk:26, maxHit:19, defLv:35, xp:320, style:'melee',  weakness:'ranged', drops:[{item:'coins',name:'Coins',icon:'🪙',qty:90,chance:1},{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:1,chance:.15},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'warlock',       name:'Warlock',       icon:'🧙', level:55, hp:80,  maxhp:80,  atk:32, maxHit:22, defLv:22, xp:345, style:'magic',  weakness:'ranged', drops:[{item:'coins',name:'Coins',icon:'🪙',qty:100,chance:1},{item:'soul_shard',name:'Soul Shard',icon:'🩵',qty:1,chance:.25},{item:'bandit_key',name:'Bandit Key',icon:'🗝️',qty:1,chance:.003}]},
+    ],
+    boss:{id:'bandit_lord',name:'Bandit Lord',icon:'👹', level:60, hp:300, maxhp:300, atk:35, maxHit:25, defLv:38, xp:700, style:'ranged', weakness:'magic', isBoss:true, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:250,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:2,chance:.4},{item:'mithril_bar',name:'Mithril Bar',icon:'🔵',qty:3,chance:.6}]},
+  },
+  {
+    id:'ruined_citadel', name:'Ruined Citadel', icon:'🏰',
+    desc:'Ancient stronghold', range:'Lv 60–90',
+    bossKeyItem:'citadel_key', bossKeyName:'Citadel Key',
+    monsters:[
+      {id:'skeleton_warrior',name:'Skeleton Warrior',icon:'💀', level:60, hp:120, maxhp:120, atk:30, maxHit:22, defLv:36, xp:380, style:'melee',  weakness:'magic',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:80,chance:1},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'skeleton_archer', name:'Skeleton Archer', icon:'🏹', level:64, hp:95,  maxhp:95,  atk:33, maxHit:24, defLv:30, xp:410, style:'ranged', weakness:'melee',  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:90,chance:1},{item:'yew_logs',name:'Yew Logs',icon:'🪵',qty:2,chance:.3},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'skeleton_mage',   name:'Skeleton Mage',   icon:'🔮', level:68, hp:80,  maxhp:80,  atk:38, maxHit:27, defLv:26, xp:440, style:'magic',  weakness:'ranged', drops:[{item:'bones',name:'Bones',icon:'🦴',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:100,chance:1},{item:'pure_essence',name:'Pure Essence',icon:'✨',qty:1,chance:.25},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'lich',            name:'Lich',            icon:'👁️', level:72, hp:100, maxhp:100, atk:42, maxHit:30, defLv:30, xp:480, style:'magic',  weakness:'melee',  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:120,chance:1},{item:'pure_shard',name:'Pure Shard',icon:'💎',qty:1,chance:.2},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'infernal_knight', name:'Infernal Knight', icon:'🔥', level:76, hp:150, maxhp:150, atk:38, maxHit:27, defLv:44, xp:520, style:'melee',  weakness:'ranged', drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:130,chance:1},{item:'rune_bar',name:'Rune Bar',icon:'🔴',qty:1,chance:.1},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'storm_elemental', name:'Storm Elemental', icon:'⚡', level:80, hp:120, maxhp:120, atk:44, maxHit:32, defLv:36, xp:560, style:'magic',  weakness:'ranged', drops:[{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1},{item:'pure_essence',name:'Pure Essence',icon:'✨',qty:2,chance:.3},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'demon',           name:'Demon',           icon:'👹', level:85, hp:170, maxhp:170, atk:42, maxHit:30, defLv:48, xp:600, style:'melee',  weakness:'magic',  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:180,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.2},{item:'citadel_key',name:'Citadel Key',icon:'🗝️',qty:1,chance:.003}]},
+    ],
+    boss:{id:'death_knight',name:'Death Knight',icon:'💀', level:90, hp:500, maxhp:500, atk:50, maxHit:36, defLv:55, xp:1200, style:'melee', weakness:'magic', isBoss:true, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'rune_bar',name:'Rune Bar',icon:'🔴',qty:3,chance:.5},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:3,chance:.6}]},
+  },
+  {
+    id:'dragon_lair', name:'Dragon Lair', icon:'🐉',
+    desc:'Ultimate challenge', range:'Lv 55–100',
+    bossKeyItem:'dragon_key', bossKeyName:'Dragon Key',
+    monsters:[
+      {id:'drake',        name:'Drake',        icon:'🦎', level:55, hp:110, maxhp:110, atk:30, maxHit:22, defLv:34, xp:340, style:'melee',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:100,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'serpent',      name:'Serpent',      icon:'🐍', level:62, hp:90,  maxhp:90,  atk:36, maxHit:26, defLv:28, xp:390, style:'magic',  weakness:'melee',  drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:110,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'wyvern',       name:'Wyvern',       icon:'🐲', level:70, hp:130, maxhp:130, atk:38, maxHit:27, defLv:40, xp:440, style:'ranged', weakness:'magic',  drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:130,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'green_dragon', name:'Green Dragon', icon:'🐉', level:78, hp:160, maxhp:160, atk:40, maxHit:28, defLv:44, xp:500, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:160,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'fire_drake',   name:'Fire Drake',   icon:'🔥', level:85, hp:140, maxhp:140, atk:44, maxHit:31, defLv:46, xp:560, style:'ranged', weakness:'magic',  drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:180,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'ice_drake',    name:'Ice Drake',    icon:'❄️', level:90, hp:150, maxhp:150, atk:46, maxHit:33, defLv:48, xp:620, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:200,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+      {id:'shadow_drake', name:'Shadow Drake', icon:'🌑', level:95, hp:160, maxhp:160, atk:48, maxHit:34, defLv:50, xp:680, style:'ranged', weakness:'melee',  drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:.5},{item:'coins',name:'Coins',icon:'🪙',qty:220,chance:1},{item:'dragon_key',name:'Dragon Key',icon:'🗝️',qty:1,chance:.003}]},
+    ],
+    boss:{id:'black_dragon',name:'Black Dragon',icon:'🐲', level:100, hp:600, maxhp:600, atk:55, maxHit:40, defLv:60, xp:1500, style:'magic', weakness:'ranged', isBoss:true, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:2,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:2,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:500,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:2,chance:.4}]},
+  },
 ];
+
+function findMonster(id){
+  for(const zone of ZONES)
+    for(const m of [...zone.monsters, zone.boss])
+      if(m && m.id===id) return m;
+  return null;
+}
 
 const TOOL_TIERS = {
   bronze_axe:0, iron_axe:1, steel_axe:2, mithril_axe:3, adamant_axe:4, rune_axe:5,
@@ -1461,6 +1563,7 @@ function defaultState(){
     activeActivity:null,
     activeMode:'gather',
     combat:null,
+    openZone:'farmlands',
     lastActiveTimestamp: Date.now(),
     questsDone:{}, questsPending:{}, taskBonusEarned:{},
   };
@@ -1535,6 +1638,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(!S.equipped.pickaxe) S.equipped.pickaxe=null;
   if(!S.equipped.rod)     S.equipped.rod=null;
   if(!S.equipped.trap)    S.equipped.trap=null;
+  if(!S.openZone)         S.openZone='farmlands';
   // migrate old saves — remove removed/renamed slots
   ['cape','neck','hands','ring','ammo','net'].forEach(s=>{ if(s in S.equipped) delete S.equipped[s]; });
   if(!S.hp) S.hp={current:10,max:10};
@@ -1857,7 +1961,7 @@ function processOfflineProgress(){
 
   // ── Combat ──────────────────────────────────────────────────────────────
   if(S.combat){
-    const monster = MONSTERS.find(m=>m.id===S.combat.monsterId);
+    const monster = findMonster(S.combat.monsterId);
     if(monster){
       const style = getCombatSkill();
       const skillLv = getLvForXP(S.skills[style]?.xp||0);
@@ -3398,42 +3502,72 @@ function startCombatBar(){
 
 function buildMonsterList(){
   const list=document.getElementById('monster-list'); if(!list) return;
-  list.innerHTML='';
-  const styleIcon = {melee:'⚔️', ranged:'🏹', magic:'🔮'};
-  const weaknessIcon = {melee:'⚔️', ranged:'🏹', magic:'🔮'};
-  MONSTERS.forEach(m=>{
-    const div=document.createElement('div');
-    div.className='monster-card'+(S.combat?.monsterId===m.id?' active-monster':'');
-    const {gearAtk,gearStr,weaponStyle} = getGearStats();
-    const style = getCombatSkill();
-    const skillLv = getLvForXP(S.skills[style]?.xp||0);
-    const defLv = getLvForXP(S.skills.defence?.xp||0);
-    const gearDef = Object.values(S.equipped).reduce((t,i)=>t+(i?.def||0),0);
-    const styleMatchBonus = weaponStyle === (m.weakness||'melee') ? 1.15 : 1.0;
-    const hitPct = Math.round(Math.min(0.95, Math.max(0.20,
-      (skillLv + gearAtk) / (skillLv + gearAtk + (m.defLv||1)) * styleMatchBonus
-    )) * 100);
-    const maxHit = Math.max(1, Math.floor(((skillLv + gearStr) / 7 + 1) * styleMatchBonus));
-    const playerDefRating = defLv + gearDef;
-    const monsterHitPct = Math.round(calcMonsterHitChance(m.atk, playerDefRating) * 100);
-    const hitColor = hitPct>=80?'#6dbf5a':hitPct>=60?'#c9a84c':'#c05040';
-    const isWeak = weaponStyle === (m.weakness||'melee');
-    div.innerHTML=`
-      <div class="mc-icon">${m.icon}</div>
-      <div class="mc-info">
-        <div class="mc-name">${m.name}</div>
-        <div class="mc-level">Lv ${m.level} &nbsp;·&nbsp; ${styleIcon[m.style||'melee']} ${(m.style||'melee')} &nbsp;·&nbsp; Weakness: ${weaknessIcon[m.weakness||'melee']}</div>
-        <div class="mc-drops">
-          <span style="color:${hitColor}">Hit: ${hitPct}%${isWeak?' ✦':''}</span>
-          &nbsp;·&nbsp;Max: ${maxHit}${isWeak?' ✦':''}
-          &nbsp;·&nbsp;<span style="color:var(--red)">Their Hit: ${monsterHitPct}%</span>
+  const styleIcon={melee:'⚔️',ranged:'🏹',magic:'🔮'};
+  const {gearAtk,gearStr,weaponStyle}=getGearStats();
+  const style=getCombatSkill();
+  const skillLv=getLvForXP(S.skills[style]?.xp||0);
+  const defLv=getLvForXP(S.skills.defence?.xp||0);
+  const gearDef=Object.values(S.equipped).reduce((t,i)=>t+(i?.def||0),0);
+
+  function monsterRowHtml(m){
+    const styleMatchBonus=weaponStyle===(m.weakness||'melee')?1.15:1.0;
+    const isActive=S.combat?.monsterId===m.id;
+    const isWeak=weaponStyle===(m.weakness||'melee');
+    return `<div class="zone-monster-row${isActive?' active-monster':''}" onclick="startCombat('${m.id}')">
+      <span class="zm-icon">${m.icon}</span>
+      <span class="zm-name">${m.name}</span>
+      <span class="zm-lv">Lv ${m.level}</span>
+      <span class="style-badge style-${m.style||'melee'}">${styleIcon[m.style||'melee']}</span>
+      <span class="zm-weak">Weak: ${styleIcon[m.weakness||'melee']}${isWeak?' ✦':''}</span>
+    </div>`;
+  }
+
+  list.innerHTML = ZONES.map((zone,zi)=>{
+    const isOpen = S.openZone===zone.id || (S.openZone===undefined && zi===0);
+    const hasActiveMonster = S.combat && [...zone.monsters, zone.boss].some(m=>m&&m.id===S.combat.monsterId);
+    const open = isOpen || hasActiveMonster;
+    return `<div class="zone-card${open?' zone-open':''}" id="zone-card-${zone.id}">
+      <div class="zone-header" onclick="toggleZone('${zone.id}')">
+        <span class="zone-icon">${zone.icon}</span>
+        <div class="zone-info">
+          <div class="zone-name">${zone.name}</div>
+          <div class="zone-meta">${zone.range} · ${zone.monsters.length} monsters + boss</div>
         </div>
+        <span class="zone-arrow">▶</span>
       </div>
-      <div class="mc-combat-lv">${m.level}</div>
-    `;
-    div.onclick=()=>startCombat(m.id);
-    list.appendChild(div);
-  });
+      <div class="zone-monsters">
+        ${zone.monsters.map(m=>monsterRowHtml(m)).join('')}
+        ${zone.boss ? bossRowHtml(zone) : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  function bossRowHtml(zone){
+    const m=zone.boss;
+    const hasKey=(S.bank.items[zone.bossKeyItem]?.qty||0)>0;
+    const isActive=S.combat?.monsterId===m.id;
+    const styleMatchBonus=weaponStyle===(m.weakness||'melee')?1.15:1.0;
+    const isWeak=weaponStyle===(m.weakness||'melee');
+    if(!hasKey){
+      return `<div class="zone-boss-row boss-locked">
+        <span style="font-size:14px">🔒</span>
+        <span style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold-d);flex:1;letter-spacing:.5px">⚑ ${m.name}</span>
+        <span style="font-size:10px;color:var(--text-d);font-style:italic">Requires ${zone.bossKeyName} (0.3% drop)</span>
+      </div>`;
+    }
+    return `<div class="zone-boss-row${isActive?' active-monster':''}" onclick="startCombat('${m.id}')">
+      <span style="font-size:14px">${m.icon}</span>
+      <span style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);flex:1;letter-spacing:.5px">⚑ ${m.name}</span>
+      <span style="font-size:10px;color:var(--text-d)">Lv ${m.level}</span>
+      <span class="style-badge style-${m.style||'melee'}">${styleIcon[m.style||'melee']}</span>
+      <span style="font-size:10px;color:var(--text-d)">Weak: ${styleIcon[m.weakness||'melee']}${isWeak?' ✦':''}</span>
+    </div>`;
+  }
+}
+
+function toggleZone(zoneId){
+  S.openZone = S.openZone===zoneId ? null : zoneId;
+  buildMonsterList();
 }
 
 function updateCombatStyles(){
@@ -3482,8 +3616,18 @@ function setCombatStyle(style){
 
 function startCombat(monsterId){
   stopCombat(true);
-  const monster=MONSTERS.find(m=>m.id===monsterId);
+  const monster=findMonster(monsterId);
   if(!monster) return;
+  // Boss fight requires key — consume it
+  if(monster.isBoss){
+    const zone=ZONES.find(z=>z.boss?.id===monsterId);
+    if(zone){
+      const keyItem=S.bank.items[zone.bossKeyItem];
+      if(!keyItem||keyItem.qty<=0){ buildMonsterList(); return; }
+      keyItem.qty--;
+      if(keyItem.qty<=0) delete S.bank.items[zone.bossKeyItem];
+    }
+  }
   S.combat={monsterId, monsterHp:monster.maxhp, style:combatStyle};
   buildMonsterList();
   updateCombatStyles();
@@ -3684,7 +3828,7 @@ function updateAutoEatStatus(){
 }
 
 function updateCombatHP(monster){
-  const m=S.combat?.monsterId?MONSTERS.find(x=>x.id===S.combat.monsterId):monster;
+  const m=S.combat?.monsterId?findMonster(S.combat.monsterId):monster;
   if(!m) return;
   const mHp=S.combat?.monsterHp??m.maxhp;
   document.getElementById('cb-monster-hp').style.width=Math.max(0,(mHp/m.maxhp)*100)+'%';
@@ -4446,6 +4590,7 @@ const ITEM_VALUES = {
   rune_essence:3, leather:3, hard_leather:8,
   green_hide:30, black_hide:80, green_leather:50, black_leather:120,
   dragon_bones:60, big_bones:10, bones:2,
+  farmlands_key:500, forest_key:800, bandit_key:1200, citadel_key:2000, dragon_key:3000,
   // Bars
   iron_bar:10, steel_bar:25, mithril_bar:50, adamant_bar:90,
   // Cooked food
