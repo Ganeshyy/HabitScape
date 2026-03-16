@@ -1207,13 +1207,13 @@ function getMC(d){ return d>=100?'m100':d>=30?'m30':d>=10?'m10':''; }
 const MONSTERS = [
   // defLv = defence level used for player hit chance formula
   // atk   = monster's max hit (raw damage before player DR)
-  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  maxHit:1,  defLv:1,  xp:5,   drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
-  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:10,  maxhp:10,  atk:2,  maxHit:1,  defLv:2,  xp:8,   drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
-  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:15,  maxhp:15,  atk:3,  maxHit:2,  defLv:3,  xp:15,  drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
-  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:8,  maxHit:6,  defLv:14, xp:85,  drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
-  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:14, maxHit:10, defLv:24, xp:130, drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
-  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:22, maxHit:16, defLv:36, xp:250, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
-  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:35, maxHit:25, defLv:45, xp:600, drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
+  {id:'chicken',     name:'Chicken',      icon:'🐔', level:1,   hp:5,   maxhp:5,   atk:1,  maxHit:1,  defLv:1,  xp:5,   style:'melee', weakness:'melee',  drops:[{item:'raw_chicken',name:'Raw Chicken',icon:'🍗',qty:1,chance:1}]},
+  {id:'cow',         name:'Cow',          icon:'🐄', level:2,   hp:10,  maxhp:10,  atk:2,  maxHit:1,  defLv:2,  xp:8,   style:'melee', weakness:'magic',  drops:[{item:'cowhide',name:'Cowhide',icon:'🐄',qty:1,chance:.8},{item:'raw_beef',name:'Raw Beef',icon:'🥩',qty:1,chance:.9}]},
+  {id:'goblin',      name:'Goblin',       icon:'👺', level:3,   hp:15,  maxhp:15,  atk:3,  maxHit:2,  defLv:3,  xp:15,  style:'melee', weakness:'ranged', drops:[{item:'bones',name:'Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:5,chance:.8},{item:'bronze_sword',name:'Bronze Sword',icon:'🗡️',qty:1,chance:.1}]},
+  {id:'giant',       name:'Giant',        icon:'👾', level:20,  hp:50,  maxhp:50,  atk:8,  maxHit:6,  defLv:14, xp:85,  style:'melee', weakness:'ranged', drops:[{item:'big_bones',name:'Big Bones',icon:'🦴',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:25,chance:1},{item:'iron_ore',name:'Iron Ore',icon:'🪨',qty:3,chance:.6}]},
+  {id:'black_knight',name:'Black Knight', icon:'🗡️', level:33,  hp:70,  maxhp:70,  atk:14, maxHit:10, defLv:24, xp:130, style:'melee', weakness:'magic',  drops:[{item:'coins',name:'Coins',icon:'🪙',qty:60,chance:1},{item:'steel_bar',name:'Steel Bar',icon:'🔧',qty:1,chance:.2}]},
+  {id:'green_dragon',name:'Green Dragon', icon:'🐉', level:50,  hp:120, maxhp:120, atk:22, maxHit:16, defLv:36, xp:250, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'green_hide',name:'Green Dragonhide',icon:'🟢',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:150,chance:1}]},
+  {id:'black_dragon', name:'Black Dragon',icon:'🐲', level:100, hp:250, maxhp:250, atk:35, maxHit:25, defLv:45, xp:600, style:'magic',  weakness:'ranged', drops:[{item:'dragon_bones',name:'Dragon Bones',icon:'🦴',qty:1,chance:1},{item:'black_hide',name:'Black Dragonhide',icon:'⬛',qty:1,chance:1},{item:'coins',name:'Coins',icon:'🪙',qty:400,chance:1},{item:'adamant_bar',name:'Adamant Bar',icon:'🟢',qty:1,chance:.3}]},
 ];
 
 const TOOL_TIERS = {
@@ -1273,14 +1273,14 @@ const ACTIVITIES = {
     {id:'swordfish', name:'Swordfish', icon:'🐬',req:50,xp:110, gives:{item:'raw_swordfish',name:'Raw Swordfish',icon:'🐬',qty:1}},
   ],
   cooking: [
-    {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',name:'Raw Chicken'},gives:{item:'chicken',name:'Chicken',icon:'🍗',qty:1,heals:3}},
-    {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',name:'Raw Beef'},gives:{item:'beef',name:'Beef',icon:'🥩',qty:1,heals:4}},
-    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',  name:'Raw Shrimp'},  gives:{item:'shrimp',  name:'Shrimp',  icon:'🦐',qty:1,heals:3}},
-    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:10,xp:50, interval:4500, needs:{item:'raw_sardine', name:'Raw Sardine'}, gives:{item:'sardine', name:'Sardine', icon:'🐟',qty:1,heals:5}},
-    {id:'cook_trout',     name:'Trout',     icon:'🐠',req:20,xp:70, interval:5000, needs:{item:'raw_trout',   name:'Raw Trout'},   gives:{item:'trout',   name:'Trout',   icon:'🐠',qty:1,heals:7}},
-    {id:'cook_salmon',    name:'Salmon',    icon:'🐠',req:25,xp:90, interval:6000, needs:{item:'raw_salmon',name:'Raw Salmon'},gives:{item:'salmon',name:'Salmon',icon:'🐠',qty:1,heals:9}},
-    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster',name:'Raw Lobster'},gives:{item:'lobster',name:'Lobster',icon:'🦞',qty:1,heals:12}},
-    {id:'cook_swordfish', name:'Swordfish', icon:'🐡',req:45,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐡',qty:1,heals:14}},
+    {id:'cook_chicken',   name:'Chicken',   icon:'🍗',req:1, xp:30, interval:4000, needs:{item:'raw_chicken',  name:'Raw Chicken'},  gives:{item:'chicken',  name:'Chicken',  icon:'🍗',qty:1,heals:3}},
+    {id:'cook_beef',      name:'Beef',      icon:'🥩',req:1, xp:30, interval:4000, needs:{item:'raw_beef',    name:'Raw Beef'},     gives:{item:'beef',     name:'Beef',     icon:'🥩',qty:1,heals:4}},
+    {id:'cook_shrimp',    name:'Shrimp',    icon:'🦐',req:1, xp:30, interval:4000, needs:{item:'raw_shrimp',  name:'Raw Shrimp'},   gives:{item:'shrimp',   name:'Shrimp',   icon:'🦐',qty:1,heals:3}},
+    {id:'cook_sardine',   name:'Sardine',   icon:'🐟',req:10,xp:50, interval:4500, needs:{item:'raw_sardine', name:'Raw Sardine'},  gives:{item:'sardine',  name:'Sardine',  icon:'🐟',qty:1,heals:5}},
+    {id:'cook_trout',     name:'Trout',     icon:'🐠',req:20,xp:70, interval:5000, needs:{item:'raw_trout',   name:'Raw Trout'},    gives:{item:'trout',    name:'Trout',    icon:'🐠',qty:1,heals:7}},
+    {id:'cook_salmon',    name:'Salmon',    icon:'🐡',req:30,xp:90, interval:6000, needs:{item:'raw_salmon',  name:'Raw Salmon'},   gives:{item:'salmon',   name:'Salmon',   icon:'🐡',qty:1,heals:9}},
+    {id:'cook_lobster',   name:'Lobster',   icon:'🦞',req:40,xp:120,interval:7000, needs:{item:'raw_lobster', name:'Raw Lobster'},  gives:{item:'lobster',  name:'Lobster',  icon:'🦞',qty:1,heals:12}},
+    {id:'cook_swordfish', name:'Swordfish', icon:'🐬',req:50,xp:140,interval:8000, needs:{item:'raw_swordfish',name:'Raw Swordfish'},gives:{item:'swordfish',name:'Swordfish',icon:'🐬',qty:1,heals:14}},
   ],
   smithing_smelt: [
     {id:'smelt_bronze',  name:'Bronze Bar',  icon:'🟫',req:1, xp:6,  interval:4000, needs:{item:'tin_ore',    qty:1,name:'1x Tin Ore + 1x Copper Ore',item2:'copper_ore',qty2:1}, gives:{item:'bronze_bar', name:'Bronze Bar', icon:'🟫',qty:1}},
@@ -1461,6 +1461,7 @@ function defaultState(){
     activeActivity:null,
     activeMode:'gather',
     combat:null,
+    lastActiveTimestamp: Date.now(),
     questsDone:{}, questsPending:{}, taskBonusEarned:{},
   };
 }
@@ -1483,6 +1484,12 @@ function loadState(){
 }
 function saveState(){ localStorage.setItem('habitscape_v1',JSON.stringify(S)); }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+// Save timestamp when app goes to background
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ S.lastActiveTimestamp=Date.now(); saveState(); }
+});
+window.addEventListener('pagehide',()=>{ S.lastActiveTimestamp=Date.now(); saveState(); });
 
 // ═══════════════════════════════════════
 // DAILY ROLLOVER
@@ -1585,6 +1592,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   } else {
     document.getElementById('onboarding').style.display='none';
     document.getElementById('app').classList.add('ready');
+    processOfflineProgress();
     init();
   }
 });
@@ -1752,6 +1760,239 @@ function completeOnboarding(){
   document.getElementById('onboarding').style.display='none';
   document.getElementById('app').classList.add('ready');
   init();
+}
+
+// ═══════════════════════════════════════
+// OFFLINE PROGRESS
+// ═══════════════════════════════════════
+const OFFLINE_CAP_MS = 24 * 60 * 60 * 1000;
+const OFFLINE_MIN_MS = 30 * 1000;
+let offlineMode = false; // suppresses level up popups during offline simulation
+
+function processOfflineProgress(){
+  const now = Date.now();
+  const last = S.lastActiveTimestamp || now;
+  const rawElapsed = now - last;
+  if(rawElapsed < OFFLINE_MIN_MS) return; // too short to bother
+  const elapsed = Math.min(rawElapsed, OFFLINE_CAP_MS);
+  const elapsedSec = elapsed / 1000;
+
+  // Snapshot levels before simulation to detect changes
+  const levelsBeforeOffline = {};
+  SKILL_KEYS.forEach(k=>{ levelsBeforeOffline[k]=getLvForXP(S.skills[k]?.xp||0); });
+
+  offlineMode = true; // suppress level up popups during simulation
+
+  const summary = []; // [{icon, skill, lines:[]}]
+
+  // ── Gathering skills ─────────────────────────────────────────────────────
+  const gatherSkills = ['mining','woodcutting','fishing','hunting'];
+  gatherSkills.forEach(skill=>{
+    if(!S.activeActivity || S.activeActivity.skill !== skill) return;
+    const items = getActivityItems(skill);
+    const item = items.find(i=>i.id===S.activeActivity.itemId);
+    if(!item) return;
+    const interval = getToolInterval(skill) / 1000; // seconds per gather
+    const ticks = Math.floor(elapsedSec / interval);
+    if(ticks < 1) return;
+    const xpEach = item.xp || 0;
+    const totalXP = ticks * xpEach;
+    awardXP(skill, totalXP, false);
+    const g = item.gives;
+    if(g) addToBank(g.item, {...g, id:g.item, qty:ticks});
+    const skillDef = SKILLS[skill];
+    summary.push({
+      icon: skillDef.icon,
+      skill: skillDef.name,
+      lines: [`${g?.name||'items'} ×${ticks}`, `+${totalXP} XP`]
+    });
+  });
+
+  // ── Processing skills (cook until mats run out) ───────────────────────────
+  const processingSkills = [
+    {key:'cooking',   activities: ACTIVITIES.cooking},
+    {key:'smithing',  activities: null, smith:true},
+    {key:'carving',   activities: ACTIVITIES['carving_'+currentCarvingMode]},
+    {key:'crafting',  activities: currentCraftMode==='ranged'?ACTIVITIES.crafting_ranged:ACTIVITIES.crafting_magic},
+  ];
+  processingSkills.forEach(({key, activities, smith})=>{
+    if(!S.activeActivity || S.activeActivity.skill !== key) return;
+    const itemId = S.activeActivity.itemId;
+    const smithMode = S.activeActivity.smithMode;
+    let items = smith ? getActivityItems(key, smithMode) : activities;
+    if(!items) return;
+    const recipe = items.find(i=>i.id===itemId);
+    if(!recipe || !recipe.interval) return;
+    const interval = recipe.interval / 1000;
+    let ticks = Math.floor(elapsedSec / interval);
+    if(ticks < 1) return;
+    // Cap ticks by available materials
+    const needs = recipe.needs;
+    if(needs){
+      const mat1 = S.bank.items[needs.item];
+      const mat2 = needs.item2 ? S.bank.items[needs.item2] : null;
+      const avail1 = mat1 ? Math.floor(mat1.qty / (needs.qty||1)) : 0;
+      const avail2 = mat2 ? Math.floor(mat2.qty / (needs.qty2||1)) : Infinity;
+      ticks = Math.min(ticks, avail1, avail2);
+    }
+    if(ticks < 1) return;
+    // Consume materials
+    if(needs){
+      if(S.bank.items[needs.item]) S.bank.items[needs.item].qty -= (needs.qty||1)*ticks;
+      if(needs.item2 && S.bank.items[needs.item2]) S.bank.items[needs.item2].qty -= (needs.qty2||1)*ticks;
+      // Clean up empty stacks
+      Object.keys(S.bank.items).forEach(k=>{ if(S.bank.items[k]?.qty<=0) delete S.bank.items[k]; });
+    }
+    // Award output
+    const g = recipe.gives;
+    if(g) addToBank(g.item, {...g, id:g.item, qty:ticks*(g.qty||1)});
+    awardXP(key, (recipe.xp||0)*ticks, false);
+    const skillDef = SKILLS[key];
+    summary.push({
+      icon: skillDef.icon,
+      skill: skillDef.name,
+      lines: [`${g?.name||'items'} ×${ticks*(g?.qty||1)}`, `+${(recipe.xp||0)*ticks} XP`]
+    });
+  });
+
+  // ── Combat ──────────────────────────────────────────────────────────────
+  if(S.combat){
+    const monster = MONSTERS.find(m=>m.id===S.combat.monsterId);
+    if(monster){
+      const style = getCombatSkill();
+      const skillLv = getLvForXP(S.skills[style]?.xp||0);
+      const defLv   = getLvForXP(S.skills.defence?.xp||0);
+      const {gearAtk,gearStr,gearDef,gearDR,weaponStyle} = getGearStats();
+
+      // Average damage per tick (player)
+      const styleMatchBonus = weaponStyle===(monster.weakness||'melee')?1.15:1.0;
+      const hitChance = Math.min(0.95,Math.max(0.20,
+        (skillLv+gearAtk)/(skillLv+gearAtk+(monster.defLv||1))*styleMatchBonus));
+      const maxHit = Math.max(1,Math.floor(((skillLv+gearStr)/7+1)*styleMatchBonus));
+      const avgPlayerDmg = hitChance*(maxHit/2+0.5); // expected damage per tick
+
+      // Average damage per tick (monster)
+      const effectiveDef = defLv+gearDef+BASE_PLAYER_DEF;
+      const monHitChance = Math.min(0.90,Math.max(0.05,monster.atk/(monster.atk+effectiveDef*2.5)));
+      const monMaxHit = monster.maxHit||monster.atk;
+      const totalDR = Math.min(75,gearDR+getStyleDRBonus(monster.style||'melee'));
+      const avgMonDmg = monHitChance*(monMaxHit/2+0.5)*(1-totalDR/100);
+
+      // Ticks per kill, ticks per combat second
+      const ticksPerKill = Math.ceil(monster.maxhp/Math.max(0.1,avgPlayerDmg));
+      const tickSec = COMBAT_INTERVAL/1000; // 3s per tick
+      const totalTicks = Math.floor(elapsedSec/tickSec);
+
+      // How much HP does player lose per kill fight?
+      const hpLostPerKill = avgMonDmg * ticksPerKill;
+
+      // Food available
+      let totalHealing = 0;
+      const foodSnap = {};
+      Object.values(S.bank.items||{}).filter(i=>i.heals&&i.qty>0).forEach(f=>{
+        foodSnap[f.id]={...f};
+        totalHealing += f.heals*f.qty;
+      });
+      if(S.equipped?.food){
+        const ef=S.bank.items[S.equipped.food.id];
+        if(ef) totalHealing=Math.max(totalHealing,ef.heals*ef.qty);
+      }
+
+      // Simulate kills until out of ticks or dead
+      let kills=0, ticksUsed=0, died=false;
+      let currentHp=S.hp.current;
+      const hpMax=S.hp.max;
+      let healingLeft=totalHealing;
+
+      while(ticksUsed+ticksPerKill<=totalTicks){
+        currentHp -= hpLostPerKill;
+        ticksUsed += ticksPerKill;
+        // Auto-heal when below 50%
+        if(currentHp < hpMax*0.5 && healingLeft>0){
+          const healAmt = Math.min(healingLeft, hpMax-currentHp);
+          currentHp = Math.min(hpMax, currentHp+healAmt);
+          healingLeft -= healAmt;
+        }
+        if(currentHp<=0){
+          died=true;
+          break;
+        }
+        kills++;
+        // Loot drops (use chance directly)
+        monster.drops.forEach(drop=>{
+          if(Math.random()<drop.chance){
+            addToBank(drop.item,{...drop,id:drop.item,qty:drop.qty||1});
+          }
+        });
+      }
+
+      // Award XP
+      const hasHabit=(S.habits||[]).some(h=>(h.skill===style||h.skill==='attack'||h.skill==='defence')&&h.doneToday);
+      if(hasHabit && kills>0){
+        const totalDmg = avgPlayerDmg*ticksPerKill*kills;
+        awardCombatXP(style, Math.floor(totalDmg*4));
+      }
+
+      // Consume food proportionally
+      const healingConsumed = totalHealing - healingLeft;
+      if(healingConsumed>0){
+        let remaining = healingConsumed;
+        Object.values(S.bank.items||{}).filter(i=>i.heals&&i.qty>0).sort((a,b)=>a.heals-b.heals).forEach(f=>{
+          if(remaining<=0) return;
+          const used = Math.min(f.qty, Math.ceil(remaining/f.heals));
+          f.qty -= used;
+          remaining -= used*f.heals;
+          if(f.qty<=0) delete S.bank.items[f.id];
+        });
+      }
+
+      // Update HP
+      if(died){ S.hp.current=Math.max(1,Math.ceil(hpMax*0.10)); S.combat=null; }
+      else { S.hp.current=Math.max(1,Math.floor(currentHp)); }
+
+      const lines=[`${monster.name} kills: ${kills}`];
+      if(healingConsumed>0) lines.push(`Food consumed: ~${Math.ceil(healingConsumed/5)}`);
+      if(died) lines.push('⚠ Ran out of HP — respawned at 10%');
+      summary.push({icon:'⚔️', skill:'Combat', lines});
+    }
+  }
+
+  offlineMode = false; // re-enable level up popups
+
+  // Queue one level up notification per skill that gained levels offline
+  SKILL_KEYS.forEach(k=>{
+    const oldLv = levelsBeforeOffline[k];
+    const newLv = getLvForXP(S.skills[k]?.xp||0);
+    if(newLv > oldLv) showLevelUp(k, newLv, oldLv);
+  });
+
+  S.lastActiveTimestamp = now;
+  saveState();
+
+  if(summary.length===0) return; // nothing happened, no modal needed
+
+  // Format elapsed time
+  const hrs=Math.floor(elapsed/3600000);
+  const mins=Math.floor((elapsed%3600000)/60000);
+  const timeStr=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
+
+  const bodyHtml=`
+    <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--text-d);letter-spacing:1px;margin-bottom:12px">
+      Away for ${timeStr}${rawElapsed>OFFLINE_CAP_MS?' · progress capped at 24h':''}
+    </div>
+    ${summary.map(s=>`
+      <div style="margin-bottom:12px">
+        <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:4px">
+          ${s.icon} ${s.skill}
+        </div>
+        ${s.lines.map(l=>`<div style="font-size:13px;color:var(--text);margin-left:8px">${l}</div>`).join('')}
+      </div>
+    `).join('')}
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-gold" onclick="closeModal();renderAll();buildActivityPanes();buildMonsterList();updateHPBar();">Continue</button>
+    </div>
+  `;
+  openModal('Welcome Back!', bodyHtml);
 }
 
 function init(){
@@ -2160,7 +2401,7 @@ function awardXP(skillKey,amount,isVice){
   S.skills[skillKey].xp=Math.min(S.skills[skillKey].xp+amount,XP_TABLE[MAX_LV-1]);
   S.totalXP=(S.totalXP||0)+amount;
   const newLv=getLvForXP(S.skills[skillKey].xp);
-  if(newLv>oldLv){
+  if(newLv>oldLv && !offlineMode){
     setTimeout(()=>showLevelUp(skillKey, newLv, oldLv),350);
     updateActivityLevels();
     buildActivityPanes();
@@ -2172,7 +2413,7 @@ function awardXP(skillKey,amount,isVice){
     const oldHpLv=getLvForXP(S.skills.hitpoints.xp);
     S.skills.hitpoints.xp=Math.min(S.skills.hitpoints.xp+hpXp,XP_TABLE[MAX_LV-1]);
     const newHpLv=getLvForXP(S.skills.hitpoints.xp);
-    if(newHpLv>oldHpLv){
+    if(newHpLv>oldHpLv && !offlineMode){
       S.hp.max=newHpLv;
       if(S.hp.current>S.hp.max) S.hp.current=S.hp.max;
       updateHPBar();
@@ -3158,26 +3399,33 @@ function startCombatBar(){
 function buildMonsterList(){
   const list=document.getElementById('monster-list'); if(!list) return;
   list.innerHTML='';
+  const styleIcon = {melee:'⚔️', ranged:'🏹', magic:'🔮'};
+  const weaknessIcon = {melee:'⚔️', ranged:'🏹', magic:'🔮'};
   MONSTERS.forEach(m=>{
     const div=document.createElement('div');
     div.className='monster-card'+(S.combat?.monsterId===m.id?' active-monster':'');
-    // Calculate live hit chance and max hit for this monster
+    const {gearAtk,gearStr,weaponStyle} = getGearStats();
     const style = getCombatSkill();
     const skillLv = getLvForXP(S.skills[style]?.xp||0);
-    const {gearAtk,gearStr} = getGearStats();
-    const defRating = getLvForXP(S.skills.defence?.xp||0) + (getGearStats().gearDef||0);
-    const monsterHitPct = Math.round(calcMonsterHitChance(m.atk, defRating) * 100);
-    const hitPct = Math.round(calcHitChance(skillLv, gearAtk, m.defLv) * 100);
-    const maxHit = calcMaxHit(skillLv, gearStr);
+    const defLv = getLvForXP(S.skills.defence?.xp||0);
+    const gearDef = Object.values(S.equipped).reduce((t,i)=>t+(i?.def||0),0);
+    const styleMatchBonus = weaponStyle === (m.weakness||'melee') ? 1.15 : 1.0;
+    const hitPct = Math.round(Math.min(0.95, Math.max(0.20,
+      (skillLv + gearAtk) / (skillLv + gearAtk + (m.defLv||1)) * styleMatchBonus
+    )) * 100);
+    const maxHit = Math.max(1, Math.floor(((skillLv + gearStr) / 7 + 1) * styleMatchBonus));
+    const playerDefRating = defLv + gearDef;
+    const monsterHitPct = Math.round(calcMonsterHitChance(m.atk, playerDefRating) * 100);
     const hitColor = hitPct>=80?'#6dbf5a':hitPct>=60?'#c9a84c':'#c05040';
+    const isWeak = weaponStyle === (m.weakness||'melee');
     div.innerHTML=`
       <div class="mc-icon">${m.icon}</div>
       <div class="mc-info">
         <div class="mc-name">${m.name}</div>
-        <div class="mc-level">Combat Level ${m.level}</div>
-        <div class="mc-drops" style="font-size:11px;color:var(--text-d)">
-          <span style="color:${hitColor}">Hit: ${hitPct}%</span>
-          &nbsp;·&nbsp;Max: ${maxHit}
+        <div class="mc-level">Lv ${m.level} &nbsp;·&nbsp; ${styleIcon[m.style||'melee']} ${(m.style||'melee')} &nbsp;·&nbsp; Weakness: ${weaknessIcon[m.weakness||'melee']}</div>
+        <div class="mc-drops">
+          <span style="color:${hitColor}">Hit: ${hitPct}%${isWeak?' ✦':''}</span>
+          &nbsp;·&nbsp;Max: ${maxHit}${isWeak?' ✦':''}
           &nbsp;·&nbsp;<span style="color:var(--red)">Their Hit: ${monsterHitPct}%</span>
         </div>
       </div>
@@ -3293,23 +3541,35 @@ function calcHitChance(skillLv, gearAtk, monsterDefLv){
 }
 
 function calcMonsterHitChance(monsterAtk, playerDefRating){
-  // Monster hit chance: separate formula with no brutal floor
-  // clamp(monsterAtk / (monsterAtk + playerDefRating * 2.5), 0.05, 0.75)
   const effectiveDef = playerDefRating + BASE_PLAYER_DEF;
-  return Math.min(0.75, Math.max(0.05, monsterAtk / (monsterAtk + effectiveDef * 2.5)));
+  return Math.min(0.90, Math.max(0.05, monsterAtk / (monsterAtk + effectiveDef * 2.5)));
 }
 
 function calcMaxHit(skillLv, gearStr){
   return Math.floor((skillLv + gearStr) / 7) + 1;
 }
 
-function getStyleDRBonus(weaponStyle, monsterStyle){
-  // Weapon style determines DR bonus vs certain incoming attack types
-  // melee weapon → +5% DR vs ranged attacks
-  // ranged weapon → +5% DR vs magic attacks
-  // magic weapon  → +5% DR vs melee attacks
+function getArmorStyle(){
+  // Check head, body, legs — return majority armor style, or null if none equipped
+  const counters = { melee:0, ranged:0, magic:0 };
+  ['head','body','legs'].forEach(slot=>{
+    const item = S.equipped[slot];
+    if(item?.armorStyle && counters[item.armorStyle] !== undefined)
+      counters[item.armorStyle]++;
+  });
+  const best = Object.entries(counters).sort((a,b)=>b[1]-a[1])[0];
+  return best[1] > 0 ? best[0] : null;
+}
+
+function getStyleDRBonus(monsterStyle){
+  // Armor style counters determine DR bonus vs incoming attack style
+  // melee armor → +5% DR vs ranged
+  // ranged armor → +5% DR vs magic
+  // magic armor  → +5% DR vs melee
+  const armorStyle = getArmorStyle();
+  if(!armorStyle) return 0;
   const counters = { melee:'ranged', ranged:'magic', magic:'melee' };
-  return (counters[weaponStyle] === monsterStyle) ? 5 : 0;
+  return counters[armorStyle] === monsterStyle ? 5 : 0;
 }
 
 function combatTick(monster){
@@ -3320,15 +3580,25 @@ function combatTick(monster){
   const {gearAtk,gearStr,gearDef,gearDR,weaponStyle} = getGearStats();
 
   // ── Player attacks monster ──────────────────────────────────────────────
-  const hitChance = calcHitChance(skillLv, gearAtk, monster.defLv);
+  const monsterWeakness = monster.weakness || 'melee';
+  const styleMatchBonus = weaponStyle === monsterWeakness ? 1.15 : 1.0;
+  const hitChance = Math.min(0.95, Math.max(0.20,
+    (skillLv + gearAtk) / (skillLv + gearAtk + (monster.defLv||1)) * styleMatchBonus
+  ));
   let playerDmg = 0;
   if(Math.random() < hitChance){
-    const maxHit = calcMaxHit(skillLv, gearStr);
+    const maxHit = Math.max(1, Math.floor(((skillLv + gearStr) / 7 + 1) * styleMatchBonus));
     playerDmg = Math.floor(Math.random() * maxHit) + 1;
   }
   S.combat.monsterHp = Math.max(0, S.combat.monsterHp - playerDmg);
   if(playerDmg>0) addCombatLog(`You hit ${monster.name} for ${playerDmg} damage.`,'hit-monster');
   else addCombatLog(`You miss the ${monster.name}.`,'info');
+
+  // Award XP on hit
+  if(playerDmg > 0){
+    const hasHabit=(S.habits||[]).some(h=>(h.skill===style||h.skill==='attack'||h.skill==='defence')&&h.doneToday);
+    if(hasHabit) awardCombatXP(style, playerDmg * 4);
+  }
 
   // ── Monster attacks player ──────────────────────────────────────────────
   const monsterStyle = monster.style || 'melee';
@@ -3338,8 +3608,8 @@ function combatTick(monster){
   if(Math.random() < monsterHitChance){
     const monsterMaxHit = monster.maxHit || monster.atk;
     const rawDmg = Math.floor(Math.random() * monsterMaxHit) + 1;
-    const totalDR = Math.min(75, gearDR + getStyleDRBonus(weaponStyle, monsterStyle));
-    monsterDmg = Math.max(0, Math.floor(rawDmg * (1 - totalDR / 100)));
+    const totalDR = Math.min(75, gearDR + getStyleDRBonus(monsterStyle));
+    monsterDmg = Math.max(1, Math.floor(rawDmg * (1 - totalDR / 100)));
   }
   S.hp.current = Math.max(0, S.hp.current - monsterDmg);
   if(monsterDmg>0) addCombatLog(`${monster.name} hits you for ${monsterDmg} damage.`,'hit-player');
@@ -3347,7 +3617,6 @@ function combatTick(monster){
 
   // Auto-eat if enabled and HP below 50%
   if(S.autoEat && S.hp.current < S.hp.max * 0.5){
-    // Prefer equipped food, fall back to lowest-heal food in bank
     let food = null;
     if(S.equipped?.food){
       const equippedFood = S.bank.items[S.equipped.food.id];
@@ -3362,7 +3631,6 @@ function combatTick(monster){
       food.qty--;
       if(food.qty<=0){
         delete S.bank.items[food.id];
-        // Clear food slot if it was the equipped food and ran out
         if(S.equipped?.food?.id===food.id) S.equipped.food=null;
       }
       addCombatLog(`Auto-eat: ${food.name} (+${food.heals} HP)`,'loot');
@@ -3378,10 +3646,6 @@ function combatTick(monster){
   if(S.combat.monsterHp<=0){
     addCombatLog(`You defeated the ${monster.name}!`,'hit-monster');
     S.monstersKilled=(S.monstersKilled||0)+1;
-    // XP — only if relevant habit done today
-    const combatSkill = getCombatSkill();
-    const hasHabit=(S.habits||[]).some(h=>(h.skill===combatSkill||h.skill==='attack'||h.skill==='defence')&&h.doneToday);
-    if(hasHabit) awardCombatXP(combatSkill, monster.xp);
     // Loot
     monster.drops.forEach(drop=>{
       if(Math.random()<drop.chance){
@@ -3392,7 +3656,6 @@ function combatTick(monster){
       }
     });
     clearInterval(combatTimer);
-    // Respawn same monster after delay
     combatTimer=null;
     S.combat.monsterHp=monster.maxhp;
     updateCombatHP(monster);
@@ -3400,13 +3663,13 @@ function combatTick(monster){
     return;
   }
 
-  // Player dead
+  // Player dead — respawn at 10% HP
   if(S.hp.current<=0){
     addCombatLog('You have been defeated!','hit-player');
     stopCombat(true);
-    S.hp.current=Math.ceil(S.hp.max*0.3); // respawn at 30% HP
+    S.hp.current=Math.max(1, Math.ceil(S.hp.max*0.10));
     updateHPBar(); saveState();
-    showToast('Defeated!','You respawn with 30% HP.',false);
+    showToast('Defeated!','You respawn with 10% HP.',false);
   }
 }
 
@@ -3711,9 +3974,9 @@ const SKILL_UNLOCKS = {
     {req:1,  name:'Shrimp',    icon:'🦐', cat:'Cook'},
     {req:10, name:'Sardine',   icon:'🐟', cat:'Cook'},
     {req:20, name:'Trout',     icon:'🐠', cat:'Cook'},
-    {req:25, name:'Salmon',    icon:'🐡', cat:'Cook'},
+    {req:30, name:'Salmon',    icon:'🐡', cat:'Cook'},
     {req:40, name:'Lobster',   icon:'🦞', cat:'Cook'},
-    {req:45, name:'Swordfish', icon:'🐬', cat:'Cook'},
+    {req:50, name:'Swordfish', icon:'🐬', cat:'Cook'},
   ],
 };
 
@@ -3997,9 +4260,14 @@ function selectSellItem(itemId) {
 }
 
 function showLevelUp(skillKey, newLv, oldLv) {
-  // Use skillKey if passed, fall back to name lookup
   const key = skillKey;
-  luQueue.push({key, newLv, oldLv: oldLv || newLv - 1});
+  const existing = luQueue.find(e => e.key === key);
+  if(existing){
+    // Extend the existing entry to the new level — keep the original oldLv
+    existing.newLv = Math.max(existing.newLv, newLv);
+  } else {
+    luQueue.push({key, newLv, oldLv: oldLv || newLv - 1});
+  }
   if (!luActive) luProcessNext();
 }
 
